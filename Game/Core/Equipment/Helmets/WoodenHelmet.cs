@@ -17,10 +17,8 @@ internal class WoodenHelmet : Helmet
     
     public override Dictionary<string, string> Stats => new()
     {
-        { nameof(Name), Name },
         {nameof(Health), Health.ToString(CultureInfo.CurrentCulture)},
         {nameof(Armor), Armor.ToString(CultureInfo.CurrentCulture)},
-        {"Gold",Value.ToString()}
     };
 
     

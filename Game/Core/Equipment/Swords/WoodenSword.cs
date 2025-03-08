@@ -16,9 +16,7 @@ internal class WoodenSword : Sword
     
     public override Dictionary<string, string> Stats => new()
     {
-        { nameof(Name), Name },
-        { nameof(Damage), Damage.ToString(CultureInfo.CurrentCulture) },
-        { "Gold", Value.ToString() }
+        { nameof(Damage), Damage.ToString(CultureInfo.CurrentCulture) }
     };
 
     public override void ApplyStats(CharacterBase characterBase)

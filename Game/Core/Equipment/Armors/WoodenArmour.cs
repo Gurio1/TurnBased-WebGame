@@ -18,11 +18,9 @@ public class WoodenArmour : Armour
     
     public override Dictionary<string, string> Stats => new()
     {
-        { nameof(Name), Name },
         { nameof(Armor), Armor.ToString(CultureInfo.CurrentCulture) },
         { nameof(Health), Health.ToString(CultureInfo.CurrentCulture) },
         { "Debuff Resistance", DebuffResistance.ToString(CultureInfo.CurrentCulture) },
-        { "Gold", Value.ToString() }
     };
 
     
