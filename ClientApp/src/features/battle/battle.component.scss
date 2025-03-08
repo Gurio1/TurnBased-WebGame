@@ -1,0 +1,45 @@
+.battle-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+
+.log-container {
+  height: 300px; /* Set max height */
+  width: 400px;
+  background-color: aquamarine;
+  overflow-y: auto; /* Enable scrollbar */
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.character {
+  border: 2px solid #333;
+  padding: 15px;
+  border-radius: 10px;
+  width: 40%;
+  text-align: center;
+}
+
+.hero {
+  background-color: #f4f4f4;
+}
+
+.enemy {
+  background-color: rgb(71, 71, 221);
+}
+
+.abilities {
+  margin-top: 10px;
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: gray;
+  cursor: not-allowed;
+}

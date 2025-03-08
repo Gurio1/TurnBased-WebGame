@@ -1,0 +1,49 @@
+<div class="battle-container" *ngIf="battleData">
+  <!-- Hero -->
+  <div class="character hero">
+    <h2>Hero</h2>
+    <p><strong>HP:</strong> {{ battleData.hero.hp }}</p>
+    <p><strong>Armor:</strong> {{ battleData.hero.armor }}</p>
+    <p><strong>Damage:</strong> {{ battleData.hero.damage }}</p>
+    <p><strong>Crit Chance:</strong> {{ battleData.hero.critChance * 100 }}%</p>
+    <p><strong>Crit Damage:</strong> {{ battleData.hero.critDamage }}</p>
+    <p>
+      <strong>Dodge Chance:</strong> {{ battleData.hero.dodgeChance * 100 }}%
+    </p>
+
+    <h3>Abilities</h3>
+    <div class="abilities">
+      <button
+        *ngFor="let ability of battleData.hero.abilities"
+        [disabled]="ability.currentCooldown > 0"
+        (click)="useAbility(ability)"
+      >
+        {{ ability.name }} (CD: {{ ability.currentCooldown }}/{{
+          ability.cooldown
+        }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Enemy -->
+  <div class="character enemy">
+    <h2>{{ battleData.enemy.characterType }}</h2>
+    <p><strong>HP:</strong> {{ battleData.enemy.hp }}</p>
+    <p><strong>Armor:</strong> {{ battleData.enemy.armor }}</p>
+    <p><strong>Damage:</strong> {{ battleData.enemy.damage }}</p>
+    <p>
+      <strong>Crit Chance:</strong> {{ battleData.enemy.critChance * 100 }}%
+    </p>
+    <p><strong>Crit Damage:</strong> {{ battleData.enemy.critDamage }}</p>
+    <p>
+      <strong>Dodge Chance:</strong> {{ battleData.enemy.dodgeChance * 100 }}%
+    </p>
+  </div>
+</div>
+
+<div class="log-container">
+  <h1>Logs</h1>
+  <div *ngFor="let log of logs">
+    {{ log }}
+  </div>
+</div>
