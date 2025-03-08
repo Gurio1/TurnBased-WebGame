@@ -1,0 +1,26 @@
+<h2 mat-dialog-title class="dialog-title">Battle Rewards</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="reward-summary">
+    <p><strong>Gold Earned:</strong> {{ data.gold }}</p>
+    <p><strong>Experience Gained:</strong> {{ data.experience }}</p>
+  </div>
+
+  <div *ngIf="data.drop" class="dropped-item">
+    <h3 class="dropped-item-name">{{ data.drop.name }}</h3>
+    <p><strong>Gold:</strong> {{ data.drop.value }} gold</p>
+
+    <div class="item-stats">
+      <h4>Item Stats:</h4>
+      <ul>
+        <li *ngFor="let key of objectKeys(data.drop.stats)">
+          <strong>{{ key }}:</strong> {{ data.drop.stats[key] }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="closeModal()">Close</button>
+</mat-dialog-actions>

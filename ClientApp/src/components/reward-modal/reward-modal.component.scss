@@ -1,0 +1,79 @@
+// Variables for color scheme
+$primary-color: #6200ea; // Material Purple
+$accent-color: #f5f5f5; // Light Gray
+$highlight-color: #fff3e0; // Light Peach
+$hover-color: #d1c4e9; // Light Purple for hover effect
+$font-color: #333; // Dark Gray for text
+
+// Mixin for button styles
+@mixin button-style($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 8px 16px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $hover-color;
+    transform: scale(1.05);
+  }
+}
+
+.dialog-title {
+  background-color: $primary-color;
+  color: white;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.5rem;
+  padding: 16px;
+  text-align: center;
+}
+
+.dialog-content {
+  padding: 16px;
+  background-color: $accent-color;
+  font-family: "Roboto", sans-serif;
+  color: $font-color;
+}
+
+.reward-summary {
+  margin-bottom: 20px;
+}
+
+.dropped-item {
+  background-color: $highlight-color;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropped-item-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #d32f2f;
+}
+
+.item-stats ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item-stats li {
+  padding: 4px 0;
+}
+
+.dialog-actions {
+  background-color: $primary-color;
+  padding: 12px;
+  text-align: right;
+}
+
+.dialog-actions button {
+  @include button-style(
+    white,
+    $primary-color
+  ); // Use the mixin for button styling
+}
