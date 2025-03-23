@@ -1,0 +1,72 @@
+<div class="background-overlay"></div>
+<div class="container">
+  <h1>Dark Dungeon RPG Login</h1>
+  <form
+    [formGroup]="loginForm"
+    (ngSubmit)="$event.preventDefault(); submitForm()"
+  >
+    <div class="form-group">
+      <label for="email">Contact Scroll (Email):</label>
+      <input type="email" id="email" formControlName="email" required />
+      <div
+        *ngIf="
+          loginForm.get('email')?.invalid &&
+          (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)
+        "
+      >
+        <small
+          class="text-danger"
+          *ngIf="loginForm.get('email')?.hasError('required')"
+        >
+          Email is required
+        </small>
+        <small
+          class="text-danger"
+          *ngIf="loginForm.get('email')?.hasError('email')"
+        >
+          Enter a valid email address
+        </small>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Secret Word (Password):</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        required
+      />
+      <div
+        *ngIf="
+          loginForm.get('password')?.invalid &&
+          (loginForm.get('password')?.dirty ||
+            loginForm.get('password')?.touched)
+        "
+      >
+        <small
+          class="text-danger"
+          *ngIf="loginForm.get('password')?.hasError('required')"
+        >
+          Password is required<br />
+        </small>
+        <small
+          class="text-danger"
+          *ngIf="loginForm.get('password')?.hasError('minlength')"
+        >
+          Password length must not be less than 8 symbols<br />
+        </small>
+        <small
+          class="text-danger"
+          *ngIf="loginForm.get('password')?.hasError('invalidPassword')"
+        >
+          Password should contain at least 1 special character and 1 numeric
+          value
+        </small>
+      </div>
+    </div>
+    <button type="submit">Enter the Dungeon</button>
+  </form>
+  <div class="link-container">
+    <a routerLink="/register">Not registered yet? Join the Quest!</a>
+  </div>
+</div>

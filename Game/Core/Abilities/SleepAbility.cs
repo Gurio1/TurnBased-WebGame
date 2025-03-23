@@ -1,5 +1,6 @@
 using Game.Core.AbilityEffects;
 using Game.Core.Models;
+using Game.Logger;
 using MediatR;
 
 namespace Game.Core.Abilities;
@@ -8,7 +9,7 @@ public class SleepAbility : Ability
 {
     public override string TypeName { get; init; } = nameof(SleepAbility);
 
-    public override int Id { get; set; } = 2;
+    public override string Id { get; set; } = "2";
     public override string Name { get; set; } = "Sleep";
     public override int Cooldown { get; init; } = 4;
     public override int CurrentCooldown { get; set; }
@@ -22,12 +23,19 @@ public class SleepAbility : Ability
         }
 
         var damage = owner.CalculateDamage(owner.Damage * 0.7f,mediator);
-        
-        target.SetDebuff(new Sleep(Duration),mediator);
 
+        SetDebuff(target,mediator);
+        
         CurrentCooldown = Cooldown;
         
         return damage;
-
+    }
+    
+    private void SetDebuff(CharacterBase target, IMediator mediator)
+    {
+        var debuff = new Sleep(Duration);
+        target.Debuffs.Add(debuff);
+        
+        mediator.Publish(new ActionLogNotification($"{target.CharacterType} has been debuffed with {debuff.Name}"));
     }
 }

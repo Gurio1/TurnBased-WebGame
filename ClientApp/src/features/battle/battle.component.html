@@ -5,8 +5,10 @@
     <p><strong>HP:</strong> {{ battleData.hero.hp }}</p>
     <p><strong>Armor:</strong> {{ battleData.hero.armor }}</p>
     <p><strong>Damage:</strong> {{ battleData.hero.damage }}</p>
-    <p><strong>Crit Chance:</strong> {{ battleData.hero.critChance * 100 }}%</p>
-    <p><strong>Crit Damage:</strong> {{ battleData.hero.critDamage }}</p>
+    <p>
+      <strong>Crit Chance:</strong> {{ battleData.hero.criticalChance * 100 }}%
+    </p>
+    <p><strong>Crit Damage:</strong> {{ battleData.hero.criticalDamage }}</p>
     <p>
       <strong>Dodge Chance:</strong> {{ battleData.hero.dodgeChance * 100 }}%
     </p>
@@ -32,9 +34,9 @@
     <p><strong>Armor:</strong> {{ battleData.enemy.armor }}</p>
     <p><strong>Damage:</strong> {{ battleData.enemy.damage }}</p>
     <p>
-      <strong>Crit Chance:</strong> {{ battleData.enemy.critChance * 100 }}%
+      <strong>Crit Chance:</strong> {{ battleData.enemy.criticalChance * 100 }}%
     </p>
-    <p><strong>Crit Damage:</strong> {{ battleData.enemy.critDamage }}</p>
+    <p><strong>Crit Damage:</strong> {{ battleData.enemy.criticalDamage }}</p>
     <p>
       <strong>Dodge Chance:</strong> {{ battleData.enemy.dodgeChance * 100 }}%
     </p>

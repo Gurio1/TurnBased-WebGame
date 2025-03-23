@@ -15,7 +15,6 @@ public class Sleep : IDebuff
 
     public void Execute(CharacterBase target, IMediator mediator)
     {
-        target.SkipAction();
         Duration--;
     }
 }

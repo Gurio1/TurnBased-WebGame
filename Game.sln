@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", "{FD99A5B8-12E2-4547-B5E7-F4D91046DB46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F7E89C3-C064-477C-AE28-91D5BD758C87}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FD99A5B8-12E2-4547-B5E7-F4D91046DB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD99A5B8-12E2-4547-B5E7-F4D91046DB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD99A5B8-12E2-4547-B5E7-F4D91046DB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD99A5B8-12E2-4547-B5E7-F4D91046DB46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

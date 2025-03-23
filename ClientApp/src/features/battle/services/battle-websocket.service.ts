@@ -20,10 +20,10 @@ export class BattleWebsocketService {
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(API_URL + 'hubs/battle', {
-        withCredentials: false,
-        // accessTokenFactory: () => {
-        //   return localStorage.getItem(JWT_TOKEN)!;
-        // },
+        withCredentials: true,
+        accessTokenFactory: () => {
+          return localStorage.getItem(JWT_TOKEN)!;
+        },
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
       })
@@ -51,9 +51,9 @@ export class BattleWebsocketService {
     });
   }
 
-  useAbility(abilityId: number, id: string) {
+  useAbility(abilityId: number) {
     this.hubConnection
-      .invoke('UseAbility', abilityId, id)
+      .invoke('UseAbility', abilityId)
       .catch((err) => console.error('Error sending ability:', err));
   }
 

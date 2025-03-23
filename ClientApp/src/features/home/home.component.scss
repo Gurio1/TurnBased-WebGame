@@ -1,0 +1,137 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.rpg-container {
+  display: flex;
+  justify-content: space-between;
+  height: 100vh; /* Full page height */
+  width: 100vw; /* Full page width */
+  padding: 20px;
+  background-color: #1a1a1a;
+  color: white;
+  font-family: "Arial", sans-serif;
+}
+
+/* Left Panel: Character Stats */
+.character-stats {
+  width: 20%;
+  padding: 15px;
+  border: 1px solid #444;
+  background: #222;
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+/* Center Panel: Character & Equipment */
+.character-equipment {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+}
+
+/* Character Model */
+.character-model img {
+  width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+}
+
+/* Equipment Slots (Left & Right) */
+.equipment-left,
+.equipment-right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.equipment-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background: #333;
+  width: 100px;
+}
+
+.equipment-slot img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.empty-slot {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px dashed #777;
+}
+
+/* Right Panel: Inventory */
+.inventory {
+  width: 25%;
+  padding: 15px;
+  border: 1px solid #444;
+  background: #222;
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.inventory-item {
+  padding: 5px;
+  text-align: center;
+  background: #333;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.inventory-item img {
+  width: 60px;
+  height: 60px;
+}
+
+button {
+  margin-top: 5px;
+  background: #444;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+button:hover {
+  background: #666;
+}
+.context-menu {
+  position: absolute;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.context-menu div {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: white;
+}
+
+.context-menu div:hover {
+  background: #444;
+}

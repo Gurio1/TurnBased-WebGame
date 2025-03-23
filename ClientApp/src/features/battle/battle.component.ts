@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { BattleResponse } from './Contracts/Responses/WebSocket/battle-response';
 import { BattleWebsocketService } from './services/battle-websocket.service';
 import { BattleData } from './Contracts/models/battle-data';
+import { MatDialog } from '@angular/material/dialog';
+import { RewardModalComponent } from '../../components/reward-modal/reward-modal.component';
 
 @Component({
   selector: 'app-battle',
@@ -26,7 +28,10 @@ export class BattleComponent implements OnInit {
 
   @ViewChild('logContainer') logContainer!: ElementRef;
 
-  constructor(private battleService: BattleWebsocketService) {}
+  constructor(
+    private battleService: BattleWebsocketService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.battleService.getBattleData().subscribe((data) => {
@@ -38,11 +43,18 @@ export class BattleComponent implements OnInit {
       this.logs.push(data.message);
       console.log(this.logs);
     });
+
+    this.battleService.getBattleReward().subscribe((reward) => {
+      this.dialog.open(RewardModalComponent, {
+        width: '400px',
+        data: reward,
+      });
+    });
   }
 
   useAbility(ability: Ability) {
     if (ability.currentCooldown === 0) {
-      this.battleService.useAbility(ability.id, this.battleData!.hero.id!);
+      this.battleService.useAbility(ability.id);
     } else {
       alert(`${ability.name} is on cooldown!`);
     }

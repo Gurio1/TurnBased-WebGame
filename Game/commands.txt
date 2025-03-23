@@ -1,0 +1,1 @@
+docker exec -it 216678e6815643eab8b8799b548ac0a95bc74043a4a433a73c912978ac4c2ebf redis-cli FLUSHALL

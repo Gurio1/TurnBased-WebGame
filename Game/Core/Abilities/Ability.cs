@@ -1,13 +1,15 @@
 using Game.Core.Models;
 using MediatR;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace Game.Core.Abilities;
 
-public abstract class Ability() : ICreatableClass
+[BsonDiscriminator(Required = true)]
+public abstract class Ability 
 {
     public abstract string TypeName { get; init; }
-    public abstract int Id { get; set; } 
+    public abstract string Id { get; set; } 
     public abstract string Name { get; set; }
     public abstract int Cooldown  { get; init; }
     public abstract int CurrentCooldown { get; set; }

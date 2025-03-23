@@ -5,7 +5,7 @@ import { BattleComponent } from '../features/battle/battle.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, BattleComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

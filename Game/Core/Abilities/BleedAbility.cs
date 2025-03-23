@@ -1,5 +1,6 @@
 using Game.Core.AbilityEffects;
 using Game.Core.Models;
+using Game.Logger;
 using MediatR;
 
 namespace Game.Core.Abilities;
@@ -7,7 +8,7 @@ namespace Game.Core.Abilities;
 internal class BleedAbility : Ability
 {
     public override string TypeName { get; init; } = nameof(BleedAbility);
-    public override int Id { get; set; } = 1;
+    public override string Id { get; set; } = "1";
     public override string Name { get; set; } = "Bleed";
     public override int Cooldown { get; init; } = 4;
     public override int CurrentCooldown { get; set; }
@@ -23,11 +24,18 @@ internal class BleedAbility : Ability
 
         var damage = owner.CalculateDamage(owner.Damage * 0.7f,mediator);
 
-        target.SetDebuff(new Bleed(Duration),mediator);
+        SetDebuff(target,mediator);
 
         CurrentCooldown = Cooldown;
 
         return damage;
-
+    }
+    
+    private void SetDebuff(CharacterBase target, IMediator mediator)
+    {
+        var debuff = new Bleed(Duration);
+        target.Debuffs.Add(debuff);
+        
+        mediator.Publish(new ActionLogNotification($"{target.CharacterType} has been debuffed with {debuff.Name}"));
     }
 }

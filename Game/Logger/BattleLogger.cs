@@ -1,4 +1,4 @@
-using Game.Battle.Hubs;
+using Game.Features.Battle.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
