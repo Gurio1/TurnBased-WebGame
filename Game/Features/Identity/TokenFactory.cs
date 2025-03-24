@@ -1,7 +1,6 @@
 using FastEndpoints.Security;
-using Game.Features.Identity;
 
-namespace Game.Identity;
+namespace Game.Features.Identity;
 
 public class TokenFactory : ITokenFactory
 {
@@ -13,7 +12,7 @@ public class TokenFactory : ITokenFactory
         {
             opt.SigningKey = jwtSecret;
             opt.User["UserId"] = user.Id;
-            opt.User["PlayerId"] = user.PlayerId;
+            opt.User["PlayerId"] = user.PlayerId.ToString();
         });
 
         return token;

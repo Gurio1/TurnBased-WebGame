@@ -2,46 +2,41 @@ import { Injectable } from '@angular/core';
 import { Character } from '../core/models/player';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { API_URL } from '../constants';
-import { catchError, Observable, Subject, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CharacterService {
-  private characterSubject = new Subject<Character>();
+  private characterSubject = new BehaviorSubject<Character | null>(null);
+
+  character$ = this.characterSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   getPlayer(): Observable<Character> {
-    return this.http
-      .get<Character>(API_URL + `players`)
-      .pipe(catchError(this.handleError))
-      .pipe(tap((char) => this.characterSubject.next(char)));
+    return this.http.get<Character>(`${API_URL}players`).pipe(
+      tap((character) => this.characterSubject.next(character)),
+      catchError(this.handleError)
+    );
   }
 
   makeAction(actionName: string, equipmentId: string): Observable<Character> {
-    const url = `${API_URL}players/${actionName.toLowerCase()}/${equipmentId}`;
     return this.http
-      .post<Character>(url, null)
-      .pipe(catchError(this.handleError))
-      .pipe(tap((char) => this.characterSubject.next(char)));
+      .post<Character>(
+        `${API_URL}players/${actionName.toLowerCase()}/${equipmentId}`,
+        null
+      )
+      .pipe(
+        tap((character) => this.characterSubject.next(character)),
+        catchError(this.handleError)
+      );
   }
 
   private handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong.
-      console.error(
-        `Backend returned code ${error.status}, body was: `,
-        error.error
-      );
-    }
-    // Return an observable with a user-facing error message.
+    console.error('API Error:', error);
     return throwError(
-      () => new Error('Something bad happened; please try again later.')
+      () => new Error('An error occurred. Please try again later.')
     );
   }
 }

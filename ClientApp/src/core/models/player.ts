@@ -2,15 +2,22 @@ import { Ability } from './ability';
 
 export interface Item {
   id: string;
+  itemType: string;
   name: string;
   interactions: string;
+  description: string;
 }
 
-export interface Equipment {
+export interface EquipmentAttribute {
+  name: string;
+  value: number;
+}
+
+export interface Equipment extends Item {
   id: string;
   name: string;
-  type: string; // e.g., "weapon", "armor"
-  stats: { [key: string]: number };
+  slot: string;
+  attributes: EquipmentAttribute[];
 }
 
 export interface Character {
@@ -24,6 +31,7 @@ export interface Character {
   dodgeChance: number;
   abilities: Ability[];
   equipment: { [slot: string]: Equipment | null };
-  inventory: Item[];
+  inventoryEquipmentItems: Equipment[];
+  otherInventoryItems: Item[];
   characterType: string;
 }

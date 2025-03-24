@@ -1,10 +1,10 @@
 using Game.Core.Models;
-using Game.Features.Battle.Contracts;
 
 namespace Game.Features.Battle;
 
 public class Battle
 {
-    public HeroBattleModel Hero { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public Hero Hero { get; set; }
     public Monster Enemy { get; set; }
 }

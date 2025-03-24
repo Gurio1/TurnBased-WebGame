@@ -13,21 +13,22 @@ internal class BattleHub : Hub
 {
     private readonly BattleManager _battleManager;
     private readonly BattleService _battleService;
-    private readonly IAbilityService _abilityService;
     private string _playerId;
-    public BattleHub(BattleManager battleManager,BattleService battleService,IAbilityService abilityService)
+    public BattleHub(BattleManager battleManager,BattleService battleService)
     {
         _battleManager = battleManager;
         _battleService = battleService;
-        _abilityService = abilityService;
     }
     
     public override async Task OnConnectedAsync()
     {
         _playerId = Context.User.Claims.SingleOrDefault(x => x.Type == "PlayerId").Value;
         
-        var battle = await _battleService.GetOrCreate(_playerId);
-        await Clients.Caller.SendAsync("ReceiveBattleData", battle);
+
+        var battle =  await _battleService.GetOrCreate(_playerId);
+        
+        await Groups.AddToGroupAsync(Context.ConnectionId, battle.Id);
+        await Clients.Group(battle.Id).SendAsync("ReceiveBattleData", battle);
         await base.OnConnectedAsync();
     }
 
@@ -43,7 +44,7 @@ internal class BattleHub : Hub
             await SendBattleReward(result);
         }
         
-        await Clients.Caller.SendAsync("ReceiveBattleData", battle);
+        await Clients.Group(battle.Id).SendAsync("ReceiveBattleData", battle);
     }
 
     public async Task SendBattleReward(IReward reward)

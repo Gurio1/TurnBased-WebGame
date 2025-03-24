@@ -37,7 +37,7 @@ public class Create(UserManager<User> userManager,ITokenFactory tokenFactory,Pla
         
         await playersService.CreateAsync(character);
 
-        newUser.PlayerId = character.Id;
+        newUser.PlayerId = character.Id.ToString();
 
         var result = await userManager.CreateAsync(newUser, req.Password);
 

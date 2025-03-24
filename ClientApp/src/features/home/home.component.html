@@ -1,25 +1,7 @@
 <div class="rpg-container" *ngIf="character">
   <!-- Left Panel: Character Stats -->
   <div class="character-stats">
-    <h2>{{ character.characterType }}</h2>
-    <p><strong>HP:</strong> {{ character.hp }}</p>
-    <p><strong>Armor:</strong> {{ character.armor }}</p>
-    <p><strong>Damage:</strong> {{ character.damage }}</p>
-    <p>
-      <strong>Crit Chance:</strong>
-      {{ character.criticalChance * 100 | number : "1.0-2" }}%
-    </p>
-    <p><strong>Crit Damage:</strong> x{{ character.criticalDamage }}</p>
-    <p>
-      <strong>Dodge Chance:</strong>
-      {{ character.dodgeChance * 100 | number : "1.0-2" }}%
-    </p>
-    <p><strong>Debuff Resistance:</strong> {{ character.debuffResistance }}</p>
-
-    <h3>Abilities</h3>
-    <ul>
-      <li *ngFor="let ability of character.abilities">{{ ability.name }}</li>
-    </ul>
+    <app-player-stats [character]="character"></app-player-stats>
   </div>
 
   <!-- Center Panel: Character Model & Equipment -->
@@ -64,27 +46,10 @@
   <div class="inventory">
     <h2>Inventory</h2>
     <div class="inventory-grid">
-      <div
-        *ngFor="let item of character.inventory"
-        class="inventory-item"
-        (contextmenu)="openContextMenu($event, item)"
-      >
-        <img [src]="item.id + '.png'" alt="{{ item.name }}" />
-      </div>
-    </div>
-
-    <div
-      *ngIf="contextMenuVisible"
-      class="context-menu"
-      [style.left.px]="contextMenuX"
-      [style.top.px]="contextMenuY"
-    >
-      <div
-        *ngFor="let action of (selectedItem?.interactions ?? '').split(', ')"
-        (click)="performAction(action, selectedItem?.id ?? '')"
-      >
-        {{ action }}
-      </div>
+      <app-inventory
+        [equipmentInventoryItems]="character.inventoryEquipmentItems"
+        [otherInventoryItems]="character.otherInventoryItems"
+      ></app-inventory>
     </div>
   </div>
 </div>

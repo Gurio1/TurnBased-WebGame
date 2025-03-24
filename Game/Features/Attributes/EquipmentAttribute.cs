@@ -6,12 +6,14 @@ namespace Game.Features.Attributes;
 [BsonDiscriminator(Required = true)]
 public abstract class EquipmentAttribute
 {
+    public abstract string Name { get; }
     public abstract float Value { get; set; }
     public abstract void ApplyStats(CharacterBase character);
     public abstract void RemoveStats(CharacterBase character);
 }
 public class AttackAttribute : EquipmentAttribute
 {
+    public override string Name { get; } = "Attack";
     public override float Value { get; set; }
     public override void ApplyStats(CharacterBase character)
     {
@@ -24,8 +26,9 @@ public class AttackAttribute : EquipmentAttribute
     }
 }
 
-public class DefenseAttribute : EquipmentAttribute
+public class ArmorAttribute : EquipmentAttribute
 {
+    public override string Name { get; } = "Armor";
     public override float Value { get; set; }
     public override void ApplyStats(CharacterBase character)
     {
@@ -40,6 +43,7 @@ public class DefenseAttribute : EquipmentAttribute
 
 public class SpeedAttribute : EquipmentAttribute
 {
+    public override string Name { get; } = "Speed";
     public override float Value { get; set; }
     public override void ApplyStats(CharacterBase character)
     {
@@ -53,6 +57,7 @@ public class SpeedAttribute : EquipmentAttribute
 
 public class CriticalChanceAttribute : EquipmentAttribute
 {
+    public override string Name { get; } = "Critical chance";
     public override float Value { get; set; }
     public override void ApplyStats(CharacterBase character)
     {
@@ -66,6 +71,7 @@ public class CriticalChanceAttribute : EquipmentAttribute
 
 public class CriticalDamageAttribute : EquipmentAttribute
 {
+    public override string Name { get; } = "Critical damage";
     public override float Value { get; set; }
     public override void ApplyStats(CharacterBase character)
     {

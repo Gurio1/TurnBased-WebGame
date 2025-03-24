@@ -1,0 +1,21 @@
+<div>
+  <h2>{{ this.character.characterType }}</h2>
+  <p><strong>HP:</strong> {{ character.hp }}</p>
+  <p><strong>Armor:</strong> {{ character.armor }}</p>
+  <p><strong>Damage:</strong> {{ character.damage }}</p>
+  <p>
+    <strong>Crit Chance:</strong>
+    {{ character.criticalChance * 100 | number : "1.0-2" }}%
+  </p>
+  <p><strong>Crit Damage:</strong> x{{ character.criticalDamage }}</p>
+  <p>
+    <strong>Dodge Chance:</strong>
+    {{ character.dodgeChance * 100 | number : "1.0-2" }}%
+  </p>
+  <p><strong>Debuff Resistance:</strong> {{ character.debuffResistance }}</p>
+
+  <h3>Abilities</h3>
+  <ul>
+    <li *ngFor="let ability of character.abilities">{{ ability.name }}</li>
+  </ul>
+</div>

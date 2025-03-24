@@ -1,4 +1,3 @@
-using Game.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace Game.Features.Identity;

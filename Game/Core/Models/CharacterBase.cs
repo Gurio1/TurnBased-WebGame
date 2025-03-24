@@ -3,12 +3,16 @@ using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
 using Game.Logger;
 using MediatR;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Models;
 
 public abstract class CharacterBase
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } =ObjectId.GenerateNewId().ToString();
     public abstract float Hp { get; set; }
     public abstract float Armor { get; set; }
     public abstract float Damage { get; set; } 

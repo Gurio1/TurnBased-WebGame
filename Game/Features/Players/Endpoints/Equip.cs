@@ -1,9 +1,13 @@
 using FastEndpoints;
 using Game.Core.Equipment;
 using Game.Core.Models;
+using Game.Features.Players.Contracts;
+using MongoDB.Bson;
 
 namespace Game.Features.Players.Endpoints;
 
+
+//TODO : If player is in battle he cannot equip or sell items.Only use consumables
 public class Equip : Endpoint<EquipRequest>
 {
     private readonly PlayersService _playersService;
@@ -21,9 +25,7 @@ public class Equip : Endpoint<EquipRequest>
 
     public override async Task HandleAsync(EquipRequest req, CancellationToken ct)
     {
-        var player = await _playersService.CreateQuery()
-            .GetById(req.PlayerId)
-            .ExecuteAsync<Hero>();
+        var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
 
         var item = player.Inventory.FirstOrDefault(i => i.Id == req.EquipmentId);
 
@@ -44,9 +46,9 @@ public class Equip : Endpoint<EquipRequest>
         }
         Logger.LogInformation($"Equiped item - {item.Id} - {item.Name}");
 
-        await _playersService.UpdateAsync(player.Id,player);
+        await _playersService.UpdateAsync(player);
 
-        await SendOkAsync(player, ct);
+        await SendOkAsync(player.ToViewModel(), ct);
 
     }
 }

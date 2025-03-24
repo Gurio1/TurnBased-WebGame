@@ -1,6 +1,7 @@
 using FastEndpoints;
-using Game.Features.Battle.Contracts;
-using MongoDB.Bson.Serialization;
+using Game.Core.Models;
+using Game.Features.Players.Contracts;
+using MongoDB.Bson;
 
 namespace Game.Features.Players.Endpoints;
 
@@ -20,11 +21,8 @@ public class Get : Endpoint<GetByIdRequest>
 
     public override async Task HandleAsync(GetByIdRequest req, CancellationToken ct)
     {
-        var player =await _playersService.CreateQuery()
-            .GetById(req.PlayerId)
-            .WithAbilities()
-            .ExecuteAsync<HeroBattleModel>();
+        var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
         
-        await SendOkAsync(player,ct);
+        await SendOkAsync(player.ToViewModel(),ct);
     }
 }
