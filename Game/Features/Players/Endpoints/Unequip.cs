@@ -1,8 +1,11 @@
 using FastEndpoints;
 using Game.Core.Equipment;
-using Game.Core.Models;
+using Game.Core.Equipment.Boots;
+using Game.Core.Equipment.Chests;
+using Game.Core.Equipment.Heads;
+using Game.Core.Equipment.Weapons;
+using Game.Features.Attributes;
 using Game.Features.Players.Contracts;
-using MongoDB.Bson;
 
 namespace Game.Features.Players.Endpoints;
 

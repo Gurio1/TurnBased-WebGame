@@ -49,6 +49,24 @@
       <Compile Update="Features\Players\Endpoints\UnequipRequest.cs">
         <DependentUpon>Unequip.cs</DependentUpon>
       </Compile>
+      <Compile Update="Features\Identity\Endpoints\CreateRequest.cs">
+        <DependentUpon>Create.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Identity\Endpoints\CreateRequestValidator.cs">
+        <DependentUpon>Create.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Identity\Endpoints\IsEmailUniqueRequest.cs">
+        <DependentUpon>IsEmailUnique.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Identity\Endpoints\IsEmailUniqueRequestValidator.cs">
+        <DependentUpon>IsEmailUnique.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Identity\Endpoints\LoginRequest.cs">
+        <DependentUpon>Login.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Features\Identity\Endpoints\LoginRequestValidator.cs">
+        <DependentUpon>Login.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>

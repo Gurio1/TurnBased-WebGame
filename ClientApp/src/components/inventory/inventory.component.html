@@ -2,24 +2,28 @@
   *ngFor="let item of equipmentInventoryItems"
   class="inventory-item"
   (contextmenu)="openContextMenu($event, item)"
-  (mouseover)="onItemHover(item)"
-  (mouseleave)="onItemLeave()"
 >
+  <span class="mat-tooltip">{{ getEquipmentTooltip(item) }}</span>
   <img [src]="item.id + '.png'" alt="{{ item.name }}" />
 
   <!-- Tooltip or Popup for item description and equipment attributes -->
-  <div *ngIf="hoveredItem === item" class="item-tooltip">
+  <div
+    *ngIf="hoveredItem === item"
+    class="item-tooltip"
+    matTooltip="Info about the action"
+    matTooltipPosition="left"
+  >
     <p>{{ item.name }}</p>
     <p>{{ item.description }}</p>
 
-    <div *ngIf="item.itemType === 'Equipment'">
+    <!-- <div *ngIf="item.itemType === 'Equipment'">
       <h4>Attributes:</h4>
       <ul>
         <li *ngFor="let attribute of item.attributes">
           <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </div>
 <div

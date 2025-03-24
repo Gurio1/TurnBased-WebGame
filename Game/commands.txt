@@ -1,1 +1,56 @@
 docker exec -it 216678e6815643eab8b8799b548ac0a95bc74043a4a433a73c912978ac4c2ebf redis-cli FLUSHALL
+
+ var boots = new WoodenBoots();
+        var chest = new WoodenArmour();
+        var head = new WoodenHelmet();
+        var sword = new WoodenSword();
+
+        var items = new EquipmentBase[] { boots, chest, head, sword };
+
+        foreach (var item in items)
+        {
+            await _equipmentService.SaveAsync(item);
+        }
+
+        foreach (var item in items)
+        {
+            var template = new EquipmentTemplate
+            {
+                EquipmentId = item.Id,
+                AttributeRanges = new()
+                {
+                    new EquipmentAttributeRange()
+                    {
+                        Attribute = new AttackAttribute(),
+                        MinValue = 5,
+                        MaxValue = 10
+                    },
+                    new EquipmentAttributeRange()
+                    {
+                        Attribute = new ArmorAttribute(),
+                        MinValue = 10,
+                        MaxValue = 20
+                    },
+                    new EquipmentAttributeRange()
+                    {
+                        Attribute = new CriticalChanceAttribute(),
+                        MinValue = 0.05f,
+                        MaxValue = 0.12f
+                    },
+                    new EquipmentAttributeRange()
+                    {
+                        Attribute = new CriticalDamageAttribute(),
+                        MinValue = 0.05f,
+                        MaxValue = 0.2f
+                    }
+                } ,AttributeCountWeights = new Dictionary<string, double>()
+                {
+                    {"1",0.4},
+                    {"2",0.3},
+                    {"3",0.2},
+                    {"4",0.1}
+                }
+            };
+
+            await _template.SaveAsync(template);
+        }

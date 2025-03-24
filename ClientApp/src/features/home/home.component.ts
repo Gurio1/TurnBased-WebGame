@@ -8,7 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, PlayerStatsComponent],
+  imports: [CommonModule, PlayerStatsComponent, InventoryComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   character: Character | null = null;
-  leftEquipmentSlots: string[] = ['Helmet', 'Armor', 'Gloves'];
+  leftEquipmentSlots: string[] = ['Head', 'Chest', 'Gloves'];
   rightEquipmentSlots: string[] = ['Weapon', 'Shield', 'Boots'];
 
   constructor(private characterService: CharacterService) {}
@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((character) => {
         if (character) {
+          console.log(character);
           this.character = character;
         }
       });

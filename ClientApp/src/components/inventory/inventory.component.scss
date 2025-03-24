@@ -1,0 +1,60 @@
+.inventory-item {
+  background-color: #444;
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.inventory-item img {
+  width: 50px;
+  height: 50px;
+}
+
+.context-menu {
+  position: absolute;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.context-menu div {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: white;
+}
+
+.context-menu div:hover {
+  background: #444;
+}
+
+.mat-tooltip {
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre-line;
+  background: url("https://www.transparenttextures.com/patterns/dark-mosaic.png"),
+    rgba(20, 20, 20, 0.75);
+  background-blend-mode: overlay;
+  color: #d4af37;
+  border: 1px solid #8b7500;
+  font-family: "Cinzel", serif;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  min-width: 100px;
+  text-align: left;
+  box-shadow: 0px 0px 8px rgba(255, 215, 0, 0.4);
+
+  position: absolute;
+  z-index: 1;
+  width: max-content;
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.inventory-item:hover .mat-tooltip {
+  visibility: visible;
+}

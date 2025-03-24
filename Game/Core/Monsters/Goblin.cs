@@ -23,7 +23,10 @@ public class Goblin : Monster
 
     public override Dictionary<string, float> DropsTable { get; init; } = new()
     {
-        { "wooden-sword", 1f },
+        { "wooden-sword", 0.25f },
+        { "wooden-boots", 0.25f },
+        { "wooden-helmet", 0.25f },
+        { "wooden-chest", 0.25f },
     };
 
     public override List<string> AbilityIds { get; set; }

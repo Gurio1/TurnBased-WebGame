@@ -8,7 +8,7 @@ public class EquipmentTemplate
 {
     public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
     public string EquipmentId { get; set; } // e.g., "wooden-sword"
-    public List<EquipmentAttributeRange> AttributeRanges { get; set; } = new();
+    public required List<EquipmentAttributeRange> AttributeRanges { get; set; } 
     
-    public Dictionary<string, double> AttributeCountWeights { get; set; } = new();
+    public required Dictionary<string, double> AttributeCountWeights { get; set; } 
 }

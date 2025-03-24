@@ -45,11 +45,10 @@
 
   <div class="inventory">
     <h2>Inventory</h2>
-    <div class="inventory-grid">
-      <app-inventory
-        [equipmentInventoryItems]="character.inventoryEquipmentItems"
-        [otherInventoryItems]="character.otherInventoryItems"
-      ></app-inventory>
-    </div>
+    <app-inventory
+      class="inventory-grid"
+      [equipmentInventoryItems]="character.inventoryEquipmentItems"
+      [otherInventoryItems]="character.otherInventoryItems"
+    ></app-inventory>
   </div>
 </div>
