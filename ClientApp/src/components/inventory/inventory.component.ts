@@ -2,13 +2,13 @@ import {
   Component,
   HostListener,
   Input,
-  ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
-import { Equipment, Item } from '../../core/models/player';
 import { CommonModule } from '@angular/common';
 import { CharacterService } from '../../shared/character.service';
+import { Equipment } from '../../core/models/equipment';
+import { Item } from '../../core/models/item';
 
 @Component({
   selector: 'app-inventory',
@@ -47,8 +47,19 @@ export class InventoryComponent {
             Slot: ${item.slot}
             Id: ${item.id}
             ${item.attributes
-              .map((attr) => `${attr.name}: ${attr.value}`)
+              .map(
+                (attr) =>
+                  `${attr.name}: ${
+                    this.isItPercentStat(attr.name)
+                      ? attr.value * 100 + '%'
+                      : attr.value
+                  }`
+              )
               .join('\n')}`;
+  }
+
+  isItPercentStat(statName: string) {
+    return statName == 'Critical chance' || statName == 'Critical damage';
   }
 
   performAction(action: string, itemId: string): void {

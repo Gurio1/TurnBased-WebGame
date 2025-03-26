@@ -1,13 +1,17 @@
 <div>
   <h2>{{ this.character.characterType }}</h2>
-  <p><strong>HP:</strong> {{ character.hp }}</p>
+  <p><strong>Max Health:</strong> {{ character.maxHealth }}</p>
+  <p><strong>Current Health:</strong> {{ character.currentHealth }}</p>
   <p><strong>Armor:</strong> {{ character.armor }}</p>
   <p><strong>Damage:</strong> {{ character.damage }}</p>
   <p>
-    <strong>Crit Chance:</strong>
+    <strong>Critical Chance:</strong>
     {{ character.criticalChance * 100 | number : "1.0-2" }}%
   </p>
-  <p><strong>Crit Damage:</strong> x{{ character.criticalDamage }}</p>
+  <p>
+    <strong>Critical Damage:</strong>
+    {{ character.criticalDamage * 100 | number : "1.0-2" }}%
+  </p>
   <p>
     <strong>Dodge Chance:</strong>
     {{ character.dodgeChance * 100 | number : "1.0-2" }}%
