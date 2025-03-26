@@ -2,7 +2,7 @@ namespace Game.Core.Equipment.Chests;
 
 public class WoodenArmour : EquipmentBase
 {
-    public override string Id { get; set; } = "wooden-chest";
+    public override string EquipmentId { get; set; } = "wooden-chest";
 
     public override string Slot { get; set; } = "Chest";
 

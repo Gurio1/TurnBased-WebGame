@@ -6,7 +6,7 @@ namespace Game.Core.Models;
 [BsonDiscriminator(Required = true)]
 public abstract class Item
 {
-    public abstract string Id { get; set; }
+    public string Id { get; set; } = Guid.CreateVersion7().ToString();
     public abstract string Name { get; set; }
     
     [BsonRepresentation(BsonType.String)]

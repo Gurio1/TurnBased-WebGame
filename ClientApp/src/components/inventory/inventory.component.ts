@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   HostListener,
   Input,
@@ -19,13 +18,11 @@ import { CharacterService } from '../../shared/character.service';
   styleUrl: './inventory.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class InventoryComponent implements AfterViewInit {
+export class InventoryComponent {
   @Input()
   equipmentInventoryItems!: Equipment[];
   @Input()
   otherInventoryItems!: Item[];
-
-  @ViewChild(MatTooltip) tooltip: MatTooltip | undefined;
 
   contextMenuVisible = false;
   contextMenuX = 0;
@@ -36,27 +33,6 @@ export class InventoryComponent implements AfterViewInit {
   disableTooltipInteractivity = true;
 
   constructor(private characterService: CharacterService) {}
-
-  ngAfterViewInit() {
-    // Listen for hover events on the tooltip trigger element
-    if (this.tooltip?._tooltipInstance) {
-      this.tooltip._tooltipInstance.afterHidden().subscribe(() => {
-        // Tooltip hidden, reset any state or actions here if needed
-      });
-    }
-  }
-
-  showTooltip(event: Event) {
-    if (this.tooltip) {
-      this.tooltip.show();
-    }
-  }
-
-  hideTooltip(event: Event) {
-    if (this.tooltip) {
-      this.tooltip.hide();
-    }
-  }
 
   openContextMenu(event: MouseEvent, item: Item) {
     event.preventDefault(); // Prevent default right-click menu
@@ -69,6 +45,7 @@ export class InventoryComponent implements AfterViewInit {
   getEquipmentTooltip(item: Equipment): string {
     return `Name: ${item.name}
             Slot: ${item.slot}
+            Id: ${item.id}
             ${item.attributes
               .map((attr) => `${attr.name}: ${attr.value}`)
               .join('\n')}`;

@@ -1,11 +1,5 @@
 using FastEndpoints;
-using Game.Core.Equipment;
-using Game.Core.Equipment.Boots;
-using Game.Core.Equipment.Chests;
-using Game.Core.Equipment.Heads;
-using Game.Core.Equipment.Weapons;
 using Game.Core.Models;
-using Game.Features.Attributes;
 using Game.Features.Players;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,16 +14,12 @@ public class Create : Endpoint<CreateRequest>
     private readonly UserManager<User> _userManager;
     private readonly ITokenFactory _tokenFactory;
     private readonly PlayersService _playersService;
-    private readonly EquipmentService _equipmentService;
-    private readonly EquipmentTemplateService _template;
 
-    public Create(UserManager<User> userManager,ITokenFactory tokenFactory,PlayersService playersService, EquipmentService equipmentService, EquipmentTemplateService template)
+    public Create(UserManager<User> userManager,ITokenFactory tokenFactory,PlayersService playersService)
     {
         _userManager = userManager;
         _tokenFactory = tokenFactory;
         _playersService = playersService;
-        _equipmentService = equipmentService;
-        _template = template;
     }
 
     public override void Configure()

@@ -5,7 +5,7 @@ namespace Game.Core.Equipment.Boots;
 
 public class WoodenBoots : EquipmentBase
 {
-    public override string Id { get; set; } = "wooden-boots";
+    public override string EquipmentId { get; set; } = "wooden-boots";
 
     public override string Slot { get; set; } = "Boots";
     

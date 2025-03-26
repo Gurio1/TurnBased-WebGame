@@ -2,7 +2,6 @@ using FastEndpoints;
 using Game.Core.Equipment;
 using Game.Core.Models;
 using Game.Features.Players.Contracts;
-using MongoDB.Bson;
 
 namespace Game.Features.Players.Endpoints;
 
@@ -19,7 +18,7 @@ public class Equip : Endpoint<EquipRequest>
     
     public override void Configure()
     {
-        Post("/players/equip/{EquipmentId}");
+        Post("/players/equip/{ItemId}");
         Description(x => x.Accepts<EquipRequest>());
     }
 
@@ -27,7 +26,7 @@ public class Equip : Endpoint<EquipRequest>
     {
         var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
 
-        var item = player.Inventory.FirstOrDefault(i => i.Id == req.EquipmentId);
+        var item = player.Inventory.FirstOrDefault(i => i.Id == req.ItemId);
 
         if (item is null)
         {

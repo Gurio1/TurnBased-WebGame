@@ -1,8 +1,9 @@
+using Game.Core.Equipment;
 using Game.Data.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Game.Core.Equipment;
+namespace Game.Features.Equipment;
 
 public class EquipmentTemplateService
 {

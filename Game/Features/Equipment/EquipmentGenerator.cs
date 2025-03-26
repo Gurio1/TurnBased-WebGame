@@ -1,32 +1,31 @@
+using Game.Core.Equipment;
 using Game.Services;
 
-namespace Game.Core.Equipment;
+namespace Game.Features.Equipment;
 
 public class EquipmentGenerator
 {
     private readonly EquipmentTemplateService _equipmentTemplateService;
-    private readonly EquipmentService _equipmentService;
 
-    public EquipmentGenerator(EquipmentTemplateService equipmentTemplateService,EquipmentService equipmentService)
+    public EquipmentGenerator(EquipmentTemplateService equipmentTemplateService)
     {
         _equipmentTemplateService = equipmentTemplateService;
-        _equipmentService = equipmentService;
     }
     
-    public async Task<EquipmentBase> GenerateEquipment(string equipmentId)
+    public async Task<EquipmentBase> GenerateEquipment(string equipmentType)
     {
-        var equipment = await _equipmentService.GetById(equipmentId);
+        var equipment = EquipmentFactory.CreateDrop(equipmentType);
         
         if (equipment is null)
         {
-            throw new Exception($"Equipment with Id: {equipmentId} doesnt exist");
+            throw new Exception($"Equipment with type: {equipmentType} doesnt exist");
         }
         
-        var template = await _equipmentTemplateService.GetByEquipmentIdAsync(equipmentId);
+        var template = await _equipmentTemplateService.GetByEquipmentIdAsync(equipment.EquipmentId);
 
         if (template is null)
         {
-            throw new Exception($"Equipment with Id: {equipmentId} doesnt have template");
+            throw new Exception($"Equipment with Id: {equipmentType} doesnt have template");
         }
         
         var attributeCount = GetWeightedRandom(template.AttributeCountWeights);

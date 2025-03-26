@@ -15,6 +15,7 @@ export interface EquipmentAttribute {
 
 export interface Equipment extends Item {
   id: string;
+  equipmentId: string;
   name: string;
   slot: string;
   attributes: EquipmentAttribute[];

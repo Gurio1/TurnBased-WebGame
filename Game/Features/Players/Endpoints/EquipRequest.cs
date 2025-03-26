@@ -6,5 +6,5 @@ public class EquipRequest
 {
     [FromClaim]
     public string PlayerId { get; set; }
-    public string EquipmentId { get; set; }
+    public string ItemId { get; set; }
 }

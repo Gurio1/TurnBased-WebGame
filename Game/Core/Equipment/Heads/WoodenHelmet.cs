@@ -2,7 +2,7 @@ namespace Game.Core.Equipment.Heads;
 
 public class WoodenHelmet : EquipmentBase
 {
-    public override string Id { get; set; } = "wooden-helmet";
+    public override string EquipmentId { get; set; } = "wooden-helmet";
     
     public override string Slot { get; set; } = "Head";
     

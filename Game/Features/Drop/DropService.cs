@@ -1,5 +1,6 @@
 using Game.Core.Equipment;
 using Game.Core.Models;
+using Game.Features.Equipment;
 using Game.Services;
 
 namespace Game.Features.Drop;

@@ -1,9 +1,10 @@
-using Game.Core.Abilities;
 using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
 using Game.Core.Equipment.Boots;
+using Game.Core.Equipment.Chests;
+using Game.Core.Equipment.Heads;
+using Game.Core.Equipment.Weapons;
 using Game.Core.Models;
-using Newtonsoft.Json;
 
 namespace Game.Core.Monsters;
 
@@ -23,10 +24,10 @@ public class Goblin : Monster
 
     public override Dictionary<string, float> DropsTable { get; init; } = new()
     {
-        { "wooden-sword", 0.25f },
-        { "wooden-boots", 0.25f },
-        { "wooden-helmet", 0.25f },
-        { "wooden-chest", 0.25f },
+        { nameof(WoodenSword), 0.25f },
+        { nameof(WoodenBoots), 0.25f },
+        { nameof(WoodenArmour), 0.25f },
+        { nameof(WoodenHelmet), 0.25f },
     };
 
     public override List<string> AbilityIds { get; set; }
