@@ -1,7 +1,7 @@
-import { DropItem } from "../models/drop-item";
+import { Item } from '../../../core/models/item';
 
 export interface Reward {
   gold: number;
   experience: number;
-  drop?: DropItem | null;
+  drop?: Item | null;
 }
