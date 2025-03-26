@@ -13,7 +13,8 @@ public abstract class CharacterBase
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } =ObjectId.GenerateNewId().ToString();
-    public abstract float Hp { get; set; }
+    public abstract float MaxHealth { get; set; }
+    public abstract float CurrentHealth { get; set; }
     public abstract float Armor { get; set; }
     public abstract float Damage { get; set; } 
     public abstract float DebuffResistance { get; set; }
@@ -54,7 +55,7 @@ public abstract class CharacterBase
 
         var damage = ability.Execute(attacker, this,mediator);
         
-        Hp -= damage;
+        CurrentHealth -= damage;
         mediator.Publish(new ActionLogNotification($"{CharacterType} took {damage} damage."));
     }
     

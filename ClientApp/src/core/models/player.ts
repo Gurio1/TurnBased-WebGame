@@ -1,29 +1,11 @@
 import { Ability } from './ability';
-
-export interface Item {
-  id: string;
-  itemType: string;
-  name: string;
-  interactions: string;
-  description: string;
-}
-
-export interface EquipmentAttribute {
-  name: string;
-  value: number;
-}
-
-export interface Equipment extends Item {
-  id: string;
-  equipmentId: string;
-  name: string;
-  slot: string;
-  attributes: EquipmentAttribute[];
-}
+import { Equipment } from './equipment';
+import { Item } from './item';
 
 export interface Character {
   id: string;
-  hp: number;
+  maxHealth: number;
+  currentHealth: number;
   armor: number;
   damage: number;
   debuffResistance: number;

@@ -37,7 +37,7 @@ public class BattleManager
         
         battle.Enemy.Defence(battle.Hero,ability,_mediator);
         
-        if (battle.Enemy.Hp <= 0)
+        if (battle.Enemy.CurrentHealth <= 0)
         {
             var drop = await _dropService.HandleDrop(battle.Enemy);
 

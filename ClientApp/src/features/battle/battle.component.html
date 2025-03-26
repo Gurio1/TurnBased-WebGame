@@ -1,8 +1,17 @@
 <div class="battle-container" *ngIf="battleData">
   <!-- Hero -->
   <div class="character hero">
-    <h2>Hero</h2>
-    <p><strong>HP:</strong> {{ battleData.hero.hp }}</p>
+    <h2>{{ battleData.hero.characterType }}</h2>
+    <label for="value1"><strong>HP</strong></label>
+    <meter
+      id="value1"
+      min="0"
+      max="{{ battleData.hero.maxHealth }}"
+      low="{{ battleData.hero.maxHealth * 0.3 }}"
+      optimum="{{ battleData.hero.maxHealth * 0.8 }}"
+      high="{{ battleData.hero.maxHealth * 0.5 }}"
+      value="{{ battleData.hero.currentHealth }}"
+    ></meter>
     <p><strong>Armor:</strong> {{ battleData.hero.armor }}</p>
     <p><strong>Damage:</strong> {{ battleData.hero.damage }}</p>
     <p>
@@ -30,7 +39,16 @@
   <!-- Enemy -->
   <div class="character enemy">
     <h2>{{ battleData.enemy.characterType }}</h2>
-    <p><strong>HP:</strong> {{ battleData.enemy.hp }}</p>
+    <label for="value1"><strong>HP</strong></label>
+    <meter
+      id="value1"
+      min="0"
+      max="{{ battleData.enemy.maxHealth }}"
+      low="{{ battleData.enemy.maxHealth * 0.3 }}"
+      optimum="{{ battleData.enemy.maxHealth * 0.8 }}"
+      high="{{ battleData.enemy.maxHealth * 0.6 }}"
+      value="{{ battleData.enemy.currentHealth }}"
+    ></meter>
     <p><strong>Armor:</strong> {{ battleData.enemy.armor }}</p>
     <p><strong>Damage:</strong> {{ battleData.enemy.damage }}</p>
     <p>

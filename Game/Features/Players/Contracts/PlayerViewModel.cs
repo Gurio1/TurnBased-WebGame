@@ -9,7 +9,8 @@ namespace Game.Features.Players.Contracts;
 public class PlayerViewModel
 {
     public string Id { get; set; }
-    public float Hp { get; set; }
+    public float MaxHealth { get; set; }
+    public float CurrentHealth { get; set; }
     public float Armor { get; set; }
     public float Damage { get; set; }
     public float DebuffResistance { get; set; }
@@ -30,7 +31,8 @@ public static partial class  Mapper {
         return new PlayerViewModel()
         {
             Id = model.Id,
-            Hp = model.Hp,
+            MaxHealth = model.MaxHealth,
+            CurrentHealth = model.CurrentHealth,
             Armor = model.Armor,
             Damage = model.Damage,
             DebuffResistance = model.DebuffResistance,

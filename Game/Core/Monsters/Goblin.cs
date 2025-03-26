@@ -14,7 +14,8 @@ public class Goblin : Monster
 {
     public override string CharacterType { get; set; } = "Goblin";
     
-    public override float Hp { get; set; } = 150;
+    public override float MaxHealth { get; set; } = 150;
+    public override float CurrentHealth { get; set; } = 150;
     public override float Armor { get; set; }
     public override float Damage { get; set; }
     public override float DebuffResistance { get; set; }
