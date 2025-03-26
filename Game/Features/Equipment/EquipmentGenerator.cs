@@ -38,8 +38,9 @@ public class EquipmentGenerator
 
             var range = template.AttributeRanges[index];
             template.AttributeRanges.RemoveAt(index);
-            
-            range.Attribute.Value = (float)Math.Round(RandomHelper.NextFloat(range.MinValue,range.MaxValue), 2);
+
+            var randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
+            range.Attribute.Value = MathF.Round(randomValue,1);
             
             equipment.Attributes.Add(range.Attribute);
         }
