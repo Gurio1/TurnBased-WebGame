@@ -7,6 +7,8 @@ import {
 } from '@angular/material/dialog';
 import { Reward } from './models/reward';
 import { NgFor, NgIf } from '@angular/common';
+import { Item } from '../../core/models/item';
+import { Equipment } from '../../core/models/equipment';
 
 @Component({
   selector: 'app-reward-modal',
@@ -33,7 +35,13 @@ export class RewardModalComponent {
   openItemStatsDialog(): void {
     // Call the method passed from the parent (BattleResultComponent)
     if (this.data.openItemStatsDialog) {
-      this.data.openItemStatsDialog(this.data.reward.drop); // Pass the drop data to the method
+      this.data.openItemStatsDialog(this.data.drop);
     }
+  }
+
+  isEquipment(): Equipment | null {
+    return this.data.drop?.itemType === 'Equipment'
+      ? (this.data.drop as Equipment)
+      : null;
   }
 }

@@ -8,13 +8,12 @@
 
   <div *ngIf="data.drop" class="dropped-item">
     <h3 class="dropped-item-name">{{ data.drop.name }}</h3>
-    <p><strong>Gold:</strong> {{ data.drop.value }}</p>
 
-    <div class="item-stats">
+    <div class="item-stats" *ngIf="isEquipment() as eq">
       <h4>Item Stats:</h4>
       <ul>
-        <li *ngFor="let key of objectKeys(data.drop.stats)">
-          <strong>{{ key }}:</strong> {{ data.drop.stats[key] }}
+        <li *ngFor="let attr of eq.attributes">
+          <strong>{{ attr.name }}:</strong> {{ attr.value }}
         </li>
       </ul>
     </div>

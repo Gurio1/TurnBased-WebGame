@@ -7,6 +7,7 @@ import { BattleResponse } from '../Contracts/Responses/WebSocket/battle-response
 
 import { API_URL, JWT_TOKEN } from '../../../constants';
 import { BattleData } from '../Contracts/models/battle-data';
+import { Reward } from '../../../components/reward-modal/models/reward';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class BattleWebsocketService {
   private hubConnection: signalR.HubConnection;
   private battleSubject = new Subject<BattleData>();
   private actionLogSubject = new Subject<ActionLogResponse>();
-  private battleReward = new Subject();
+  private battleReward = new Subject<Reward>();
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -65,7 +66,7 @@ export class BattleWebsocketService {
   }
 
   private subscribeToBattleReward() {
-    this.hubConnection.on('ReceiveBattleReward', (data) => {
+    this.hubConnection.on('ReceiveBattleReward', (data: Reward) => {
       console.log(data);
       this.battleReward.next(data);
     });
@@ -75,7 +76,7 @@ export class BattleWebsocketService {
     return this.battleSubject.asObservable();
   }
 
-  getBattleReward() {
+  getBattleReward(): Observable<Reward> {
     return this.battleReward.asObservable();
   }
 
