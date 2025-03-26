@@ -4,9 +4,8 @@
   (contextmenu)="openContextMenu($event, item)"
 >
   <span class="mat-tooltip">{{ getEquipmentTooltip(item) }}</span>
-  <img [src]="item.id + '.png'" alt="{{ item.name }}" />
+  <img [src]="item.imageUrl + '.png'" alt="{{ item.name }}" />
 
-  <!-- Tooltip or Popup for item description and equipment attributes -->
   <div
     *ngIf="hoveredItem === item"
     class="item-tooltip"
@@ -15,15 +14,6 @@
   >
     <p>{{ item.name }}</p>
     <p>{{ item.description }}</p>
-
-    <!-- <div *ngIf="item.itemType === 'Equipment'">
-      <h4>Attributes:</h4>
-      <ul>
-        <li *ngFor="let attribute of item.attributes">
-          <strong>{{ attribute.name }}:</strong> {{ attribute.value }}
-        </li>
-      </ul>
-    </div> -->
   </div>
 </div>
 <div
@@ -33,7 +23,7 @@
   (mouseover)="onItemHover(item)"
   (mouseleave)="onItemLeave()"
 >
-  <img [src]="item.id + '.png'" alt="{{ item.name }}" />
+  <img [src]="item.imageUrl + '.png'" alt="{{ item.name }}" />
 
   <!-- Tooltip or Popup for item description and equipment attributes -->
   <div *ngIf="hoveredItem === item" class="item-tooltip">

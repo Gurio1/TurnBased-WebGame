@@ -8,4 +8,6 @@ public class WoodenArmour : EquipmentBase
 
     public override string Name { get; set; } = "Wooden Armour";
     
+    public override string ImageUrl { get; set; } = "wooden-chest";
+
 }

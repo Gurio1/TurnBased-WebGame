@@ -10,5 +10,5 @@ public class WoodenBoots : EquipmentBase
     public override string Slot { get; set; } = "Boots";
     
     public override string Name { get; set; } = "Wooden Boots";
-
+    public override string ImageUrl { get; set; } = "wooden-boots";
 }

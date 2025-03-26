@@ -11,7 +11,7 @@
         <strong>{{ slot | titlecase }}</strong>
         <span *ngIf="character.equipment[slot]; else emptySlot">
           <img
-            [src]="character.equipment[slot]?.id + '.png'"
+            [src]="character.equipment[slot]?.imageUrl + '.png'"
             alt="{{ character.equipment[slot]?.name }}"
           />
           <button (click)="performAction('Unequip', slot)">✖</button>
@@ -31,7 +31,7 @@
         <strong>{{ slot | titlecase }}</strong>
         <span *ngIf="character.equipment[slot]; else emptySlot">
           <img
-            [src]="character.equipment[slot]?.id + '.png'"
+            [src]="character.equipment[slot]?.imageUrl + '.png'"
             alt="{{ character.equipment[slot]?.name }}"
           />
           <button (click)="performAction('Unequip', slot)">✖</button>

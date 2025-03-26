@@ -11,6 +11,7 @@ public abstract class Item
     
     [BsonRepresentation(BsonType.String)]
     public abstract ItemType ItemType { get; set; }
+    public abstract string ImageUrl { get; set; }
 
     [BsonRepresentation(BsonType.String)]
     public abstract ItemInteractions Interactions { get; }
