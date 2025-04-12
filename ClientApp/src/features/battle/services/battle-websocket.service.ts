@@ -5,9 +5,9 @@ import { Observable, Subject } from 'rxjs';
 import { ActionLogResponse } from '../Contracts/Responses/WebSocket/action-log-response';
 import { BattleResponse } from '../Contracts/Responses/WebSocket/battle-response';
 
-import { API_URL, JWT_TOKEN } from '../../../constants';
 import { BattleData } from '../Contracts/models/battle-data';
 import { Reward } from '../../../components/reward-modal/models/reward';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -17,13 +17,14 @@ export class BattleWebsocketService {
   private battleSubject = new Subject<BattleData>();
   private actionLogSubject = new Subject<ActionLogResponse>();
   private battleReward = new Subject<Reward>();
+  private battleLose = new Subject<boolean>();
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(API_URL + 'hubs/battle', {
+      .withUrl(environment.apiUrl + '/hubs/battle', {
         withCredentials: true,
         accessTokenFactory: () => {
-          return localStorage.getItem(JWT_TOKEN)!;
+          return localStorage.getItem(environment.jwtToken)!;
         },
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,
@@ -35,6 +36,7 @@ export class BattleWebsocketService {
     this.subscribeToActionLog();
     this.subscribeToBattleData();
     this.subscribeToBattleReward();
+    this.subscribeToBattleLose();
   }
 
   private startConnection() {
@@ -72,12 +74,22 @@ export class BattleWebsocketService {
     });
   }
 
+  private subscribeToBattleLose() {
+    this.hubConnection.on('ReceiveBattleLose', (data: boolean) => {
+      this.battleLose.next(data);
+    });
+  }
+
   getBattleData(): Observable<BattleData> {
     return this.battleSubject.asObservable();
   }
 
   getBattleReward(): Observable<Reward> {
     return this.battleReward.asObservable();
+  }
+
+  getBattleLose(): Observable<boolean> {
+    return this.battleLose.asObservable();
   }
 
   getActionLog(): Observable<ActionLogResponse> {

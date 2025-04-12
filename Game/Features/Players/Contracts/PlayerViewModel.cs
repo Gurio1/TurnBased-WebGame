@@ -1,50 +1,35 @@
-using Game.Core.Abilities;
 using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
 using Game.Core.Models;
-using MongoDB.Bson;
+using Game.Features.Abilities.Contracts;
 
 namespace Game.Features.Players.Contracts;
 
 public class PlayerViewModel
 {
     public string Id { get; set; }
-    public float MaxHealth { get; set; }
-    public float CurrentHealth { get; set; }
-    public float Armor { get; set; }
-    public float Damage { get; set; }
-    public float DebuffResistance { get; set; }
-    public float CriticalChance { get; set; }
-    public float CriticalDamage { get; set; }
-    public float DodgeChance { get; set; }
-    public List<Ability> Abilities { get; set; } = [];
+    public Stats Stats { get; set; }
+    public List<AbilityHomeViewModel> Abilities { get; set; } = [];
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     public List<EquipmentBase> InventoryEquipmentItems { get; set; } = new();
-    public List<Item> OtherInventoryItems { get; set; } = new();
+    public List<InventorySlot> OtherInventoryItems { get; set; } = new();
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; }
 }
 
 public static partial class  Mapper {
-    public static PlayerViewModel ToViewModel(this Hero model)
+    public static PlayerViewModel ToViewModel(this Player model)
     {
         return new PlayerViewModel()
         {
             Id = model.Id,
-            MaxHealth = model.MaxHealth,
-            CurrentHealth = model.CurrentHealth,
-            Armor = model.Armor,
-            Damage = model.Damage,
-            DebuffResistance = model.DebuffResistance,
-            Abilities = model.Abilities,
+            Stats = model.Stats,
+            Abilities = model.Abilities.Select(a => a.ToAbilityHomeViewModel(model)).ToList(),
             Debuffs = model.Debuffs,
-            CriticalDamage = model.CriticalDamage,
-            CriticalChance = model.CriticalChance,
             CharacterType = model.CharacterType,
-            DodgeChance = model.DodgeChance,
             Equipment = model.Equipment,
-            InventoryEquipmentItems = model.Inventory.Where(i => i.ItemType == ItemType.Equipment).Cast<EquipmentBase>().ToList(),
-            OtherInventoryItems = model.Inventory.Where(i => i.ItemType != ItemType.Equipment).ToList()
+            InventoryEquipmentItems = model.Inventory.Select(s => s.Item).Where(i => i.ItemType == ItemType.Equipment).Cast<EquipmentBase>().ToList(),
+            OtherInventoryItems = model.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList()
         };
     }
 }

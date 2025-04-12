@@ -1,17 +1,11 @@
 import { Ability } from './ability';
 import { Equipment } from './equipment';
 import { Item } from './item';
+import { Stats } from './stats';
 
-export interface Character {
+export interface Player {
   id: string;
-  maxHealth: number;
-  currentHealth: number;
-  armor: number;
-  damage: number;
-  debuffResistance: number;
-  criticalChance: number;
-  criticalDamage: number;
-  dodgeChance: number;
+  stats: Stats;
   abilities: Ability[];
   equipment: { [slot: string]: Equipment | null };
   inventoryEquipmentItems: Equipment[];

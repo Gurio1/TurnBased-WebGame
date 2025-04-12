@@ -3,6 +3,9 @@ import { BattleComponent } from '../features/battle/battle.component';
 import { LoginComponent } from '../features/identity/login/login.component';
 import { RegisterComponent } from '../features/identity/register/register.component';
 import { HomeComponent } from '../features/home/home.component';
+import { RewardModalComponent } from '../components/reward-modal/reward-modal.component';
+import { DefeatModalComponent } from '../components/defeat-modal/defeat-modal.component';
+import { TestComponent } from '../features/test/test.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -10,4 +13,5 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'battle', component: BattleComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'test', component: TestComponent },
 ];

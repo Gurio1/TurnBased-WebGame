@@ -1,0 +1,91 @@
+.player-stats {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid #3a2b1c;
+  border-radius: 1rem;
+  color: #e8ddca;
+  font-family: "Merriweather", serif;
+  box-shadow: 0 0 8px #000;
+
+  @media (max-width: 768px) {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+}
+
+.character-type {
+  font-size: 1.6rem;
+  color: #d1b384;
+  margin-bottom: 1rem;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.stat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    .icon {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+      margin-right: 0.5rem;
+    }
+
+    .label {
+      flex: 1;
+      color: #cfa976;
+      font-weight: bold;
+    }
+
+    .value {
+      color: #ffffff;
+      text-shadow: 1px 1px 1px #000;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.02);
+      border-radius: 0.5rem;
+    }
+  }
+}
+
+.abilities {
+  margin-top: 1rem;
+
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #a08964;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.3rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 0.3rem 0;
+      color: #e2c89b;
+      font-style: italic;
+      cursor: help;
+
+      &:hover {
+        text-shadow: 0 0 6px #f0e6d2;
+      }
+
+      .ability-name {
+        display: inline-block;
+        padding-left: 0.2rem;
+      }
+    }
+  }
+}

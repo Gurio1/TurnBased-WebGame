@@ -2,7 +2,8 @@ using MediatR;
 
 namespace Game.Logger;
 
-internal class ActionLogNotification(string message) : INotification
+public class ActionLogNotification(string battleId,string message) : INotification
 {
+    public string BattleId { get; set; } = battleId;
     public string ActionLog { get; set; } = message;
 }

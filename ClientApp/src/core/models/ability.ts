@@ -3,4 +3,5 @@ export interface Ability {
   name: string;
   cooldown: number;
   currentCooldown: number;
+  imageUrl: string;
 }

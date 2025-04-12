@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using Game.Core;
 using Game.Core.Equipment;
 
 namespace Game.Features.Equipment;
@@ -23,13 +24,10 @@ public static class EquipmentFactory
         }
     }
 
-    public static EquipmentBase CreateDrop(string typeName)
+    public static Result<EquipmentBase> CreateDrop(string typeName)
     {
-        if (_equipmentFactory.TryGetValue(typeName, out var factoryMethod))
-        {
-            return factoryMethod();
-        }
-
-        throw new InvalidOperationException($"Drop type '{typeName}' not found.");
+        return _equipmentFactory.TryGetValue(typeName, out var factoryMethod)
+            ? Result<EquipmentBase>.Success(factoryMethod())
+            : Result<EquipmentBase>.NotFound($"Equipment type '{typeName}' not found.");
     }
 }

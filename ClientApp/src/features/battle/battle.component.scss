@@ -1,45 +1,502 @@
+//TODO: Separate the styles into different files for better organization
+//TODO: To deal with z-index in modals!
+
+app-reward-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.8); // just for testing
+  width: 100vw;
+  height: 100vh;
+}
+
+app-defeat-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.8); // just for testing
+  width: 100vw;
+  height: 100vh;
+}
+
 .battle-container {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.2fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+  background: url("/test/24.png") center center / cover no-repeat;
+  grid-template-areas:
+    "player-stats     .             .           .           .       .                monster-stats"
+    "player-stats     monster       monster     monster    monster  .                monster-stats"
+    "player-stats     monster       monster     monster    monster  .                monster-stats"
+    "player-stats     monster       monster     monster    monster   battle-logs     battle-logs"
+    ".                monster       monster     monster    monster   battle-logs     battle-logs"
+    ".                abilities     abilities  abilities   abilities battle-logs     battle-logs";
+
+  gap: 1rem;
+}
+
+.scene {
+  grid-area: monster;
+  height: 100%;
+  width: 100%;
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  .monster-health-bar-container {
+    position: relative;
+    width: 15rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+
+    .monster-health-bar {
+      z-index: 2;
+      max-width: 40%;
+      animation: float 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.7));
+    }
+
+    .health-wrapper {
+      position: absolute;
+      bottom: 35%;
+      left: 35%;
+      height: 30%;
+      width: 30%;
+
+      .health-fill {
+        height: 100%;
+        border-radius: 30%;
+        background-color: red;
+        z-index: 1;
+        animation: float 3.5s ease-in-out infinite;
+      }
+    }
+  }
+  .monster {
+    animation: float 3.5s ease-in-out infinite;
+    max-width: 100%;
+    max-height: 80%;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.7));
+  }
 }
 
-.log-container {
-  height: 300px; /* Set max height */
-  width: 400px;
-  background-color: aquamarine;
-  overflow-y: auto; /* Enable scrollbar */
-  border: 1px solid #ccc;
-  padding: 10px;
+.battle-logs {
+  grid-area: battle-logs;
+  overflow-y: auto;
+
+  background: url("/test/test5.png");
+
+  background-size: 100% 100%;
+
+  font-family: "Spectral SC", serif;
+  font-size: 0.9rem;
+  color: #c8f8e2;
+  line-height: 1.6;
+  letter-spacing: 0.4px;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.7);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .battle-logs-wrapper {
+    color: #c8f8e2;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    overflow-y: auto;
+    padding: 3% 4%;
+    width: 80%;
+    height: 75%;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    scroll-behavior: smooth;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    .log-entry {
+      margin-bottom: 0.5rem;
+      padding-left: 0.25rem;
+      animation: typeGlow 0.6s ease-out;
+
+      &.critical {
+        color: #ff8b8b;
+        font-weight: bold;
+        text-shadow: 0 0 6px rgba(255, 60, 60, 0.4);
+      }
+
+      &.heal {
+        color: #b1fcb1;
+      }
+
+      &.miss {
+        color: #9c9c9c;
+        font-style: italic;
+      }
+    }
+  }
+  @keyframes typeGlow {
+    0% {
+      opacity: 0;
+      transform: translateY(4px);
+      text-shadow: none;
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      text-shadow: 0 0 5px rgba(140, 255, 200, 0.15);
+    }
+  }
+  @keyframes glyphGlow {
+    0%,
+    100% {
+      opacity: 0.02;
+    }
+    50% {
+      opacity: 0.06;
+    }
+  }
 }
 
-.character {
-  border: 2px solid #333;
-  padding: 15px;
-  border-radius: 10px;
-  width: 40%;
-  text-align: center;
+.player-stats {
+  grid-area: player-stats;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(70, 50, 30, 0.3);
+
+  background: radial-gradient(
+      circle at 80% 20%,
+      rgba(40, 80, 40, 0.1),
+      transparent 40%
+    ),
+    // moss stain
+    radial-gradient(circle at 10% 90%, rgba(20, 60, 30, 0.08), transparent 50%),
+    // dark mold edge
+    repeating-linear-gradient(
+        -45deg,
+        rgba(30, 45, 30, 0.08),
+        rgba(30, 45, 30, 0.08) 2px,
+        transparent 2px,
+        transparent 4px
+      ),
+    // subtle bark/leaf texture
+    linear-gradient(to bottom, #202e24, #131f18);
+
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 0, 0, 0.3);
+
+  font-family: "Uncial Antiqua", serif;
+  color: #e2d4b8;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8), 0 0 2px rgba(20, 15, 5, 0.5);
+  backdrop-filter: blur(1.5px);
+  filter: brightness(1) contrast(0.95);
+
+  border: 2px solid rgba(120, 90, 60, 0.3);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .player-health-bar {
+    position: relative;
+    width: 80%;
+    height: 20%;
+    border-radius: 50%;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .liquid-wrapper {
+      position: absolute;
+      backdrop-filter: blur(2px);
+
+      width: 61%;
+      height: 52%;
+      border-radius: 50%;
+      overflow: hidden;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+
+      span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+
+        font-family: "Cinzel", serif; // or any fantasy serif you’re using
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #f9f4e8;
+
+        text-shadow: 0 0 2px rgba(0, 0, 0, 0.9),
+          // deep shadow to contrast red
+          0 0 4px rgba(60, 255, 180, 0.3),
+          // magical glow
+          0 0 6px rgba(60, 255, 180, 0.15);
+
+        letter-spacing: 1px;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .liquid {
+        position: absolute;
+        width: 100%;
+
+        background-image: url("/test/health1.png");
+        background-blend-mode: overlay;
+        background-size: 200% 100%;
+        background-repeat: repeat-x;
+        background-position: center bottom;
+
+        animation: waveMotion 4s linear infinite;
+
+        filter: hue-rotate(10deg) brightness(0.6) contrast(1.4) saturate(1.3)
+          blur(1px);
+
+        &.danger {
+          box-shadow: 0 0 10px rgba(255, 0, 0, 0.4),
+            0 0 25px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.3);
+        }
+      }
+    }
+
+    .orb-frame {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+
+      filter: drop-shadow(0 0 4px rgba(40, 20, 20, 0.4)) // dark ambient glow
+        drop-shadow(0 0 10px rgba(100, 20, 20, 0.15));
+    }
+  }
+
+  h2 {
+    font-family: "IM Fell English SC", serif;
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #ffdf99; // rich golden header
+    text-shadow: 0 0 6px rgba(80, 50, 20, 0.3), 1px 1px 2px #000;
+  }
+
+  .player-stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      position: relative;
+      font-size: 0.95rem;
+      padding: 0.75rem 0;
+      letter-spacing: 0.4px;
+      color: #e4edd4;
+
+      strong {
+        color: #eaffcc;
+        text-shadow: 0 0 3px rgba(90, 130, 90, 0.3);
+      }
+
+      span {
+        color: #e68f8f;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+      }
+
+      // Glowing vine divider
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(130, 255, 130, 0.25),
+          rgba(90, 255, 180, 0.4),
+          rgba(130, 255, 130, 0.25),
+          transparent
+        );
+        box-shadow: 0 0 6px rgba(90, 255, 180, 0.15);
+      }
+
+      &:last-child::after {
+        display: none; // no divider after the last stat
+      }
+    }
+    @keyframes vineGlow {
+      0%,
+      100% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .player-stats-list li::after {
+      animation: vineGlow 4s ease-in-out infinite;
+    }
+  }
 }
 
-.hero {
-  background-color: #f4f4f4;
+.monster-stats {
+  grid-area: monster-stats;
+  border-radius: 16px;
+
+  background: radial-gradient(
+      circle at 85% 20%,
+      rgba(90, 20, 20, 0.1),
+      transparent 50%
+    ),
+    radial-gradient(circle at 10% 90%, rgba(50, 0, 0, 0.08), transparent 60%),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(30, 45, 30, 0.06),
+      rgba(30, 45, 30, 0.06) 2px,
+      transparent 2px,
+      transparent 4px
+    ),
+    linear-gradient(to bottom, #1c2a20, #131f18);
+
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 0, 0, 0.3);
+
+  color: #e8dbc8;
+  font-family: "Uncial Antiqua", serif;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(120, 80, 60, 0.3);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h2 {
+    font-family: "IM Fell English SC", serif;
+    font-size: 1.7rem;
+    color: #ffb377; // more dangerous golden-red
+    margin-bottom: 1rem;
+    text-shadow: 0 0 6px rgba(180, 50, 30, 0.3);
+  }
+
+  .monster-stats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      position: relative;
+      font-size: 0.95rem;
+      padding: 0.75rem 0;
+      letter-spacing: 0.4px;
+
+      strong {
+        color: #ffd6a6;
+        text-shadow: 0 0 3px rgba(130, 70, 30, 0.2);
+      }
+
+      span {
+        color: #e57474;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+      }
+
+      // Glowing red-vine divider (corrupted energy style)
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 100, 100, 0.15),
+          rgba(200, 50, 50, 0.4),
+          rgba(255, 100, 100, 0.15),
+          transparent
+        );
+        box-shadow: 0 0 6px rgba(200, 50, 50, 0.2);
+        animation: vineGlow 4s ease-in-out infinite;
+      }
+
+      &:last-child::after {
+        display: none;
+      }
+    }
+  }
 }
 
-.enemy {
-  background-color: rgb(71, 71, 221);
+.ability-canvas {
+  grid-area: abilities;
+
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  .ability-icon {
+    background-image: url("/test/custom.png");
+    border-radius: 35%;
+    filter: drop-shadow(2px 10px 15px rgba(3, 10, 0, 0.7));
+    width: 10%;
+    cursor: pointer;
+    position: relative; // 👈 this is the key
+
+    &:hover {
+      transform: scale(1.05);
+      filter: brightness(1.2) drop-shadow(0 0 8px rgba(120, 255, 200, 0.3));
+    }
+    &.disabled {
+      pointer-events: none;
+      filter: brightness(0.5) saturate(0.2);
+      transform: none;
+      opacity: 0.7;
+    }
+  }
 }
 
-.abilities {
-  margin-top: 10px;
+@media (max-width: 768px) {
 }
 
-button {
-  margin: 5px;
-  padding: 10px;
-  cursor: pointer;
+@keyframes waveMotion {
+  0% {
+    background-position-x: 0%;
+  }
+  100% {
+    background-position-x: 200%;
+  }
 }
 
-button:disabled {
-  background-color: gray;
-  cursor: not-allowed;
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(0, -8px);
+  }
 }

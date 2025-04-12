@@ -1,25 +1,26 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { identityTokenResponse } from '../contracts/responses/token.response';
-import { API_URL, JWT_TOKEN } from '../../../constants';
 import { registerUser } from '../register/models/register-user';
 import { loginUser } from '../login/models/login-user';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IdentityService {
+  private apiUrl = environment.apiUrl + '/users';
   getToken() {
-    return localStorage.getItem(JWT_TOKEN);
+    return localStorage.getItem(environment.jwtToken);
   }
   constructor(private http: HttpClient) {}
 
   registerUser(user: registerUser): Observable<identityTokenResponse> {
     console.log(user);
-    return this.http.post<identityTokenResponse>(API_URL + `users`, user).pipe(
+    return this.http.post<identityTokenResponse>(this.apiUrl, user).pipe(
       tap((response: identityTokenResponse) => {
-        localStorage.setItem(JWT_TOKEN, response.token);
+        localStorage.setItem(environment.jwtToken, response.token);
       }),
       catchError(this.handleError)
     );
@@ -27,23 +28,23 @@ export class IdentityService {
 
   login(user: loginUser): Observable<identityTokenResponse> {
     return this.http
-      .post<identityTokenResponse>(API_URL + `users/login`, user)
+      .post<identityTokenResponse>(this.apiUrl + `/login`, user)
       .pipe(
         tap((response: identityTokenResponse) => {
-          localStorage.setItem(JWT_TOKEN, response.token);
+          localStorage.setItem(environment.jwtToken, response.token);
         }),
         catchError(this.handleError)
       );
   }
 
   isEmailTaken(email: string): Observable<boolean> {
-    return this.http.post<boolean>(API_URL + `users/check-email`, {
+    return this.http.post<boolean>(this.apiUrl + `/check-email`, {
       Email: email,
     });
   }
 
   isUserNameTaken(userName: string): Observable<boolean> {
-    return this.http.get<boolean>(API_URL + `users`);
+    return this.http.get<boolean>(this.apiUrl);
   }
 
   private handleError(error: HttpErrorResponse) {

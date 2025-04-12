@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Character } from '../../core/models/player';
 import { CharacterService } from '../../shared/character.service';
 import { CommonModule } from '@angular/common';
 import { PlayerStatsComponent } from '../../components/player-stats/player-stats.component';
 import { InventoryComponent } from '../../components/inventory/inventory.component';
 import { Subject, takeUntil } from 'rxjs';
+import { PlayerHomeViewModel } from './contracts/playerHomeViewModel';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -15,7 +15,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class HomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
-  character: Character | null = null;
+  character: PlayerHomeViewModel | null = null;
   leftEquipmentSlots: string[] = ['Head', 'Chest', 'Gloves'];
   rightEquipmentSlots: string[] = ['Weapon', 'Shield', 'Boots'];
 

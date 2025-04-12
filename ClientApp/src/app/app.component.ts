@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { BattleComponent } from '../features/battle/battle.component';
 
 @Component({
   selector: 'app-root',

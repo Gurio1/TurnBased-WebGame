@@ -1,69 +1,120 @@
 <div class="battle-container" *ngIf="battleData">
-  <!-- Hero -->
-  <div class="character hero">
-    <h2>{{ battleData.hero.characterType }}</h2>
-    <label for="value1"><strong>HP</strong></label>
-    <meter
-      id="value1"
-      min="0"
-      max="{{ battleData.hero.maxHealth }}"
-      low="{{ battleData.hero.maxHealth * 0.3 }}"
-      optimum="{{ battleData.hero.maxHealth * 0.8 }}"
-      high="{{ battleData.hero.maxHealth * 0.5 }}"
-      value="{{ battleData.hero.currentHealth }}"
-    ></meter>
-    <p><strong>Armor:</strong> {{ battleData.hero.armor }}</p>
-    <p><strong>Damage:</strong> {{ battleData.hero.damage }}</p>
-    <p>
-      <strong>Crit Chance:</strong> {{ battleData.hero.criticalChance * 100 }}%
-    </p>
-    <p><strong>Crit Damage:</strong> {{ battleData.hero.criticalDamage }}</p>
-    <p>
-      <strong>Dodge Chance:</strong> {{ battleData.hero.dodgeChance * 100 }}%
-    </p>
+  <div class="scene">
+    <div class="monster-health-bar-container">
+      <div class="health-wrapper">
+        <div
+          class="health-fill"
+          [style.width.%]="monsterHealthPercentage"
+        ></div>
+      </div>
+      <img
+        src="/test/monster-health-bar.png"
+        alt="Monster health bar"
+        class="monster-health-bar"
+      />
+    </div>
+    <img src="/test/goblin.png" alt="Goblin" class="monster" />
 
-    <h3>Abilities</h3>
-    <div class="abilities">
-      <button
-        *ngFor="let ability of battleData.hero.abilities"
-        [disabled]="ability.currentCooldown > 0"
-        (click)="useAbility(ability)"
+    <!-- <audio autoplay loop>
+    <source src="assets/forest-ambience.mp3" type="audio/mpeg" />
+  </audio> -->
+  </div>
+  <div class="monster-stats">
+    <h2>{{ battleData.monster.name }}</h2>
+    <ul class="monster-stats-list">
+      <li>
+        <strong>Health:</strong>
+        <span id="monster-health"
+          >{{ battleData.monster.stats.currentHealth }} /
+          {{ battleData.monster.stats.maxHealth }}</span
+        >
+      </li>
+      <li><strong>Armor:</strong> {{ battleData.monster.stats.armor }}</li>
+      <li><strong>Damage:</strong> {{ battleData.monster.stats.damage }}</li>
+      <li>
+        <strong>Critical Chance:</strong>
+        {{ battleData.monster.stats.criticalChance * 100 }}%
+      </li>
+      <li>
+        <strong>Critical Damage:</strong>
+        {{ battleData.monster.stats.criticalDamage * 100 }}%
+      </li>
+      <li>
+        <strong>Dodge Chance:</strong>
+        {{ battleData.monster.stats.criticalChance * 100 }}%
+      </li>
+    </ul>
+  </div>
+
+  <div class="player-stats">
+    <h2>{{ battleData.combatPlayer.characterType }}</h2>
+    <div class="player-health-bar">
+      <div class="liquid-wrapper">
+        <span
+          >{{ battleData.combatPlayer.stats.currentHealth }}/{{
+            battleData.combatPlayer.stats.maxHealth
+          }}</span
+        >
+        <div
+          class="liquid danger"
+          [style.height.%]="playerHealthPercentage"
+        ></div>
+      </div>
+      <img src="/test/player-health-bar.png" class="orb-frame" />
+    </div>
+    <ul class="player-stats-list">
+      <li><strong>Armor:</strong> {{ battleData.combatPlayer.stats.armor }}</li>
+      <li>
+        <strong>Damage:</strong> {{ battleData.combatPlayer.stats.damage }}
+      </li>
+      <li>
+        <strong>Critical Chance:</strong>
+        {{ battleData.combatPlayer.stats.criticalChance * 100 }}%
+      </li>
+      <li>
+        <strong>Critical Damage:</strong>
+        {{ battleData.combatPlayer.stats.criticalDamage * 100 }}%
+      </li>
+      <li>
+        <strong>Dodge Chance:</strong>
+        {{ battleData.combatPlayer.stats.dodgeChance * 100 }}%
+      </li>
+    </ul>
+  </div>
+
+  <div class="battle-logs">
+    <div class="battle-logs-wrapper" #logContainer>
+      <div
+        class="log-entry"
+        *ngFor="let log of logs"
+        [class]="getLogClass(log)"
       >
-        {{ ability.name }} (CD: {{ ability.currentCooldown }}/{{
-          ability.cooldown
-        }})
-      </button>
+        {{ log }}
+      </div>
     </div>
   </div>
 
-  <!-- Enemy -->
-  <div class="character enemy">
-    <h2>{{ battleData.enemy.characterType }}</h2>
-    <label for="value1"><strong>HP</strong></label>
-    <meter
-      id="value1"
-      min="0"
-      max="{{ battleData.enemy.maxHealth }}"
-      low="{{ battleData.enemy.maxHealth * 0.3 }}"
-      optimum="{{ battleData.enemy.maxHealth * 0.8 }}"
-      high="{{ battleData.enemy.maxHealth * 0.6 }}"
-      value="{{ battleData.enemy.currentHealth }}"
-    ></meter>
-    <p><strong>Armor:</strong> {{ battleData.enemy.armor }}</p>
-    <p><strong>Damage:</strong> {{ battleData.enemy.damage }}</p>
-    <p>
-      <strong>Crit Chance:</strong> {{ battleData.enemy.criticalChance * 100 }}%
-    </p>
-    <p><strong>Crit Damage:</strong> {{ battleData.enemy.criticalDamage }}</p>
-    <p>
-      <strong>Dodge Chance:</strong> {{ battleData.enemy.dodgeChance * 100 }}%
-    </p>
+  <div class="ability-canvas">
+    <img
+      class="ability-icon"
+      *ngFor="let ability of battleData.combatPlayer.abilities"
+      [class.disabled]="ability.currentCooldown > 0"
+      (click)="useAbility(ability)"
+      src="/test/{{ ability.imageUrl }}"
+      [attr.data-cooldown]="
+        ability.currentCooldown > 0 ? ability.currentCooldown : null
+      "
+      alt="{{ ability.name }}"
+    />
   </div>
-</div>
 
-<div class="log-container">
-  <h1>Logs</h1>
-  <div *ngFor="let log of logs">
-    {{ log }}
-  </div>
+  <app-reward-modal
+    *ngIf="reward"
+    [gold]="reward.gold || 100"
+    [gems]="reward.experience || 200"
+    [items]="reward.equipmentDrop || []"
+  >
+  </app-reward-modal>
+
+  <app-defeat-modal *ngIf="defeat"></app-defeat-modal>
 </div>

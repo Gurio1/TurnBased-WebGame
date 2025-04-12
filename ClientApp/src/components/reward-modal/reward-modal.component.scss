@@ -1,79 +1,124 @@
-// Variables for color scheme
-$primary-color: #6200ea; // Material Purple
-$accent-color: #f5f5f5; // Light Gray
-$highlight-color: #fff3e0; // Light Peach
-$hover-color: #d1c4e9; // Light Purple for hover effect
-$font-color: #333; // Dark Gray for text
+@mixin gold-gradient-text {
+  background: linear-gradient(
+    #fff4d6 0%,
+    #fce29f 30%,
+    #f9c86b 60%,
+    #f5b942 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
 
-// Mixin for button styles
-@mixin button-style($bg-color, $text-color) {
-  background-color: $bg-color;
-  color: $text-color;
+.gold-text {
+  @include gold-gradient-text;
+  font-size: 1.6rem;
   font-weight: bold;
-  border-radius: 4px;
-  padding: 8px 16px;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
+  font-family: "Cinzel", serif;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+}
 
-  &:hover {
-    background-color: $hover-color;
-    transform: scale(1.05);
+.wrapper {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.background-image {
+  background-image: url("/reward.png");
+  background-size: 100% 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40rem;
+  margin: auto;
+}
+
+.modal-container {
+  padding: 8rem 0rem;
+  text-align: center;
+  font-family: "Cinzel", serif;
+  width: 68%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 2.8rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  @include gold-gradient-text;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.reward-values {
+  display: flex;
+  justify-content: center;
+  max-width: 70%;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0 1rem;
+  font-size: 1.6rem;
+  margin-bottom: 2rem;
+  background: linear-gradient(to bottom, #2a2017, #251e15);
+  border: 3px solid #503e2c;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+  border-radius: 0.75rem;
+
+  .reward-value {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 64px;
+      height: 64px;
+    }
+
+    span {
+      display: block;
+      @include gold-gradient-text;
+      text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
+    }
   }
 }
 
-.dialog-title {
-  background-color: $primary-color;
-  color: white;
-  font-family: "Roboto", sans-serif;
-  font-size: 1.5rem;
-  padding: 16px;
+.reward-items {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .item {
+    width: 90px;
+    height: 90px;
+    background: url("/item-background.png") center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+    }
+  }
+}
+
+.fancy-btn {
+  background: linear-gradient(to bottom, #2a2017, #251e15);
+  border: 3px solid #503e2c;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+  border-radius: 0.75rem;
+  padding: 0.8rem 1.2rem;
+  position: relative;
   text-align: center;
-}
-
-.dialog-content {
-  padding: 16px;
-  background-color: $accent-color;
-  font-family: "Roboto", sans-serif;
-  color: $font-color;
-}
-
-.reward-summary {
-  margin-bottom: 20px;
-}
-
-.dropped-item {
-  background-color: $highlight-color;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.dropped-item-name {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #d32f2f;
-}
-
-.item-stats ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-}
-
-.item-stats li {
-  padding: 4px 0;
-}
-
-.dialog-actions {
-  background-color: $primary-color;
-  padding: 12px;
-  text-align: right;
-}
-
-.dialog-actions button {
-  @include button-style(
-    white,
-    $primary-color
-  ); // Use the mixin for button styling
+  cursor: pointer;
 }

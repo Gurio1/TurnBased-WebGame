@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Game.Logger;
 
-internal class BattleLogger : INotificationHandler<ActionLogNotification>
+public class BattleLogger : INotificationHandler<ActionLogNotification>
 {
     private readonly IHubContext<BattleHub> _battleHubContext;
 
@@ -14,6 +14,6 @@ internal class BattleLogger : INotificationHandler<ActionLogNotification>
     }
     public async Task Handle(ActionLogNotification notification, CancellationToken cancellationToken)
     {
-       await _battleHubContext.Clients.All.SendAsync("Log",new {Message = notification.ActionLog}, cancellationToken: cancellationToken);
+       await _battleHubContext.Clients.Group(notification.BattleId).SendAsync("Log",new {Message = notification.ActionLog}, cancellationToken: cancellationToken);
     }
 }

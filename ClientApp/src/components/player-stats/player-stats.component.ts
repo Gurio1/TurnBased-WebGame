@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Character } from '../../core/models/player';
 import { CommonModule } from '@angular/common';
+import { PlayerHomeViewModel } from '../../features/home/contracts/playerHomeViewModel';
 
 @Component({
   selector: 'app-player-stats',
@@ -11,5 +11,5 @@ import { CommonModule } from '@angular/common';
 })
 export class PlayerStatsComponent {
   @Input()
-  character!: Character;
+  character!: PlayerHomeViewModel;
 }

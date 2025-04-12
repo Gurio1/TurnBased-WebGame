@@ -7,11 +7,11 @@ namespace Game.Features.Players.Endpoints;
 
 public class Get : Endpoint<GetByIdRequest>
 {
-    private readonly PlayersService _playersService;
+    private readonly IPlayersMongoRepository _playersMongoRepository;
 
-    public Get(PlayersService playersService)
+    public Get(IPlayersMongoRepository playersMongoRepository)
     {
-        _playersService = playersService;
+        _playersMongoRepository = playersMongoRepository;
 
     }
     public override void Configure()
@@ -21,8 +21,14 @@ public class Get : Endpoint<GetByIdRequest>
 
     public override async Task HandleAsync(GetByIdRequest req, CancellationToken ct)
     {
-        var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
+        var playerResult = await _playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
+
+        if (playerResult.IsFailure)
+        {
+            await SendAsync(playerResult.Error.Description, int.Parse(playerResult.Error.Code), ct);
+            return;
+        }
         
-        await SendOkAsync(player.ToViewModel(),ct);
+        await SendOkAsync(playerResult.Value.ToViewModel(),ct);
     }
 }

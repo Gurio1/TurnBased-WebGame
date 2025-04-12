@@ -1,32 +1,36 @@
+using Game.Core;
 using Game.Core.Equipment;
-using Game.Services;
+using Game.Features.Attributes;
+using Game.Shared;
 
 namespace Game.Features.Equipment;
 
-public class EquipmentGenerator
+public class EquipmentGenerator : IEquipmentGenerator
 {
-    private readonly EquipmentTemplateService _equipmentTemplateService;
+    private readonly IEquipmentTemplateMongoRepository _equipmentTemplateMongoRepository;
 
-    public EquipmentGenerator(EquipmentTemplateService equipmentTemplateService)
+    public EquipmentGenerator(IEquipmentTemplateMongoRepository equipmentTemplateMongoRepository)
     {
-        _equipmentTemplateService = equipmentTemplateService;
+        _equipmentTemplateMongoRepository = equipmentTemplateMongoRepository;
     }
     
-    public async Task<EquipmentBase> GenerateEquipment(string equipmentType)
+    public async Task<Result<EquipmentBase>> GenerateEquipment(string equipmentType)
     {
-        var equipment = EquipmentFactory.CreateDrop(equipmentType);
+        var equipmentResult = EquipmentFactory.CreateDrop(equipmentType);
         
-        if (equipment is null)
+        if (equipmentResult.IsFailure)
         {
-            throw new Exception($"Equipment with type: {equipmentType} doesnt exist");
+            return equipmentResult;
         }
         
-        var template = await _equipmentTemplateService.GetByEquipmentIdAsync(equipment.EquipmentId);
+        var templateResult = await _equipmentTemplateMongoRepository.GetByEquipmentIdAsync(equipmentResult.Value.EquipmentId);
 
-        if (template is null)
+        if (templateResult.IsFailure)
         {
-            throw new Exception($"Equipment with Id: {equipmentType} doesnt have template");
+            return templateResult.AsError<EquipmentBase>();
         }
+
+        var template = templateResult.Value;
         
         var attributeCount = GetWeightedRandom(template.AttributeCountWeights);
 
@@ -40,15 +44,18 @@ public class EquipmentGenerator
             template.AttributeRanges.RemoveAt(index);
 
             var randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
-            range.Attribute.Value = MathF.Round(randomValue,1);
+
+            range.Attribute.Value = range.Attribute is CriticalChanceAttribute or CriticalDamageAttribute
+                ? randomValue.RoundTo2()
+                : randomValue.RoundTo1();
             
-            equipment.Attributes.Add(range.Attribute);
+            equipmentResult.Value.Attributes.Add(range.Attribute);
         }
 
-        return equipment;
+        return equipmentResult;
     }
 
-    private int GetWeightedRandom(Dictionary<string, double> attributeCountWeights)
+    private static int GetWeightedRandom(Dictionary<string, double> attributeCountWeights)
     {
         double totalWeight = attributeCountWeights.Values.Sum();
         double randomValue = RandomHelper.Instance.NextDouble() * totalWeight;
@@ -62,6 +69,6 @@ public class EquipmentGenerator
             randomValue -= entry.Value;
         }
 
-        return Convert.ToInt32(attributeCountWeights.Keys.First()); // Fallback
+        return Convert.ToInt32(attributeCountWeights.Keys.First()); 
     }
 }

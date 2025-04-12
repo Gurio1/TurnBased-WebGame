@@ -1,25 +1,28 @@
-<h2 mat-dialog-title class="dialog-title">Battle Rewards</h2>
+<div class="wrapper">
+  <div class="background-image">
+    <div class="modal-container">
+      <h1 class="title">REWARD</h1>
 
-<mat-dialog-content class="dialog-content">
-  <div class="reward-summary">
-    <p><strong>Gold Earned:</strong> {{ data.gold }}</p>
-    <p><strong>Experience Gained:</strong> {{ data.experience }}</p>
-  </div>
+      <div class="reward-values">
+        <div class="reward-value">
+          <img src="gold.png" alt="Gold" />
+          <span>{{ gold }}</span>
+        </div>
+        <div class="reward-value">
+          <img src="exp.png" alt="Gems" />
+          <span>{{ gems }}</span>
+        </div>
+      </div>
 
-  <div *ngIf="data.drop" class="dropped-item">
-    <h3 class="dropped-item-name">{{ data.drop.name }}</h3>
+      <div class="reward-items">
+        <div class="item" *ngFor="let item of items">
+          <img [src]="item.imageUrl + '.png'" [alt]="item.name" />
+        </div>
+      </div>
 
-    <div class="item-stats" *ngIf="isEquipment() as eq">
-      <h4>Item Stats:</h4>
-      <ul>
-        <li *ngFor="let attr of eq.attributes">
-          <strong>{{ attr.name }}:</strong> {{ attr.value }}
-        </li>
-      </ul>
+      <button (click)="goHome()" class="fancy-btn">
+        <span class="gold-text">CONTINUE</span>
+      </button>
     </div>
   </div>
-</mat-dialog-content>
-
-<mat-dialog-actions class="dialog-actions">
-  <button mat-button (click)="closeModal()">Close</button>
-</mat-dialog-actions>
+</div>

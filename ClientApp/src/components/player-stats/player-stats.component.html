@@ -1,25 +1,75 @@
-<div>
-  <h2>{{ this.character.characterType }}</h2>
-  <p><strong>Max Health:</strong> {{ character.maxHealth }}</p>
-  <p><strong>Current Health:</strong> {{ character.currentHealth }}</p>
-  <p><strong>Armor:</strong> {{ character.armor }}</p>
-  <p><strong>Damage:</strong> {{ character.damage }}</p>
-  <p>
-    <strong>Critical Chance:</strong>
-    {{ character.criticalChance * 100 | number : "1.0-2" }}%
-  </p>
-  <p>
-    <strong>Critical Damage:</strong>
-    {{ character.criticalDamage * 100 | number : "1.0-2" }}%
-  </p>
-  <p>
-    <strong>Dodge Chance:</strong>
-    {{ character.dodgeChance * 100 | number : "1.0-2" }}%
-  </p>
-  <p><strong>Debuff Resistance:</strong> {{ character.debuffResistance }}</p>
+<div class="player-stats">
+  <h2 class="character-type">{{ character.characterType }}</h2>
 
-  <h3>Abilities</h3>
-  <ul>
-    <li *ngFor="let ability of character.abilities">{{ ability.name }}</li>
+  <ul class="stat-list">
+    <li class="stat-item" tooltip="Maximum hit points this character can have.">
+      <span class="icon">❤️</span>
+      <span class="label">Max Health:</span>
+      <span class="value">{{ character.stats.maxHealth }}</span>
+    </li>
+    <li class="stat-item" tooltip="Current health remaining.">
+      <span class="icon">🧡</span>
+      <span class="label">Current Health:</span>
+      <span class="value">{{ character.stats.currentHealth }}</span>
+    </li>
+    <li class="stat-item" tooltip="Reduces damage taken from attacks.">
+      <span class="icon">🛡️</span>
+      <span class="label">Armor:</span>
+      <span class="value">{{ character.stats.armor }}</span>
+    </li>
+    <li class="stat-item" tooltip="Base attack power of the character.stats.">
+      <span class="icon">⚔️</span>
+      <span class="label">Damage:</span>
+      <span class="value">{{ character.stats.damage }}</span>
+    </li>
+    <li class="stat-item" tooltip="Chance to deal critical damage.">
+      <span class="icon">🎯</span>
+      <span class="label">Critical Chance:</span>
+      <span class="value"
+        >{{ character.stats.criticalChance * 100 | number : "1.0-2" }}%</span
+      >
+    </li>
+    <li
+      class="stat-item"
+      tooltip="Multiplier applied when a critical hit lands."
+    >
+      <span class="icon">💥</span>
+      <span class="label">Critical Damage:</span>
+      <span class="value"
+        >{{ character.stats.criticalDamage * 100 | number : "1.0-2" }}%</span
+      >
+    </li>
+    <li
+      class="stat-item"
+      tooltip="Chance to completely avoid incoming attacks."
+    >
+      <span tooltip="This is a mystical stat description." class="icon"
+        >💨</span
+      >
+      <span class="label">Dodge Chance:</span>
+      <span class="value"
+        >{{ character.stats.dodgeChance * 100 | number : "1.0-2" }}%</span
+      >
+    </li>
+    <li
+      class="stat-item"
+      tooltip="Reduces duration/effect of negative statuses."
+    >
+      <span class="icon">🧪</span>
+      <span class="label">Debuff Resistance:</span>
+      <span class="value">{{ character.stats.debuffResistance }}</span>
+    </li>
   </ul>
+
+  <div class="abilities">
+    <h3>Abilities</h3>
+    <ul>
+      <li
+        *ngFor="let ability of character.abilities"
+        tooltip="Click to view details (future feature)"
+      >
+        <span class="ability-name">✨ {{ ability.name }}</span>
+      </li>
+    </ul>
+  </div>
 </div>

@@ -1,30 +1,38 @@
 import { Injectable } from '@angular/core';
-import { Character } from '../core/models/player';
+import { Player } from '../core/models/player';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { API_URL } from '../constants';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { environment } from '../environments/environment';
+import { PlayerHomeViewModel } from '../features/home/contracts/playerHomeViewModel';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CharacterService {
-  private characterSubject = new BehaviorSubject<Character | null>(null);
+  private apiUrl = environment.apiUrl + '/players';
+
+  private characterSubject = new BehaviorSubject<PlayerHomeViewModel | null>(
+    null
+  );
 
   character$ = this.characterSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  getPlayer(): Observable<Character> {
-    return this.http.get<Character>(`${API_URL}players`).pipe(
+  getPlayer(): Observable<PlayerHomeViewModel> {
+    return this.http.get<PlayerHomeViewModel>(this.apiUrl).pipe(
       tap((character) => this.characterSubject.next(character)),
       catchError(this.handleError)
     );
   }
 
-  makeAction(actionName: string, equipmentId: string): Observable<Character> {
+  makeAction(
+    actionName: string,
+    equipmentId: string
+  ): Observable<PlayerHomeViewModel> {
     return this.http
-      .post<Character>(
-        `${API_URL}players/${actionName.toLowerCase()}/${equipmentId}`,
+      .post<PlayerHomeViewModel>(
+        `${this.apiUrl}/${actionName.toLowerCase()}/${equipmentId}`,
         null
       )
       .pipe(

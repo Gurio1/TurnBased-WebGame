@@ -1,0 +1,106 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+
+  .background {
+    background-image: url("/player-lose.png");
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40rem;
+    width: 30rem;
+    margin: auto;
+
+    .modal-container {
+      position: relative;
+      display: flex;
+      width: 66%;
+      height: 80%;
+
+      .defeat-button {
+        display: block;
+        align-self: flex-end;
+        width: 100%;
+        height: 15%;
+        margin-bottom: 0.8rem;
+
+        background: linear-gradient(
+            to bottom,
+            rgba(45, 31, 15, 0.3),
+            rgba(26, 19, 11, 0.3)
+          ),
+          url("/dark-wood.png") center/cover no-repeat;
+        border: 4px solid #2b1c0e;
+        border-radius: 10px;
+        font-family: "Georgia", serif;
+        font-weight: bold;
+        font-size: 2.2rem;
+        color: #c88a34; /* warmer burnt gold */
+        text-shadow: 1px 1px 1px #000, -1px -1px 0 #442d1d;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6),
+          0 0 5px rgba(0, 0, 0, 0.3);
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        &:hover {
+          box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8), 0 0 10px #c88a34;
+          filter: brightness(1.1);
+        }
+
+        &:hover ~ .eye {
+          opacity: 1;
+          animation: flicker-pulse 0.8s linear infinite alternate;
+        }
+      }
+
+      .eye {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          #ff0000,
+          #8b0000 60%,
+          transparent 100%
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+
+      .left-eye {
+        top: 26%;
+        left: 33%;
+      }
+
+      .right-eye {
+        top: 26%;
+        right: 33%;
+      }
+    }
+  }
+}
+
+@keyframes flicker-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 10px red;
+  }
+  25% {
+    transform: scale(1.2);
+    box-shadow: 0 0 14px #ff2020;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 12px #b00000;
+  }
+  75% {
+    transform: scale(1.15);
+    box-shadow: 0 0 16px #ff2020;
+  }
+}

@@ -9,11 +9,11 @@ namespace Game.Features.Players.Endpoints;
 //TODO : If player is in battle he cannot equip or sell items.Only use consumables
 public class Equip : Endpoint<EquipRequest>
 {
-    private readonly PlayersService _playersService;
+    private readonly IPlayersMongoRepository _playersMongoRepository;
 
-    public Equip(PlayersService playersService)
+    public Equip(IPlayersMongoRepository playersMongoRepository)
     {
-        _playersService = playersService;
+        _playersMongoRepository = playersMongoRepository;
     }
     
     public override void Configure()
@@ -24,9 +24,17 @@ public class Equip : Endpoint<EquipRequest>
 
     public override async Task HandleAsync(EquipRequest req, CancellationToken ct)
     {
-        var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
+        var playerResult = await _playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
 
-        var item = player.Inventory.FirstOrDefault(i => i.Id == req.ItemId);
+        if (playerResult.IsFailure)
+        {
+            await SendAsync(playerResult.Error.Description,int.Parse(playerResult.Error.Code), ct);
+            return;
+        }
+
+        var player = playerResult.Value;
+
+        var item = player.Inventory.Select(s => s.Item).FirstOrDefault(i => i.Id == req.ItemId);
 
         if (item is null)
         {
@@ -43,9 +51,9 @@ public class Equip : Endpoint<EquipRequest>
         {
             player.Equip(equipment);
         }
-        Logger.LogInformation($"Equiped item - {item.Id} - {item.Name}");
+        Logger.LogInformation("Equiped item - {ItemId} - {ItemName}", item.Id, item.Name);
 
-        await _playersService.UpdateAsync(player);
+        await _playersMongoRepository.UpdateAsync(player);
 
         await SendOkAsync(player.ToViewModel(), ct);
 

@@ -1,104 +1,97 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+@import "./../../styles/variables";
 
-.rpg-container {
+.rpg-wrapper {
   display: flex;
-  justify-content: space-between;
-  height: 100vh; /* Full page height */
-  width: 100vw; /* Full page width */
-  padding: 20px;
-  background-color: #1a1a1a;
-  color: white;
-  font-family: "Arial", sans-serif;
+  flex-direction: column;
+  padding: 1rem;
+  background: url("/parchment-texture.png") center / cover;
+  color: $color-text-light;
+  font-family: $font-primary;
 }
 
-/* Left Panel: Character Stats */
-.character-stats {
-  width: 20%;
-  padding: 15px;
-  border: 1px solid #444;
-  background: #222;
-  border-radius: 8px;
-  overflow-y: auto;
+.rpg-panel {
+  background: $color-panel-bg;
+  border: 2px solid $border-color;
+  border-radius: $border-radius-base;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: $box-shadow-soft;
 }
 
-/* Center Panel: Character & Equipment */
-.character-equipment {
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: center;
-  position: relative;
-}
-
-/* Character Model */
-.character-model img {
+.stats-panel {
   width: 100%;
-  max-height: 450px;
-  object-fit: contain;
 }
 
-/* Equipment Slots (Left & Right) */
-.equipment-left,
-.equipment-right {
+.rpg-main {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
 }
 
-.equipment-slot {
+.equipment-column {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+
+  .slot-label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: $color-accent;
+  }
+
+  .equipment-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .equipment-icon {
+    width: 64px;
+    height: 64px;
+    margin-top: 0.5rem;
+    border: 2px solid #444;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    box-shadow: 0 0 4px #000;
+
+    &.empty {
+      background: $color-slot-empty;
+    }
+  }
+
+  .unequip-button {
+    margin-top: 0.25rem;
+    background: transparent;
+    border: none;
+    color: $color-danger;
+    cursor: pointer;
+    font-size: 1.2rem;
+
+    &:hover {
+      color: $color-danger-hover;
+    }
+  }
+}
+
+.character-display {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  padding: 5px;
-  border: 1px solid #666;
-  border-radius: 5px;
-  background: #333;
-  width: 100px;
+
+  .character-image {
+    width: 192px;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+  }
 }
 
-.equipment-slot img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-}
-
-.empty-slot {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px dashed #777;
-}
-
-/* Right Panel: Inventory */
-.inventory {
-  width: 25%;
-  padding: 15px;
-  border: 1px solid #444;
-  background: #222;
-  border-radius: 8px;
-}
-
-.inventory-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-button {
-  margin-top: 5px;
-  background: #444;
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 3px;
-}
-
-button:hover {
-  background: #666;
+.inventory-panel {
+  .section-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    color: #ead6b5;
+    text-shadow: 1px 1px 2px #000;
+  }
 }

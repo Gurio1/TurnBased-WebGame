@@ -1,5 +1,7 @@
 using Game.Core.AbilityEffects;
 using Game.Core.Models;
+using Game.Features;
+using Game.Features.Battle.Models;
 using Game.Logger;
 using MediatR;
 
@@ -11,31 +13,40 @@ public class SleepAbility : Ability
 
     public override string Id { get; set; } = "2";
     public override string Name { get; set; } = "Sleep";
+    public override string ImageUrl { get; set; }
     public override int Cooldown { get; init; } = 4;
     public override int CurrentCooldown { get; set; }
     private int Duration { get; init; } = 2;
-    public override float Execute(CharacterBase owner, CharacterBase target, IMediator mediator)
+    public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
     {
         if (CurrentCooldown != 0)
         {
             Console.WriteLine("Can not use this ability");
-            return 0;
+            return;
         }
 
-        var damage = owner.CalculateDamage(owner.Damage * 0.7f,mediator);
+        var damage = owner.CalculateDamage(owner.Stats.Damage * 0.7f,context);
 
-        SetDebuff(target,mediator);
+        var tookDamage = target.Defence(damage, context);
+
+        if (tookDamage)
+        {
+            SetDebuff(target,context);
+        }
         
         CurrentCooldown = Cooldown;
-        
-        return damage;
     }
-    
-    private void SetDebuff(CharacterBase target, IMediator mediator)
+
+    public override string GetAbilityDescription(Player player)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void SetDebuff(CombatEntity target, BattleContext context)
     {
         var debuff = new Sleep(Duration);
         target.Debuffs.Add(debuff);
         
-        mediator.Publish(new ActionLogNotification($"{target.CharacterType} has been debuffed with {debuff.Name}"));
+        context.PublishActionLog($"{target.CharacterType} has been debuffed with {debuff.Name}");
     }
 }

@@ -16,6 +16,7 @@ public abstract class Item
     [BsonRepresentation(BsonType.String)]
     public abstract ItemInteractions Interactions { get; }
 
+    public abstract int MaxInventorySlotQuantity { get; set; }
     public bool CanInteract(ItemInteractions interaction) => (Interactions & interaction) == interaction;
 }
 

@@ -13,13 +13,13 @@ public class Create : Endpoint<CreateRequest>
 {
     private readonly UserManager<User> _userManager;
     private readonly ITokenFactory _tokenFactory;
-    private readonly PlayersService _playersService;
+    private readonly IPlayersMongoRepository _playersMongoRepository;
 
-    public Create(UserManager<User> userManager,ITokenFactory tokenFactory,PlayersService playersService)
+    public Create(UserManager<User> userManager,ITokenFactory tokenFactory,IPlayersMongoRepository playersMongoRepository)
     {
         _userManager = userManager;
         _tokenFactory = tokenFactory;
-        _playersService = playersService;
+        _playersMongoRepository = playersMongoRepository;
     }
 
     public override void Configure()
@@ -44,11 +44,18 @@ public class Create : Endpoint<CreateRequest>
             Email = req.Email,
         };
 
-        var character = new Hero() { AbilityIds = ["0", "1"] };
+        var character = new Player() { AbilityIds = ["0", "1","2"],Stats = new Stats()
+        {
+            MaxHealth = 250,
+            CriticalDamage = 1.3f,
+            CriticalChance = 0.1f,
+            Damage = 20f,
+            CurrentHealth = 250f
+        }};
         
-        await _playersService.CreateAsync(character);
+        await _playersMongoRepository.CreateAsync(character);
 
-        newUser.PlayerId = character.Id.ToString();
+        newUser.PlayerId = character.Id;
 
         var result = await _userManager.CreateAsync(newUser, req.Password);
 

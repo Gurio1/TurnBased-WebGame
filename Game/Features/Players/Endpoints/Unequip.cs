@@ -11,11 +11,11 @@ namespace Game.Features.Players.Endpoints;
 
 public class Unequip : Endpoint<UnequipRequest>
 {
-    private readonly PlayersService _playersService;
+    private readonly IPlayersMongoRepository _playersMongoRepository;
 
-    public Unequip(PlayersService playersService)
+    public Unequip(IPlayersMongoRepository playersMongoRepository)
     {
-        _playersService = playersService;
+        _playersMongoRepository = playersMongoRepository;
     }
     
     public override void Configure()
@@ -26,14 +26,22 @@ public class Unequip : Endpoint<UnequipRequest>
 
     public override async Task HandleAsync(UnequipRequest req, CancellationToken ct)
     {
-        var player = await _playersService.GetByIdWithAbilities(req.PlayerId);
+        var playerResult = await _playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
 
+        if (playerResult.IsFailure)
+        {
+            await SendAsync(playerResult.Error.Description, int.Parse(playerResult.Error.Code), ct);
+            return;
+        }
+
+        var player = playerResult.Value;
+        
         if (!player.Unequip(req.EquipmentSlot)) 
             ThrowError(r => r.EquipmentSlot,$"Player doesnt have equipment item on slot : {req.EquipmentSlot}");
         
         Logger.LogInformation("Unequipped item - {Slot}",req.EquipmentSlot);
 
-        await _playersService.UpdateAsync(player);
+        await _playersMongoRepository.UpdateAsync(player);
 
         await SendOkAsync(player.ToViewModel(), ct);
 

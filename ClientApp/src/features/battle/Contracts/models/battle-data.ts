@@ -1,6 +1,7 @@
-import { Character } from '../../../../core/models/player';
+import { Player } from '../../../../core/models/player';
+import { Monster } from './monster';
 
 export interface BattleData {
-  hero: Character;
-  enemy: Character;
+  combatPlayer: Player;
+  monster: Monster;
 }

@@ -1,4 +1,6 @@
 using Game.Core.Models;
+using Game.Features;
+using Game.Features.Battle.Models;
 using MediatR;
 
 namespace Game.Core.AbilityEffects;
@@ -13,7 +15,7 @@ public class Sleep : IDebuff
         Duration = duration;
     }
 
-    public void Execute(CharacterBase target, IMediator mediator)
+    public void Execute(CombatEntity target, BattleContext context)
     {
         Duration--;
     }

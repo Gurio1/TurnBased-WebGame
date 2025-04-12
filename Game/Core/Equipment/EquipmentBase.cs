@@ -12,13 +12,15 @@ public abstract class EquipmentBase : Item
     public abstract string Slot { get; set; }
     public override ItemInteractions Interactions { get; } = ItemInteractions.Equip | ItemInteractions.Sell;
     public List<EquipmentAttribute> Attributes { get; set; } = new();
-
-    public void ApplyStats(CharacterBase characterBase)
+    
+    public override int MaxInventorySlotQuantity { get; set; } = 1;
+    
+    public void ApplyStats(Player characterBase)
     {
         Attributes.ForEach(a => a.ApplyStats(characterBase));
     }
 
-    public void RemoveStats(CharacterBase characterBase)
+    public void RemoveStats(Player characterBase)
     {
         Attributes.ForEach(a => a.RemoveStats(characterBase));
     }
