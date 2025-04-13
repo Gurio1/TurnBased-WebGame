@@ -10,7 +10,7 @@ public class ResultWithoutValue
     protected ResultWithoutValue(bool isSuccess, CustomError error)
     {
         if (isSuccess && error != CustomError.None ||
-            !isSuccess && error != CustomError.None)
+            !isSuccess && error == CustomError.None)
         {
             throw new ArgumentException("Invalid error", nameof(error));
         }
