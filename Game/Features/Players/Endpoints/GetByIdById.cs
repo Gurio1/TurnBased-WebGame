@@ -1,34 +1,29 @@
+using System.Globalization;
 using FastEndpoints;
-using Game.Core.Models;
 using Game.Features.Players.Contracts;
-using MongoDB.Bson;
 
 namespace Game.Features.Players.Endpoints;
 
-public class Get : Endpoint<GetByIdRequest>
+public class GetByIdById : Endpoint<GetByIdRequest>
 {
-    private readonly IPlayersMongoRepository _playersMongoRepository;
+    private readonly IPlayersMongoRepository playersMongoRepository;
 
-    public Get(IPlayersMongoRepository playersMongoRepository)
-    {
-        _playersMongoRepository = playersMongoRepository;
-
-    }
-    public override void Configure()
-    {
+    public GetByIdById(IPlayersMongoRepository playersMongoRepository) => 
+        this.playersMongoRepository = playersMongoRepository;
+    
+    public override void Configure() => 
         Get("/players");
-    }
-
+    
     public override async Task HandleAsync(GetByIdRequest req, CancellationToken ct)
     {
-        var playerResult = await _playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
+        var playerResult = await playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
 
         if (playerResult.IsFailure)
         {
-            await SendAsync(playerResult.Error.Description, int.Parse(playerResult.Error.Code), ct);
+            await SendAsync(playerResult.Error.Description, Convert.ToInt32(playerResult.Error.Code,CultureInfo.InvariantCulture), ct);
             return;
         }
-        
+
         await SendOkAsync(playerResult.Value.ToViewModel(),ct);
     }
 }

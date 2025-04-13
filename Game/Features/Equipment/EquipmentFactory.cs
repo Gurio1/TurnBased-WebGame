@@ -7,7 +7,7 @@ namespace Game.Features.Equipment;
 
 public static class EquipmentFactory
 {
-    private static readonly Dictionary<string, Func<EquipmentBase>> _equipmentFactory = new();
+    private static readonly Dictionary<string, Func<EquipmentBase>> equipmentFactory = new();
 
     static EquipmentFactory()
     {
@@ -20,14 +20,12 @@ public static class EquipmentFactory
         {
             var constructor = Expression.New(type);
             var lambda = Expression.Lambda<Func<EquipmentBase>>(constructor);
-            _equipmentFactory[type.Name] = lambda.Compile();
+            equipmentFactory[type.Name] = lambda.Compile();
         }
     }
 
-    public static Result<EquipmentBase> CreateDrop(string typeName)
-    {
-        return _equipmentFactory.TryGetValue(typeName, out var factoryMethod)
+    public static Result<EquipmentBase> CreateDrop(string typeName) =>
+        equipmentFactory.TryGetValue(typeName, out var factoryMethod)
             ? Result<EquipmentBase>.Success(factoryMethod())
             : Result<EquipmentBase>.NotFound($"Equipment type '{typeName}' not found.");
-    }
 }

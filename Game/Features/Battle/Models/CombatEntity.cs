@@ -21,8 +21,8 @@ public abstract class CombatEntity
     public bool IsDead() => Stats.CurrentHealth <= 0;
     public virtual float CalculateDamage(float damage, BattleContext context, float damageMultiplier = 1f)
     {
-        var finalDamage = damage * damageMultiplier;
-        var rnd = (float)Rnd.NextDouble();
+        float finalDamage = damage * damageMultiplier;
+        float rnd = (float)Rnd.NextDouble();
 
         if (!(rnd <= Stats.CriticalChance)) return finalDamage;
 

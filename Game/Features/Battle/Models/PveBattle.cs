@@ -14,8 +14,6 @@ public class PveBattle
         Monster = monster;
         CombatPlayer = player.ToPlayerBattleModel(playerUsedItems);
     }
-    public void UpdatePlayer(Player player)
-    {
+    public void UpdatePlayer(Player player) =>
         CombatPlayer = player.ToPlayerBattleModel(CombatPlayer.UsedItems);
-    }
 }

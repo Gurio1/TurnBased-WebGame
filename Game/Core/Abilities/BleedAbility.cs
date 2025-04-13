@@ -24,14 +24,14 @@ public sealed class BleedAbility : Ability
     {
         if (CurrentCooldown != 0)
         {
-            throw new Exception("Called execution of ability which is in cd");
+            throw new InvalidOperationException("Called execution of ability which is in cd");
         }
         
         CurrentCooldown = Cooldown;
 
-        var damage = owner.CalculateDamage(GetAbilityDamage(owner.Stats),context);
+        float damage = owner.CalculateDamage(GetAbilityDamage(owner.Stats),context);
 
-        var tookDamage = target.Defence(damage,context);
+        bool tookDamage = target.Defence(damage,context);
 
         if (tookDamage)
         {
@@ -39,25 +39,18 @@ public sealed class BleedAbility : Ability
         }
     }
 
-    private static float GetAbilityDamage(Stats ownerStats)
-    {
-        return (ownerStats.Damage *AbilityDamageMultiplier).RoundTo1();
-    }
-
-    private static float GetBleedDamage(Stats ownerStats)
-    {
-        return (ownerStats.Damage * BleedDamageMultiplier).RoundTo1();
-    }
-
-    public override string GetAbilityDescription(Player player)
-    {
-        return
-            $"The player unleashes a bleeding slash, dealing {GetAbilityDamage(player.Stats)} damage" +
-            $" and inflicting a bleed effect that causes the target to take additional damage" +
-            $" equal to 10% of the player's Damage stat: {GetBleedDamage(player.Stats)} per turn for {Duration} turns.";
-    }
-
-    private void ApplyBleedDebuff(CombatEntity target,float damage, BattleContext context)
+    private static float GetAbilityDamage(Stats ownerStats) => 
+        (ownerStats.Damage *AbilityDamageMultiplier).RoundTo1();
+    
+    private static float GetBleedDamage(Stats ownerStats) => 
+        (ownerStats.Damage * BleedDamageMultiplier).RoundTo1();
+    
+    public override string GetAbilityDescription(Player player) =>
+        $"The player unleashes a bleeding slash, dealing {GetAbilityDamage(player.Stats)} damage" +
+        $" and inflicting a bleed effect that causes the target to take additional damage" +
+        $" equal to 10% of the player's Damage stat: {GetBleedDamage(player.Stats)} per turn for {Duration} turns.";
+    
+    private static void ApplyBleedDebuff(CombatEntity target,float damage, BattleContext context)
     {
         var debuff = new Bleed(Duration,damage);
         target.Debuffs.Add(debuff);

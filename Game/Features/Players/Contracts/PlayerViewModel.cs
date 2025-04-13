@@ -18,9 +18,8 @@ public class PlayerViewModel
 }
 
 public static partial class  Mapper {
-    public static PlayerViewModel ToViewModel(this Player model)
-    {
-        return new PlayerViewModel()
+    public static PlayerViewModel ToViewModel(this Player model) =>
+        new()
         {
             Id = model.Id,
             Stats = model.Stats,
@@ -31,5 +30,4 @@ public static partial class  Mapper {
             InventoryEquipmentItems = model.Inventory.Select(s => s.Item).Where(i => i.ItemType == ItemType.Equipment).Cast<EquipmentBase>().ToList(),
             OtherInventoryItems = model.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList()
         };
-    }
 }

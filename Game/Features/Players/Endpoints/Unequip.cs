@@ -1,22 +1,16 @@
+using System.Globalization;
 using FastEndpoints;
-using Game.Core.Equipment;
-using Game.Core.Equipment.Boots;
-using Game.Core.Equipment.Chests;
-using Game.Core.Equipment.Heads;
-using Game.Core.Equipment.Weapons;
-using Game.Features.Attributes;
+using Game.Core;
 using Game.Features.Players.Contracts;
 
 namespace Game.Features.Players.Endpoints;
 
 public class Unequip : Endpoint<UnequipRequest>
 {
-    private readonly IPlayersMongoRepository _playersMongoRepository;
+    private readonly IPlayersMongoRepository playersMongoRepository;
 
-    public Unequip(IPlayersMongoRepository playersMongoRepository)
-    {
-        _playersMongoRepository = playersMongoRepository;
-    }
+    public Unequip(IPlayersMongoRepository playersMongoRepository) => 
+        this.playersMongoRepository = playersMongoRepository;
     
     public override void Configure()
     {
@@ -26,11 +20,11 @@ public class Unequip : Endpoint<UnequipRequest>
 
     public override async Task HandleAsync(UnequipRequest req, CancellationToken ct)
     {
-        var playerResult = await _playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
+        var playerResult = await playersMongoRepository.GetByIdWithAbilities(req.PlayerId);
 
         if (playerResult.IsFailure)
         {
-            await SendAsync(playerResult.Error.Description, int.Parse(playerResult.Error.Code), ct);
+            await SendAsync(playerResult.Error.Description, Convert.ToInt32(playerResult.Error.Code,CultureInfo.InvariantCulture), ct);
             return;
         }
 
@@ -41,7 +35,7 @@ public class Unequip : Endpoint<UnequipRequest>
         
         Logger.LogInformation("Unequipped item - {Slot}",req.EquipmentSlot);
 
-        await _playersMongoRepository.UpdateAsync(player);
+        await playersMongoRepository.UpdateAsync(player);
 
         await SendOkAsync(player.ToViewModel(), ct);
 

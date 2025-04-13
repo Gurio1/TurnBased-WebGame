@@ -6,5 +6,5 @@ namespace Game.Features.Equipment;
 public interface IEquipmentTemplateMongoRepository
 {
     Task<Result<EquipmentTemplate>> GetByEquipmentIdAsync(string equipmentId);
-    Task SaveAsync(EquipmentTemplate template);
+    Task SaveAsync(EquipmentTemplate equipmentTemplate);
 }

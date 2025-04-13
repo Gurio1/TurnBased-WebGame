@@ -1,33 +1,31 @@
 using Game.Core.Equipment;
-using Game.Core.Models;
 using Game.Core.Rewards;
 using Game.Features.Battle.Hubs;
-using Game.Features.Battle.PVE.Events;
 using Game.Features.Drop;
 using Game.Features.Players;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Game.Features.Battle.PVE.Handlers;
+namespace Game.Features.Battle.PVE.Events;
 
 public class MonsterDefeatedHandler : INotificationHandler<MonsterDefeatedEvent>
 {
-    private readonly IDropService _dropService;
-    private readonly IBattleRepository _battleRedisRepository;
-    private readonly IPlayersMongoRepository _playersMongoRepository;
-    private readonly IHubContext<BattleHub> _hubContext;
+    private readonly IDropService dropService;
+    private readonly IBattleRepository battleRedisRepository;
+    private readonly IPlayersMongoRepository playersMongoRepository;
+    private readonly IHubContext<BattleHub> hubContext;
 
     public MonsterDefeatedHandler(IDropService dropService,IBattleRepository battleRedisRepository,IPlayersMongoRepository playersMongoRepository,IHubContext<BattleHub> hubContext)
     {
-        _dropService = dropService;
-        _battleRedisRepository = battleRedisRepository;
-        _playersMongoRepository = playersMongoRepository;
-        _hubContext = hubContext;
+        this.dropService = dropService;
+        this.battleRedisRepository = battleRedisRepository;
+        this.playersMongoRepository = playersMongoRepository;
+        this.hubContext = hubContext;
     }
     public async Task Handle(MonsterDefeatedEvent notification, CancellationToken cancellationToken)
     {
-        var playerResult = await _playersMongoRepository.GetById(notification.CombatPlayer.Id);
-        
+        var playerResult = await playersMongoRepository.GetById(notification.CombatPlayer.Id);
+
         if (playerResult.IsFailure)
         {
             //TODO: Send error
@@ -44,7 +42,7 @@ public class MonsterDefeatedHandler : INotificationHandler<MonsterDefeatedEvent>
                 .Where(i => i.Item.Id == usedItem.Key)
                 .ToArray();
 
-            var remainingToUse = usedItem.Value;
+            int remainingToUse = usedItem.Value;
 
             foreach (var slot in itemSlots)
             {
@@ -64,7 +62,7 @@ public class MonsterDefeatedHandler : INotificationHandler<MonsterDefeatedEvent>
             }
         }
 
-        var dropResult = await _dropService.GenerateDrop(notification.Monster);
+        var dropResult = await dropService.GenerateDrop(notification.Monster);
 
         if (dropResult.IsFailure)
         {
@@ -92,15 +90,15 @@ public class MonsterDefeatedHandler : INotificationHandler<MonsterDefeatedEvent>
 
         if (notification.CombatPlayer.BattleId == null)
         {
-            throw new Exception("Cant receive reward,player is not in battle");
+            throw new InvalidOperationException("Cant receive reward,player is not in battle");
         }
-            
-        await _battleRedisRepository.RemoveBattle(notification.CombatPlayer.BattleId);
+
+        await battleRedisRepository.RemoveBattle(notification.CombatPlayer.BattleId);
 
         player.BattleId = null;
-            
-        await _playersMongoRepository.UpdateAsync(player);
 
-        await _hubContext.Clients.User(notification.CombatPlayer.Id).SendAsync("ReceiveBattleReward", reward, cancellationToken: cancellationToken);
+        await playersMongoRepository.UpdateAsync(player);
+
+        await hubContext.Clients.User(notification.CombatPlayer.Id).SendAsync("ReceiveBattleReward", reward, cancellationToken: cancellationToken);
     }
 }

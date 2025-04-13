@@ -1,26 +1,25 @@
 using Game.Features.Battle.Hubs;
-using Game.Features.Battle.PVE.Events;
 using Game.Features.Players;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Game.Features.Battle.PVE.Handlers;
+namespace Game.Features.Battle.PVE.Events;
 
 public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
 {
-    private readonly IBattleRepository _battleRedisRepository;
-    private readonly IPlayersMongoRepository _playersMongoRepository;
-    private readonly IHubContext<BattleHub> _hubContext;
+    private readonly IBattleRepository battleRedisRepository;
+    private readonly IPlayersMongoRepository playersMongoRepository;
+    private readonly IHubContext<BattleHub> hubContext;
 
     public PlayerDefeatedHandler(IBattleRepository battleRedisRepository,IPlayersMongoRepository playersMongoRepository,IHubContext<BattleHub> hubContext)
     {
-        _battleRedisRepository = battleRedisRepository;
-        _playersMongoRepository = playersMongoRepository;
-        _hubContext = hubContext;
+        this.battleRedisRepository = battleRedisRepository;
+        this.playersMongoRepository = playersMongoRepository;
+        this.hubContext = hubContext;
     }
     public async Task Handle(PlayerDefeatedEvent notification, CancellationToken cancellationToken)
     {
-        var playerResult = await _playersMongoRepository.GetById(notification.CombatPlayer.Id);
+        var playerResult = await playersMongoRepository.GetById(notification.CombatPlayer.Id);
 
         if (playerResult.IsFailure)
         {
@@ -29,9 +28,9 @@ public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
         }
 
         var player = playerResult.Value;
-        
+
         if (!player.InBattle())
-            throw new Exception($"Player is not in battle - {nameof(PlayerDefeatedHandler)}");
+            throw new InvalidOperationException($"Player is not in battle - {nameof(PlayerDefeatedHandler)}");
 
         foreach (var usedItem in notification.CombatPlayer.UsedItems)
         {
@@ -39,7 +38,7 @@ public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
                 .Where(i => i.Item.Id == usedItem.Key)
                 .ToArray();
 
-            var remainingToUse = usedItem.Value;
+            int remainingToUse = usedItem.Value;
 
             foreach (var slot in itemSlots)
             {
@@ -60,13 +59,13 @@ public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
         }
 
 
-        await _battleRedisRepository.RemoveBattle(notification.CombatPlayer.BattleId!);
-        
+        await battleRedisRepository.RemoveBattle(notification.CombatPlayer.BattleId!);
+
         player.BattleId = null;
         player.Stats.CurrentHealth = player.Stats.MaxHealth;
-            
-        await _playersMongoRepository.UpdateAsync(player);
-        
-        await _hubContext.Clients.User(player.Id).SendAsync("ReceiveBattleLose", true,cancellationToken: cancellationToken);
+
+        await playersMongoRepository.UpdateAsync(player);
+
+        await hubContext.Clients.User(player.Id).SendAsync("ReceiveBattleLose", true,cancellationToken: cancellationToken);
     }
 }

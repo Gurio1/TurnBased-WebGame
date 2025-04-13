@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Game.Core;
 using Game.Features.Battle.Models;
 using Game.Features.Players;
 using Microsoft.AspNetCore.Authorization;
@@ -16,22 +17,22 @@ public class BattleHub : Hub
     private const string PlayerIdClaim = "PlayerId";
     private const string BattleCachePrefix = "battle:";
     
-    private readonly PveBattleManager _pveBattleManager;
-    private readonly IBattleService _battleRedisService;
-    private readonly IDistributedCache _cache;
+    private readonly PveBattleManager pveBattleManager;
+    private readonly IBattleService battleRedisService;
+    private readonly IDistributedCache cache;
     
 
     public BattleHub(PveBattleManager pveBattleManager,IBattleService battleRedisService,
          IDistributedCache cache)
     {
-        _pveBattleManager = pveBattleManager;
-        _battleRedisService = battleRedisService;
-        _cache = cache;
+        this.pveBattleManager = pveBattleManager;
+        this.battleRedisService = battleRedisService;
+        this.cache = cache;
     }
     
     public override async Task OnConnectedAsync()
     {
-        var playerId = GetCurrentPlayerId();
+        string? playerId = GetCurrentPlayerId();
 
         if (playerId is null)
         {
@@ -39,11 +40,11 @@ public class BattleHub : Hub
             return;
         }
         
-        var battleResult = await _battleRedisService.InitializeBattleForPlayerAsync(playerId);
+        var battleResult = await battleRedisService.InitializeBattleForPlayerAsync(playerId);
 
         if (battleResult.IsFailure)
         {
-            await SendBattleError(battleResult.Error.Description);
+            await SendBattleError(((ResultWithoutValue)battleResult).Error.Description);
             return;
         }
 
@@ -51,8 +52,8 @@ public class BattleHub : Hub
 
         try
         {
-            var cacheKey = GetBattleCacheKey(playerId);
-            await _cache.SetStringAsync(cacheKey, battle.Id, new DistributedCacheEntryOptions
+            string cacheKey = GetBattleCacheKey(playerId);
+            await cache.SetStringAsync(cacheKey, battle.Id, new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
             });
@@ -72,7 +73,7 @@ public class BattleHub : Hub
 
     public async Task UseAbility(string abilityId)
     {
-        var playerId = GetCurrentPlayerId();
+        string? playerId = GetCurrentPlayerId();
 
         if (playerId is null)
         {
@@ -80,8 +81,8 @@ public class BattleHub : Hub
             return;
         }        
         
-        var cacheKey = GetBattleCacheKey(playerId);
-        var battleId = await _cache.GetStringAsync(cacheKey);
+        string cacheKey = GetBattleCacheKey(playerId);
+        string? battleId = await cache.GetStringAsync(cacheKey);
 
         if (battleId is null)
         {
@@ -89,48 +90,40 @@ public class BattleHub : Hub
             return;
         }
         
-        var battleResult = await _battleRedisService.GetActiveBattleAsync(battleId);
+        var battleResult = await battleRedisService.GetActiveBattleAsync(battleId);
         if (battleResult.IsFailure)
         {
-            await SendBattleError(battleResult.Error.Description);
+            await SendBattleError(((ResultWithoutValue)battleResult).Error.Description);
             return;
         }
         
-        await _pveBattleManager.ExecutePlayerTurnAsync(abilityId,battleResult.Value);
+        await pveBattleManager.ExecutePlayerTurnAsync(abilityId,battleResult.Value);
     }
     
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        var playerId= GetCurrentPlayerId();
+        string? playerId= GetCurrentPlayerId();
         
         if (playerId != null)
         {
-            var cacheKey = GetBattleCacheKey(playerId);
+            string cacheKey = GetBattleCacheKey(playerId);
             
             //TODO : Handle situations when battleID is removed from cache when user was afk more than 30min
-            var battleId = await _cache.GetStringAsync(cacheKey);
+            string? battleId = await cache.GetStringAsync(cacheKey);
         
             await Groups.RemoveFromGroupAsync(playerId, battleId);
             
-            await _cache.RemoveAsync($"battle:{playerId}");
+            await cache.RemoveAsync($"battle:{playerId}");
         }
         
 
         await base.OnDisconnectedAsync(exception);
     }
     
-    private string? GetCurrentPlayerId()
-    {
-        return Context.User?.FindFirstValue(PlayerIdClaim);
-    }
-
-    private string GetBattleCacheKey(string playerId)
-    {
-        return $"{BattleCachePrefix}{playerId}";
-    }
-
-    public async Task SendBattleError(string message)
-    {
+    private string? GetCurrentPlayerId() => Context.User?.FindFirstValue(PlayerIdClaim);
+    
+    private static string GetBattleCacheKey(string playerId) => $"{BattleCachePrefix}{playerId}";
+    
+    public async Task SendBattleError(string message) =>
         await Clients.Caller.SendAsync("ReceiveBattleErrorMessage",message);
-    }
 }

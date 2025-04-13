@@ -5,5 +5,5 @@ namespace Game.Features.Drop;
 
 public interface IDropService
 {
-    Task<Result<Item>> GenerateDrop(Monster monster);
+    Task<Result<Item?>> GenerateDrop(Monster monster);
 }

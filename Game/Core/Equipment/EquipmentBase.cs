@@ -15,14 +15,7 @@ public abstract class EquipmentBase : Item
     
     public override int MaxInventorySlotQuantity { get; set; } = 1;
     
-    public void ApplyStats(Player characterBase)
-    {
-        Attributes.ForEach(a => a.ApplyStats(characterBase));
-    }
-
-    public void RemoveStats(Player characterBase)
-    {
-        Attributes.ForEach(a => a.RemoveStats(characterBase));
-    }
+    public void ApplyStats(Player characterBase) => Attributes.ForEach(a => a.ApplyStats(characterBase));
     
+    public void RemoveStats(Player characterBase) => Attributes.ForEach(a => a.RemoveStats(characterBase));
 }   

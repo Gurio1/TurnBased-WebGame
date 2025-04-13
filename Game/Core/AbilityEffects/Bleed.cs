@@ -10,18 +10,17 @@ public sealed class Bleed : IDebuff
 {
     public int Duration { get; set; }
     public string Name { get; set; } = "Bleed";
-    public float Damage => _damage;
-    private readonly float _damage;
-
+    public float Damage { get; }
+    
     public Bleed(int duration,float damage)
     {
-        _damage = damage;
+        Damage = damage;
         Duration = duration;
     }
     public void Execute(CombatEntity target, BattleContext context)
     {
-        context.PublishActionLog($"{target.CharacterType} took {_damage} damage from {Name}");
-        target.CalculateDamage(_damage,context);
+        context.PublishActionLog($"{target.CharacterType} took {Damage} damage from {Name}");
+        target.CalculateDamage(Damage,context);
 
         Duration--;
     }

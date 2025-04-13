@@ -12,19 +12,19 @@ namespace Game.Features.Players;
 
 public class PlayersMongoRepository : IPlayersMongoRepository
 {
-    private readonly IOptions<MongoSettings> _mongoDatabaseSettings;
-    private readonly IMongoCollection<Player> _playersCollection;
-    private readonly IMongoDatabase _mongoDatabase;
+    private readonly IOptions<MongoSettings> mongoDatabaseSettings;
+    private readonly IMongoCollection<Player> playersCollection;
+    private readonly IMongoDatabase mongoDatabase;
 
     public PlayersMongoRepository(IMongoClient mongoClient,
         IOptions<MongoSettings> mongoDatabaseSettings)
     {
-        _mongoDatabaseSettings = mongoDatabaseSettings;
+        this.mongoDatabaseSettings = mongoDatabaseSettings;
 
-        _mongoDatabase = mongoClient.GetDatabase(
+        mongoDatabase = mongoClient.GetDatabase(
             mongoDatabaseSettings.Value.DatabaseName);
 
-        _playersCollection = _mongoDatabase.GetCollection<Player>(
+        playersCollection = mongoDatabase.GetCollection<Player>(
             mongoDatabaseSettings.Value.PlayersCollectionName);
         
     }
@@ -37,7 +37,7 @@ public class PlayersMongoRepository : IPlayersMongoRepository
         }
         try
         {
-            var result = await _playersCollection.Find(a => a.Id == playerId).FirstOrDefaultAsync();
+            var result = await playersCollection.Find(a => a.Id == playerId).FirstOrDefaultAsync();
             
             return result is null 
                 ? Result<Player>.NotFound($"Unable to retrieve player with id '{playerId}'")
@@ -58,13 +58,13 @@ public class PlayersMongoRepository : IPlayersMongoRepository
 
         try
         {
-            await _playersCollection.UpdateOneAsync(p => p.Id == playerId, updateDef);
+            await playersCollection.UpdateOneAsync(p => p.Id == playerId, updateDef);
 
             return ResultWithoutValue.Success();
         }
         catch (Exception e)
         {
-            return ResultWithoutValue.Failure(new Error("500",e.Message));
+            return ResultWithoutValue.Failure(new CustomError("500",e.Message));
         }
     }
     
@@ -77,9 +77,9 @@ public class PlayersMongoRepository : IPlayersMongoRepository
         
         try
         {
-            var lookupResult =  await _playersCollection.AsQueryable()
+            var lookupResult =  await playersCollection.AsQueryable()
                 .Where(p => p.Id == playerId)
-                .Lookup(_mongoDatabase.GetCollection<Ability>(_mongoDatabaseSettings.Value.AbilitiesCollectionName),
+                .Lookup(mongoDatabase.GetCollection<Ability>(mongoDatabaseSettings.Value.AbilitiesCollectionName),
                     (pl, ab) => ab
                         .Where(ability => pl.AbilityIds.Contains(ability.Id))).FirstOrDefaultAsync();
 
@@ -99,7 +99,7 @@ public class PlayersMongoRepository : IPlayersMongoRepository
     {
         try
         {
-            await _playersCollection.InsertOneAsync(newPlayer);
+            await playersCollection.InsertOneAsync(newPlayer);
             return Result<Player>.Success(newPlayer);
         }
         catch (Exception e)
@@ -112,16 +112,16 @@ public class PlayersMongoRepository : IPlayersMongoRepository
     {
         try
         {
-            await _playersCollection.ReplaceOneAsync(x => x.Id == updatedPlayer.Id, updatedPlayer);
+            await playersCollection.ReplaceOneAsync(x => x.Id == updatedPlayer.Id, updatedPlayer);
             return ResultWithoutValue.Success();
         }
         catch (Exception e)
         {
-            return ResultWithoutValue.Failure(new Error("500", e.Message));
+            return ResultWithoutValue.Failure(new CustomError("500", e.Message));
         }
     }
         
 
     public async Task RemoveAsync(string id) =>
-        await _playersCollection.DeleteOneAsync(x => x.Id == id);
+        await playersCollection.DeleteOneAsync(x => x.Id == id);
 }

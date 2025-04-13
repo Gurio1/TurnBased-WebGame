@@ -2,60 +2,60 @@ namespace Game.Core.Models;
 
 public class Stats
 {
-    private float _maxHealth;
+    private float maxHealth;
 
     public float MaxHealth
     {
-        get => _maxHealth.RoundTo1();
-        set => _maxHealth = value;
+        get => maxHealth.RoundTo1();
+        set => maxHealth = value;
     }
 
-    private float _currentHealth;
+    private float currentHealth;
     public float CurrentHealth
     {
-        get => _currentHealth.RoundTo1();
-        set => _currentHealth =  value;
+        get => currentHealth.RoundTo1();
+        set => currentHealth =  value;
     }
 
-    private float _armor;
+    private float armor;
     public float Armor
     {
-        get => _armor.RoundTo1();
-        set => _armor = value;
+        get => armor.RoundTo1();
+        set => armor = value;
     }
 
-    private float _damage;
+    private float damage;
     public float Damage
     {
-        get => _damage.RoundTo1();
-        set => _damage = value;
+        get => damage.RoundTo1();
+        set => damage = value;
     }
 
-    private float _debuffResistance;
+    private float debuffResistance;
     public float DebuffResistance
     {
-        get => _debuffResistance.RoundTo1();
-        set => _debuffResistance = value;
+        get => debuffResistance.RoundTo1();
+        set => debuffResistance = value;
     }
 
-    private float _criticalChance;
+    private float criticalChance;
     public float CriticalChance
     {
-        get => _criticalChance.RoundTo1();
-        set => _criticalChance = value;
+        get => criticalChance.RoundTo1();
+        set => criticalChance = value;
     }
 
-    private float _criticalDamage;
+    private float criticalDamage;
     public float CriticalDamage
     {
-        get => _criticalDamage.RoundTo1();
-        set => _criticalDamage = value;
+        get => criticalDamage.RoundTo1();
+        set => criticalDamage = value;
     }
 
-    private float _dodgeChance;
+    private float dodgeChance;
     public float DodgeChance
     {
-        get => _dodgeChance.RoundTo1();
-        set => _dodgeChance = value;
+        get => dodgeChance.RoundTo1();
+        set => dodgeChance = value;
     }
 }

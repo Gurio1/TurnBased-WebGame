@@ -11,15 +11,15 @@ namespace Game.Features.Identity.Endpoints;
 
 public class Create : Endpoint<CreateRequest>
 {
-    private readonly UserManager<User> _userManager;
-    private readonly ITokenFactory _tokenFactory;
-    private readonly IPlayersMongoRepository _playersMongoRepository;
+    private readonly UserManager<User> userManager;
+    private readonly ITokenFactory tokenFactory;
+    private readonly IPlayersMongoRepository playersMongoRepository;
 
     public Create(UserManager<User> userManager,ITokenFactory tokenFactory,IPlayersMongoRepository playersMongoRepository)
     {
-        _userManager = userManager;
-        _tokenFactory = tokenFactory;
-        _playersMongoRepository = playersMongoRepository;
+        this.userManager = userManager;
+        this.tokenFactory = tokenFactory;
+        this.playersMongoRepository = playersMongoRepository;
     }
 
     public override void Configure()
@@ -31,7 +31,7 @@ public class Create : Endpoint<CreateRequest>
     public override async Task HandleAsync(CreateRequest req, CancellationToken ct)
     {
         
-        var isEmailNotUnique = await _userManager.Users.AnyAsync(u => u.Email == req.Email, cancellationToken: ct);
+        bool isEmailNotUnique = await userManager.Users.AnyAsync(u => u.Email == req.Email, cancellationToken: ct);
 
         if (isEmailNotUnique)
         {
@@ -53,11 +53,11 @@ public class Create : Endpoint<CreateRequest>
             CurrentHealth = 250f
         }};
         
-        await _playersMongoRepository.CreateAsync(character);
+        await playersMongoRepository.CreateAsync(character);
 
         newUser.PlayerId = character.Id;
 
-        var result = await _userManager.CreateAsync(newUser, req.Password);
+        var result = await userManager.CreateAsync(newUser, req.Password);
 
         if (!result.Succeeded)
         {
@@ -68,7 +68,7 @@ public class Create : Endpoint<CreateRequest>
             ThrowIfAnyErrors();
         }
         
-        var token = _tokenFactory.CreateToken(newUser, Config);
+        string token = tokenFactory.CreateToken(newUser, Config);
 
         await SendOkAsync(new { token },ct);
     }

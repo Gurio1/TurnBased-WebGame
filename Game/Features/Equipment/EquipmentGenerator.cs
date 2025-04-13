@@ -1,18 +1,17 @@
+using System.Globalization;
 using Game.Core;
 using Game.Core.Equipment;
 using Game.Features.Attributes;
-using Game.Shared;
+using Game.Utilities;
 
 namespace Game.Features.Equipment;
 
 public class EquipmentGenerator : IEquipmentGenerator
 {
-    private readonly IEquipmentTemplateMongoRepository _equipmentTemplateMongoRepository;
+    private readonly IEquipmentTemplateMongoRepository equipmentTemplateMongoRepository;
 
-    public EquipmentGenerator(IEquipmentTemplateMongoRepository equipmentTemplateMongoRepository)
-    {
-        _equipmentTemplateMongoRepository = equipmentTemplateMongoRepository;
-    }
+    public EquipmentGenerator(IEquipmentTemplateMongoRepository equipmentTemplateMongoRepository) =>
+        this.equipmentTemplateMongoRepository = equipmentTemplateMongoRepository;
     
     public async Task<Result<EquipmentBase>> GenerateEquipment(string equipmentType)
     {
@@ -23,7 +22,7 @@ public class EquipmentGenerator : IEquipmentGenerator
             return equipmentResult;
         }
         
-        var templateResult = await _equipmentTemplateMongoRepository.GetByEquipmentIdAsync(equipmentResult.Value.EquipmentId);
+        var templateResult = await equipmentTemplateMongoRepository.GetByEquipmentIdAsync(equipmentResult.Value.EquipmentId);
 
         if (templateResult.IsFailure)
         {
@@ -32,7 +31,7 @@ public class EquipmentGenerator : IEquipmentGenerator
 
         var template = templateResult.Value;
         
-        var attributeCount = GetWeightedRandom(template.AttributeCountWeights);
+        int attributeCount = GetWeightedRandom(template.AttributeCountWeights);
 
         for (int i = 0; i < attributeCount; i++)
         {
@@ -43,7 +42,7 @@ public class EquipmentGenerator : IEquipmentGenerator
             var range = template.AttributeRanges[index];
             template.AttributeRanges.RemoveAt(index);
 
-            var randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
+            float randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
 
             range.Attribute.Value = range.Attribute is CriticalChanceAttribute or CriticalDamageAttribute
                 ? randomValue.RoundTo2()
@@ -64,11 +63,11 @@ public class EquipmentGenerator : IEquipmentGenerator
         {
             if (randomValue < entry.Value)
             {
-                return Convert.ToInt32(entry.Key);
+                return Convert.ToInt32(entry.Key,CultureInfo.InvariantCulture);
             }
             randomValue -= entry.Value;
         }
 
-        return Convert.ToInt32(attributeCountWeights.Keys.First()); 
+        return Convert.ToInt32(attributeCountWeights.Keys.First(),CultureInfo.InvariantCulture); 
     }
 }

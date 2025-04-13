@@ -12,28 +12,23 @@ namespace Game.Data.Mongo;
 
 public class CustomDiscriminatorConvention : IDiscriminatorConvention
 {
-    private readonly string _elementName;
-
-    public CustomDiscriminatorConvention(string elementName = "_t")
-    {
-        _elementName = elementName;
-    }
-
-    public string ElementName => _elementName;
-
+    public CustomDiscriminatorConvention(string elementName = "_t") => ElementName = elementName;
+    
+    public string ElementName { get; }
+    
     public Type GetActualType(IBsonReader bsonReader, Type nominalType)
     {
         var bookmark = bsonReader.GetBookmark();
         bsonReader.ReadStartDocument(); // Now, start reading the document.
 
-        Type actualType = nominalType;
+        var actualType = nominalType;
 
         // Read through the document and check if the type field is present
         while (bsonReader.ReadBsonType() != BsonType.EndOfDocument)
         {
-            if (bsonReader.ReadName() == _elementName) // The field name that represents the type
+            if (bsonReader.ReadName() == ElementName) // The field name that represents the type
             {
-                var typeName = bsonReader.ReadString(); // This is where we get the type from '_t'
+                string? typeName = bsonReader.ReadString(); // This is where we get the type from '_t'
                 actualType = Type.GetType(typeName) ?? nominalType; // We find the type dynamically
                 break; // We can break out once we find the type
             }
@@ -46,10 +41,7 @@ public class CustomDiscriminatorConvention : IDiscriminatorConvention
         return actualType;
     }
 
-    public BsonValue GetDiscriminator(Type nominalType, Type actualType)
-    {
-        return actualType.AssemblyQualifiedName;
-    }
+    public BsonValue GetDiscriminator(Type nominalType, Type actualType) => actualType.AssemblyQualifiedName;
 }
 
 

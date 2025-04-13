@@ -4,16 +4,17 @@ namespace Game.Features.Battle;
 
 public class RedisProvider
 {
-    private readonly Lazy<ConnectionMultiplexer> _connection;
+    private readonly Lazy<ConnectionMultiplexer> connection;
 
     public RedisProvider(IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("RedisConnection");
-        _connection = new Lazy<ConnectionMultiplexer>(() =>
+        string? connectionString = configuration.GetConnectionString("RedisConnection");
+        
+        connection = new Lazy<ConnectionMultiplexer>(() =>
             ConnectionMultiplexer.Connect(connectionString));
     }
 
-    public ConnectionMultiplexer GetConnection() => _connection.Value;
+    public ConnectionMultiplexer GetConnection() => connection.Value;
 
-    public IDatabase GetDatabase() => _connection.Value.GetDatabase();
+    public IDatabase GetDatabase() => connection.Value.GetDatabase();
 }

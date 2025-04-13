@@ -2,23 +2,23 @@ namespace Game.Core;
 
 public class Result<T> : ResultWithoutValue
 {
-    private T? _value;
-    
+    private T? value;
+
     public T Value
     {
-        get => IsSuccess ? _value! : throw new InvalidOperationException("Result is not successful");
-        private set => _value = value;
+        get => IsSuccess ? value! : throw new InvalidOperationException("Result is not successful");
+        private set => this.value = value;
     }
 
-    private Result(bool isSuccess,T? value,Error error) : base(isSuccess,error)
-    {
-        _value = value;
-    }
-    public static Result<T> Success(T result) => new(true, result,Error.None);
-    public static Result<T> NotFound(string message) => new(false, default, new Error("404",message));
-    public static Result<T> Invalid(string message) => new(false, default, new Error("400",message));
-    public static Result<T> Failure(string message) => new(false, default, new Error("500",message));
-    public static Result<T> CustomError(Error error) => new(false, default, error);
+    private Result(bool isSuccess,T? value,CustomError error) : base(isSuccess,error) => this.value = value;
+    
+#pragma warning disable CA1000
+    public static Result<T> Success(T result) => new(true, result,Core.CustomError.None);
+    public static Result<T> NotFound(string message) => new(false, default, new CustomError("404",message));
+    public static Result<T> Invalid(string message) => new(false, default, new CustomError("400",message));
+    public static Result<T> Failure(string message) => new(false, default, new CustomError("500",message));
+    public static Result<T> CustomError(CustomError customError) => new(false, default, customError);
+#pragma warning restore CA1000
 
     public Result<TA> AsError<TA>()
     {
@@ -27,12 +27,12 @@ public class Result<T> : ResultWithoutValue
             throw new InvalidOperationException("Cannot rethrow successful result");
         }
 
-        return Result<TA>.CustomError(Error);
+        return Result<TA>.CustomError(base.Error);
     }
 
 };
 
-public sealed record Error(string Code, string Description)
+public sealed record CustomError(string Code, string Description)
 {
-    public static readonly Error None = new(String.Empty, String.Empty);
+    public static readonly CustomError None = new(string.Empty, string.Empty);
 }

@@ -12,20 +12,20 @@ public class BattleRedisRepository : IBattleRepository
 {
     
     //TODO : Handle exceptions
-    private readonly RedisProvider _redisProvider;
-    private readonly IPlayersMongoRepository _playersMongoRepository;
-    private readonly IMonstersMongoRepository _monstersMongoRepository;
+    private readonly RedisProvider redisProvider;
+    private readonly IPlayersMongoRepository playersMongoRepository;
+    private readonly IMonstersMongoRepository monstersMongoRepository;
 
     public BattleRedisRepository(RedisProvider redisProvider,IPlayersMongoRepository playersMongoRepository,IMonstersMongoRepository monstersMongoRepository)
     {
-        _redisProvider = redisProvider;
-        _playersMongoRepository = playersMongoRepository;
-        _monstersMongoRepository = monstersMongoRepository;
+        this.redisProvider = redisProvider;
+        this.playersMongoRepository = playersMongoRepository;
+        this.monstersMongoRepository = monstersMongoRepository;
     }
 
     public async Task<Result<PveBattle>> CreateBattleAsync(Player player)
     {
-        var monsterResult = await _monstersMongoRepository.GetByNameWithAbilities("Goblin");
+        var monsterResult = await monstersMongoRepository.GetByNameWithAbilities("Goblin");
 
         if (monsterResult.IsFailure)
         {
@@ -42,14 +42,14 @@ public class BattleRedisRepository : IBattleRepository
         
         var update = Builders<Player>.Update.Set(p => p.BattleId, battle.Id);
 
-        await _playersMongoRepository.UpdateOneAsync(player.Id,update);
+        await playersMongoRepository.UpdateOneAsync(player.Id,update);
 
         return Result<PveBattle>.Success(battle);
     }
 
     public Task<Result<PveBattle>> GetActiveBattleAsync(string battleId)
     {
-        var db =_redisProvider.GetDatabase();
+        var db =redisProvider.GetDatabase();
 
         var getResult = db.StringGet(battleId);
 
@@ -74,27 +74,27 @@ public class BattleRedisRepository : IBattleRepository
     
     public Task<ResultWithoutValue> SaveBattleData(PveBattle pveBattle)
     {
-        var db =_redisProvider.GetDatabase();
+        var db =redisProvider.GetDatabase();
         
-        var jsonBattle = JsonConvert.SerializeObject(pveBattle, Formatting.Indented, new JsonSerializerSettings
+        string jsonBattle = JsonConvert.SerializeObject(pveBattle, Formatting.Indented, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
 
-        var createResult = db.StringSet(pveBattle.Id, jsonBattle);
+        bool createResult = db.StringSet(pveBattle.Id, jsonBattle);
 
         return Task.FromResult(
             createResult
                 ? ResultWithoutValue.Success()
-                : ResultWithoutValue.Failure(new Error("500","Unable to save battle to Redis")));
+                : ResultWithoutValue.Failure(new CustomError("500","Unable to save battle to Redis")));
     }
 
     public async Task<bool> RemoveBattle(string battleId)
     {
-        var db =_redisProvider.GetDatabase();
+        var db =redisProvider.GetDatabase();
 
 
-        var result =  await db.KeyDeleteAsync(battleId);
+        bool result =  await db.KeyDeleteAsync(battleId);
 
         return result;
     }

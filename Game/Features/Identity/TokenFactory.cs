@@ -6,9 +6,9 @@ public class TokenFactory : ITokenFactory
 {
     public string CreateToken(User user,IConfiguration configuration)
     {
-        var jwtSecret = configuration["Auth:JwtSecret"]!;
+        string jwtSecret = configuration["Auth:JwtSecret"]!;
         
-        var token = JwtBearer.CreateToken(opt =>
+        string token = JwtBearer.CreateToken(opt =>
         {
             opt.SigningKey = jwtSecret;
             opt.User["UserId"] = user.Id;

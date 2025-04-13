@@ -16,9 +16,8 @@ public class CombatPlayer : CombatEntity
 
 public static partial class  Mapper
 {
-    public static CombatPlayer ToPlayerBattleModel(this Player model, Dictionary<string, int> playerUsedItems)
-    {
-        return new CombatPlayer()
+    public static CombatPlayer ToPlayerBattleModel(this Player model, Dictionary<string, int> playerUsedItems) =>
+        new()
         {
             Id = model.Id,
             Name = model.CharacterType,
@@ -31,5 +30,4 @@ public static partial class  Mapper
             OtherInventoryItems = model.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList(),
             UsedItems = playerUsedItems
         };
-    }
 }

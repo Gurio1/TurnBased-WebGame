@@ -7,22 +7,22 @@ namespace Game.Features.Battle;
 
 public class PveBattleManager
 {
-    private readonly BattleContext _battleContext;
-    private readonly IBattleRepository _battleRedisRepository;
-    private readonly IMediator _mediator;
+    private readonly BattleContext battleContext;
+    private readonly IBattleRepository battleRedisRepository;
+    private readonly IMediator mediator;
 
 
     public PveBattleManager(BattleContext battleContext,IBattleRepository battleRedisRepository,IMediator mediator)
     {
-        _battleContext = battleContext;
-        _battleRedisRepository = battleRedisRepository;
-        _mediator = mediator;
+        this.battleContext = battleContext;
+        this.battleRedisRepository = battleRedisRepository;
+        this.mediator = mediator;
     }
 
 
     public async Task ExecutePlayerTurnAsync(string abilityId, PveBattle pveBattle)
     {
-        _battleContext.SetBattleId(pveBattle.Id);
+        battleContext.SetBattleId(pveBattle.Id);
         
         
         var ability = pveBattle.CombatPlayer.Abilities.FirstOrDefault(a => a.Id == abilityId);
@@ -32,43 +32,41 @@ public class PveBattleManager
             return;
         }
 
-        CombatPlayer player = pveBattle.CombatPlayer;
+        var player = pveBattle.CombatPlayer;
         
         DecreaseAbilityCooldowns(pveBattle);
+
+        ExecuteDebuffs(pveBattle.CombatPlayer,battleContext);
         
-        ExecuteDebuffs(pveBattle.CombatPlayer,_battleContext);
-        
-        ability.Execute(player,pveBattle.Monster,_battleContext);
+        ability.Execute(player,pveBattle.Monster,battleContext);
         
         
         if (pveBattle.Monster.IsDead())
         {
-            await _mediator.Publish(new MonsterDefeatedEvent(pveBattle.Monster, pveBattle.CombatPlayer));
+            await mediator.Publish(new MonsterDefeatedEvent(pveBattle.Monster, pveBattle.CombatPlayer));
             return;
         }
-        
-        ExecuteDebuffs(pveBattle.Monster,_battleContext);
+
+        ExecuteDebuffs(pveBattle.Monster,battleContext);
 
         var enemyAbility = pveBattle.Monster.Abilities.FirstOrDefault();
         
-        enemyAbility!.Execute(pveBattle.Monster,player,_battleContext);
+        enemyAbility!.Execute(pveBattle.Monster,player,battleContext);
 
         if (player.IsDead())
         {
-            await _mediator.Publish(new PlayerDefeatedEvent(pveBattle.CombatPlayer));
+            await mediator.Publish(new PlayerDefeatedEvent(pveBattle.CombatPlayer));
             return;
         }
         
-        await _mediator.Publish(new PveBattleDataSentEvent(pveBattle));
-        await _battleRedisRepository.SaveBattleData(pveBattle);
+        await mediator.Publish(new PveBattleDataSentEvent(pveBattle));
+        await battleRedisRepository.SaveBattleData(pveBattle);
     }
     
-    private static void  DecreaseAbilityCooldowns(PveBattle pveBattle)
-    {
+    private static void  DecreaseAbilityCooldowns(PveBattle pveBattle) => 
         pveBattle.CombatPlayer.Abilities.ForEach(x => x.DecreaseCurrentCooldown());
-    }
     
-    private void ExecuteDebuffs(CombatEntity target,BattleContext battleContext)
+    private static void ExecuteDebuffs(CombatEntity target,BattleContext battleContext)
     {
         for (int i = target.Debuffs.Count - 1; i >= 0; i--)
         {

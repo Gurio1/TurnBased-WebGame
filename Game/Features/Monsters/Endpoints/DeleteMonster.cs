@@ -1,27 +1,25 @@
+using System.Globalization;
 using FastEndpoints;
 
 namespace Game.Features.Monsters.Endpoints;
 
 public class DeleteMonster : Endpoint<DeleteMonsterByNameRequest>
 {
-    private readonly IMonstersMongoRepository _monstersMongoRepository;
+    private readonly IMonstersMongoRepository monstersMongoRepository;
 
-    public DeleteMonster(IMonstersMongoRepository monstersMongoRepository)
-    {
-        _monstersMongoRepository = monstersMongoRepository;
-    }
-    public override void Configure()
-    {
+    public DeleteMonster(IMonstersMongoRepository monstersMongoRepository) => 
+        this.monstersMongoRepository = monstersMongoRepository;
+    
+    public override void Configure() => 
         Delete("/monsters/{MonsterName}");
-    }
-
+    
     public override async Task HandleAsync(DeleteMonsterByNameRequest req, CancellationToken ct)
     {
-        var result = await _monstersMongoRepository.RemoveAsync(req.MonsterName);
+        var result = await monstersMongoRepository.RemoveAsync(req.MonsterName);
 
         if (result.IsFailure)
         {
-            await SendAsync(result.Error.Description, int.Parse(result.Error.Code), ct);
+            await SendAsync(result.Error.Description, Convert.ToInt32(result.Error.Code,CultureInfo.InvariantCulture), ct);
             return;
         }
 

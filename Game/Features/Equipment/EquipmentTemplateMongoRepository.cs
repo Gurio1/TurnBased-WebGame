@@ -8,7 +8,7 @@ namespace Game.Features.Equipment;
 
 public class EquipmentTemplateMongoRepository : IEquipmentTemplateMongoRepository
 {
-    private readonly IMongoCollection<EquipmentTemplate> _templatesCollection;
+    private readonly IMongoCollection<EquipmentTemplate> templatesCollection;
 
     public EquipmentTemplateMongoRepository(IOptions<MongoSettings> mongoDatabaseSettings,
         IMongoClient mongoClient)
@@ -17,7 +17,7 @@ public class EquipmentTemplateMongoRepository : IEquipmentTemplateMongoRepositor
         var mongoDatabase = mongoClient.GetDatabase(
             mongoDatabaseSettings.Value.DatabaseName);
 
-        _templatesCollection = mongoDatabase.GetCollection<EquipmentTemplate>(
+        templatesCollection = mongoDatabase.GetCollection<EquipmentTemplate>(
             mongoDatabaseSettings.Value.EquipmentTemplatesCollectionName);
     }
 
@@ -25,25 +25,23 @@ public class EquipmentTemplateMongoRepository : IEquipmentTemplateMongoRepositor
     {
         if (string.IsNullOrEmpty(equipmentId))
         {
-            return Result<EquipmentTemplate>.Invalid("Equipment ID must be provided"); 
+            return Result<EquipmentTemplate>.Invalid("Equipment ID must be provided");
         }
-        
+
         try
         {
-            var template = await _templatesCollection.Find(t => t.EquipmentId == equipmentId).FirstOrDefaultAsync();
+            var template = await templatesCollection.Find(t => t.EquipmentId == equipmentId).FirstOrDefaultAsync();
             return template is null
                 ? Result<EquipmentTemplate>.NotFound($"Equipment template with id '{equipmentId}' was not found")
                 : Result<EquipmentTemplate>.Success(template);
         }
         catch (Exception ex)
         {
-            // TODO: Add logging 
+            // TODO: Add logging
             return Result<EquipmentTemplate>.Failure($"An error occurred while retrieving the equipment template: {ex.Message}");
         }
     }
 
-    public async Task SaveAsync(EquipmentTemplate template)
-    { 
-        await _templatesCollection.InsertOneAsync(template);
-    }
+    public async Task SaveAsync(EquipmentTemplate equipmentTemplate) => 
+        await templatesCollection.InsertOneAsync(equipmentTemplate);
 }

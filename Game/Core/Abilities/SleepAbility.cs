@@ -25,9 +25,9 @@ public class SleepAbility : Ability
             return;
         }
 
-        var damage = owner.CalculateDamage(owner.Stats.Damage * 0.7f,context);
+        float damage = owner.CalculateDamage(owner.Stats.Damage * 0.7f,context);
 
-        var tookDamage = target.Defence(damage, context);
+        bool tookDamage = target.Defence(damage, context);
 
         if (tookDamage)
         {
@@ -37,11 +37,9 @@ public class SleepAbility : Ability
         CurrentCooldown = Cooldown;
     }
 
-    public override string GetAbilityDescription(Player player)
-    {
+    public override string GetAbilityDescription(Player player) => 
         throw new NotImplementedException();
-    }
-
+    
     private void SetDebuff(CombatEntity target, BattleContext context)
     {
         var debuff = new Sleep(Duration);

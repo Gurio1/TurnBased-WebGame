@@ -10,20 +10,20 @@ namespace Game.Features.Monsters;
 
 public class MonstersMongoRepository : IMonstersMongoRepository
 {
-    private readonly IOptions<MongoSettings> _mongoDatabaseSettings;
-    private readonly IMongoCollection<Monster> _monstersCollection;
-    private readonly IMongoDatabase _mongoDatabase;
+    private readonly IOptions<MongoSettings> mongoDatabaseSettings;
+    private readonly IMongoCollection<Monster> monstersCollection;
+    private readonly IMongoDatabase mongoDatabase;
 
     //TODO: Implement error handling(or use EF Core)
     public MonstersMongoRepository(IMongoClient mongoClient,
         IOptions<MongoSettings> mongoDatabaseSettings)
     {
-        _mongoDatabaseSettings = mongoDatabaseSettings;
+        this.mongoDatabaseSettings = mongoDatabaseSettings;
 
-        _mongoDatabase = mongoClient.GetDatabase(
+        mongoDatabase = mongoClient.GetDatabase(
             mongoDatabaseSettings.Value.DatabaseName);
 
-        _monstersCollection = _mongoDatabase.GetCollection<Monster>(
+        monstersCollection = mongoDatabase.GetCollection<Monster>(
             mongoDatabaseSettings.Value.MonstersCollectionName);
         
     }
@@ -32,7 +32,7 @@ public class MonstersMongoRepository : IMonstersMongoRepository
     {
         try
         {
-            var result = await _monstersCollection.Find(a => a.Name == monsterName).FirstOrDefaultAsync();
+            var result = await monstersCollection.Find(a => a.Name == monsterName).FirstOrDefaultAsync();
 
             return result is null
                 ? Result<Monster>.NotFound($"Unable to retrieve monster with name '{monsterName}'")
@@ -47,9 +47,9 @@ public class MonstersMongoRepository : IMonstersMongoRepository
     {
         try
         {
-            var lookupResult =  await _monstersCollection.AsQueryable()
+            var lookupResult =  await monstersCollection.AsQueryable()
                 .Where(p => p.Name == monsterName)
-                .Lookup(_mongoDatabase.GetCollection<Ability>(_mongoDatabaseSettings.Value.AbilitiesCollectionName),
+                .Lookup(mongoDatabase.GetCollection<Ability>(mongoDatabaseSettings.Value.AbilitiesCollectionName),
                     (m, ab) => ab
                         .Where(ability => m.AbilityIds.Contains(ability.Id))).FirstOrDefaultAsync();
 
@@ -61,15 +61,14 @@ public class MonstersMongoRepository : IMonstersMongoRepository
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            return Result<Monster>.Failure(e.Message);
         }
     }
     public async Task<Result<Monster>> CreateAsync(Monster newMonster)
     {
         try
         {
-            await _monstersCollection.InsertOneAsync(newMonster);
+            await monstersCollection.InsertOneAsync(newMonster);
             return Result<Monster>.Success(newMonster);
         }
         catch (Exception e)
@@ -82,17 +81,17 @@ public class MonstersMongoRepository : IMonstersMongoRepository
     {
         if (string.IsNullOrEmpty(monsterName))
         {
-            return ResultWithoutValue.Failure(new Error("400","Monster name can not be empty"));
+            return ResultWithoutValue.Failure(new CustomError("400","Monster name can not be empty"));
         }
 
         try
         {
-           await _monstersCollection.DeleteOneAsync(x => x.Name == monsterName);
+           await monstersCollection.DeleteOneAsync(x => x.Name == monsterName);
            return ResultWithoutValue.Success();
         }
         catch (Exception e)
         {
-            return ResultWithoutValue.Failure(new Error("500", e.Message));
+            return ResultWithoutValue.Failure(new CustomError("500", e.Message));
         }
         
     }

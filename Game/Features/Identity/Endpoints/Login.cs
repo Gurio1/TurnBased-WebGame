@@ -21,7 +21,7 @@ internal class Login(UserManager<User> userManager,ITokenFactory tokenFactory) :
             return;
         }
 
-        var loginSuccessful = await userManager.CheckPasswordAsync(user, req.Password);
+        bool loginSuccessful = await userManager.CheckPasswordAsync(user, req.Password);
 
         if (!loginSuccessful)
         {
@@ -29,7 +29,7 @@ internal class Login(UserManager<User> userManager,ITokenFactory tokenFactory) :
             return;
         }
         
-        var token = tokenFactory.CreateToken(user, Config);
+        string token = tokenFactory.CreateToken(user, Config);
 
         await SendAsync(new {token = token}, cancellation: ct);
     }

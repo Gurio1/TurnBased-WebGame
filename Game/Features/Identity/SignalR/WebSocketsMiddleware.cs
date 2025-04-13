@@ -2,13 +2,10 @@ namespace Game.Features.Identity.SignalR;
 
 public class WebSocketsMiddleware
 {
-    private readonly RequestDelegate _next;
+    private readonly RequestDelegate next;
 
-    public WebSocketsMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
+    public WebSocketsMiddleware(RequestDelegate next) => this.next = next;
+    
     public async Task Invoke(HttpContext httpContext)
     {
         var request = httpContext.Request;
@@ -21,6 +18,6 @@ public class WebSocketsMiddleware
             request.Headers.Append("Authorization", $"Bearer {accessToken}");
         }
 
-        await _next(httpContext);
+        await next(httpContext);
     }
 }

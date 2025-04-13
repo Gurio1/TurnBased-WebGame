@@ -9,7 +9,7 @@ public static class DataExtension
         this IServiceCollection services,
         ConfigurationManager config)
     {
-        var connectionString = config.GetConnectionString("DefaultConnection");
+        string? connectionString = config.GetConnectionString("DefaultConnection");
         
         services.AddDbContext<ApplicationDbContext>(builder =>
         {

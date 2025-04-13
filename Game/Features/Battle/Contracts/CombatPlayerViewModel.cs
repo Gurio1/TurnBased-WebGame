@@ -19,9 +19,8 @@ public class CombatPlayerViewModel
 
 public static partial class Mapper
 {
-    public static CombatPlayerViewModel ToViewModel(this CombatPlayer model)
-    {
-        return new CombatPlayerViewModel()
+    public static CombatPlayerViewModel ToViewModel(this CombatPlayer model) =>
+        new()
         {
             Id = model.Id,
             Stats = model.Stats,
@@ -31,5 +30,4 @@ public static partial class Mapper
             Equipment = model.Equipment,
             OtherInventoryItems = model.OtherInventoryItems
         };
-    }
 }

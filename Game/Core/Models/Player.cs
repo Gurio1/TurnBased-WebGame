@@ -10,7 +10,7 @@ namespace Game.Core.Models;
 public class Player
 {
     [BsonElement("Inventory")]
-    private List<InventorySlot> _inventory = new();
+    private readonly List<InventorySlot> inventory = new();
     
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
@@ -26,7 +26,7 @@ public class Player
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     
     [BsonIgnore] 
-    public IReadOnlyList<InventorySlot> Inventory => _inventory;
+    public IReadOnlyList<InventorySlot> Inventory => inventory;
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; } = "Player";
 
@@ -47,7 +47,6 @@ public class Player
     {
         if (!Equipment.TryGetValue(equipmentSlot, out EquipmentBase? equippedItem)) return false;
         
-        
         if (equippedItem is null)
         {
             return false;
@@ -58,7 +57,6 @@ public class Player
         AddToInventory(equippedItem);
 
         return true;
-
     }
 
     public void AddToInventory(Item item)
@@ -67,7 +65,7 @@ public class Player
 
         if (slot is null)
         {
-            _inventory.Add(new InventorySlot(){Item = item,Quantity = 1});
+            inventory.Add(new InventorySlot(){Item = item,Quantity = 1});
         }
         else
         {
@@ -75,11 +73,8 @@ public class Player
         }
     }
     
-    public void RemoveSlotFromInventory(InventorySlot slot)
-    {
-        _inventory.Remove(slot);
-    }
-
+    public void RemoveSlotFromInventory(InventorySlot slot) => inventory.Remove(slot);
+    
     public void RemoveItemFromInventory(Item item)
     {
         var slot = Inventory.FirstOrDefault(s => s.Item.Id == item.Id);
@@ -88,12 +83,9 @@ public class Player
 
         if (slot.Quantity == 0)
         {
-            _inventory.Remove(slot);
+            inventory.Remove(slot);
         }
     }
     
-    public bool InBattle()
-    {
-        return BattleId is not null;
-    }
+    public bool InBattle() => BattleId is not null;
 }

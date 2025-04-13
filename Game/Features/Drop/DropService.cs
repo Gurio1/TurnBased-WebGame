@@ -1,32 +1,27 @@
 using Game.Core;
-using Game.Core.Equipment;
 using Game.Core.Models;
 using Game.Features.Equipment;
-using Game.Shared;
-using NetTopologySuite.Index.HPRtree;
+using Game.Utilities;
 
 namespace Game.Features.Drop;
 
 public class DropService : IDropService
 {
-    private readonly EquipmentGenerator _equipmentGenerator;
+    private readonly EquipmentGenerator equipmentGenerator;
 
     public DropService(EquipmentGenerator equipmentGenerator)
-    {
-        _equipmentGenerator = equipmentGenerator;
-    }
-
-
+        => this.equipmentGenerator = equipmentGenerator;
+    
     public async Task<Result<Item?>> GenerateDrop(Monster monster)
     {
-        var random = (float)RandomHelper.Instance.NextDouble();
-        var comulativeRate = 0f;
+        float random = (float)RandomHelper.Instance.NextDouble();
+        float cumulativeRate = 0f;
         foreach (var pair in monster.DropsTable)
         {
-            comulativeRate += pair.Value;
-            if (!(random <= comulativeRate)) continue;
-            
-            var result =  await _equipmentGenerator.GenerateEquipment(pair.Key);
+            cumulativeRate += pair.Value;
+            if (!(random <= cumulativeRate)) continue;
+
+            var result =  await equipmentGenerator.GenerateEquipment(pair.Key);
 
             return (result.IsSuccess
                 ? Result<Item>.Success(result.Value)
