@@ -10,16 +10,16 @@ namespace Game.Core.Models;
 
 public class Monster : CombatEntity
 {
-    public Dictionary<string,float> DropsTable { get; init; }
-
+    public Dictionary<string, float> DropsTable { get; init; }
+    
     [JsonIgnore] public string[] AbilityIds { get; set; } = [];
-
-     [BsonIgnore]public Ability?[] Abilities { get; set; } = [];
-     
-     [OnDeserialized]
-     internal void OnDeserializedMethod(StreamingContext context)
-     {
-         Equipment ??= new Dictionary<string, EquipmentBase?>();
-         Debuffs ??= new List<IDebuff>();
-     }
+    
+    [BsonIgnore] public Ability?[] Abilities { get; set; } = [];
+    
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        Equipment ??= new Dictionary<string, EquipmentBase?>();
+        Debuffs ??= new List<IDebuff>();
+    }
 }

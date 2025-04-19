@@ -1,4 +1,3 @@
-using Game.Core;
 using Game.Core.Common;
 using Game.Core.Models;
 using Game.Features.Equipment;
@@ -9,7 +8,7 @@ namespace Game.Features.Drop;
 public class DropService : IDropService
 {
     private readonly EquipmentGenerator equipmentGenerator;
-
+    
     public DropService(EquipmentGenerator equipmentGenerator)
         => this.equipmentGenerator = equipmentGenerator;
     
@@ -21,14 +20,14 @@ public class DropService : IDropService
         {
             cumulativeRate += pair.Value;
             if (!(random <= cumulativeRate)) continue;
-
-            var result =  await equipmentGenerator.GenerateEquipment(pair.Key);
-
+            
+            var result = await equipmentGenerator.GenerateEquipment(pair.Key);
+            
             return (result.IsSuccess
                 ? Result<Item>.Success(result.Value)
                 : result.AsError<Item>())!;
         }
-
+        
         return Result<Item?>.Success(null);
     }
 }

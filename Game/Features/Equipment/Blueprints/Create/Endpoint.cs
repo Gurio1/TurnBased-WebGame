@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Core.Common;
+using Endpoint = Game.Features.Equipment.Blueprints.GetByEquipmentId.Endpoint;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 
@@ -14,11 +15,11 @@ public sealed class CreateEquipmentBlueprint(IDispatcher dispatcher) : Endpoint<
         
         if (result.IsFailure)
         {
-            await SendAsync(result.Error.Description, Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture), ct);
+            await SendAsync(result.Error.Description, Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture),
+                ct);
             return;
         }
         
-        await SendCreatedAtAsync<GetByEquipmentId.Endpoint>(new {result.Value.EquipmentId}, result.Value, cancellation: ct);
-
+        await SendCreatedAtAsync<Endpoint>(new { result.Value.EquipmentId }, result.Value, cancellation: ct);
     }
 }

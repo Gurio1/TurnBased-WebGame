@@ -11,13 +11,13 @@ public class BaseAttack : Ability
     public override string ImageUrl { get; set; } = "BaseAttack.png";
     public override int Cooldown { get; init; }
     public override int CurrentCooldown { get; set; }
-
+    
     public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
     {
-        float damage = owner.CalculateDamage(owner.Stats.Damage,context);
-        target.Defence(damage,context);
+        float damage = owner.CalculateDamage(owner.Stats.Damage, context);
+        target.Defence(damage, context);
     }
-
-    public override string GetAbilityDescription(Player player) => 
+    
+    public override string GetAbilityDescription(Player player) =>
         $"Performs a basic attack that deals damage equal to the player's Damage stat: {player.Stats.Damage}.";
 }

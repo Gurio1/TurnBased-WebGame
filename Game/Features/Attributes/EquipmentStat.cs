@@ -11,6 +11,7 @@ public abstract class EquipmentStat
     public abstract void ApplyStats(Player character);
     public abstract void RemoveStats(Player character);
 }
+
 public class AttackStat : EquipmentStat
 {
     public override string Name { get; } = "Attack";
@@ -33,10 +34,9 @@ public class SpeedStat : EquipmentStat
 {
     public override string Name { get; } = "Speed";
     public override float Value { get; set; }
-    public override void ApplyStats(Player character)
-    {
-        throw new NotImplementedException();
-    }
+    
+    public override void ApplyStats(Player character) => throw new NotImplementedException();
+    
     public override void RemoveStats(Player character) => character.Stats.Damage -= Value;
 }
 

@@ -9,27 +9,26 @@ namespace Game.Core.Models;
 
 public class Player
 {
-    [BsonElement("Inventory")]
-    private readonly List<InventorySlot> inventory = new();
+    [BsonElement("Inventory")] private readonly List<InventorySlot> inventory = new();
     
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
-    public string? BattleId { get; set; }
-    public Stats Stats { get; set; } = new Stats();
     
-    [JsonIgnore]
-    public required List<string> AbilityIds { get; set; } = [];
-  
-    [BsonIgnore]
-    public List<Ability> Abilities { get; set; } = [];
+    public string? BattleId { get; set; }
+    public Stats Stats { get; set; } = new();
+    
+    [JsonIgnore] public required List<string> AbilityIds { get; set; } = [];
+    
+    [BsonIgnore] public List<Ability> Abilities { get; set; } = [];
+    
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     
-    [BsonIgnore] 
-    public IReadOnlyList<InventorySlot> Inventory => inventory;
+    [BsonIgnore] public IReadOnlyList<InventorySlot> Inventory => inventory;
+    
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; } = "Player";
-
+    
     public void Equip(EquipmentBase equipmentItem)
     {
         if (Equipment.TryGetValue(equipmentItem.Slot, out var equippedItem) && equippedItem is not null)
@@ -37,7 +36,7 @@ public class Player
             AddToInventory(equippedItem);
             equippedItem.RemoveStats(this);
         }
-
+        
         Equipment[equipmentItem.Slot] = equipmentItem;
         RemoveItemFromInventory(equipmentItem);
         equipmentItem.ApplyStats(this);
@@ -45,32 +44,25 @@ public class Player
     
     public bool Unequip(string equipmentSlot)
     {
-        if (!Equipment.TryGetValue(equipmentSlot, out EquipmentBase? equippedItem)) return false;
+        if (!Equipment.TryGetValue(equipmentSlot, out var equippedItem)) return false;
         
-        if (equippedItem is null)
-        {
-            return false;
-        }
-            
+        if (equippedItem is null) return false;
+        
         equippedItem.RemoveStats(this);
         Equipment.Remove(equipmentSlot);
         AddToInventory(equippedItem);
-
+        
         return true;
     }
-
+    
     public void AddToInventory(Item item)
     {
         var slot = Inventory.FirstOrDefault(i => i.Item.Id == item.Id && i.Quantity < item.MaxInventorySlotQuantity);
-
+        
         if (slot is null)
-        {
-            inventory.Add(new InventorySlot(){Item = item,Quantity = 1});
-        }
+            inventory.Add(new InventorySlot { Item = item, Quantity = 1 });
         else
-        {
             slot.Quantity++;
-        }
     }
     
     public void RemoveSlotFromInventory(InventorySlot slot) => inventory.Remove(slot);
@@ -78,13 +70,10 @@ public class Player
     public void RemoveItemFromInventory(Item item)
     {
         var slot = Inventory.FirstOrDefault(s => s.Item.Id == item.Id);
-
+        
         slot.Quantity--;
-
-        if (slot.Quantity == 0)
-        {
-            inventory.Remove(slot);
-        }
+        
+        if (slot.Quantity == 0) inventory.Remove(slot);
     }
     
     public bool InBattle() => BattleId is not null;

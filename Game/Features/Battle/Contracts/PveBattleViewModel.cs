@@ -13,10 +13,5 @@ public class PveBattleViewModel
 public static partial class Mapper
 {
     public static PveBattleViewModel ToViewModel(this PveBattle battle) =>
-        new()
-        {
-            Id = battle.Id,
-            CombatPlayer = battle.CombatPlayer.ToViewModel(),
-            Monster = battle.Monster
-        };
+        new() { Id = battle.Id, CombatPlayer = battle.CombatPlayer.ToViewModel(), Monster = battle.Monster };
 }

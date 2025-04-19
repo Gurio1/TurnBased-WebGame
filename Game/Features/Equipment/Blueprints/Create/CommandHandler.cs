@@ -1,20 +1,19 @@
 ﻿using Game.Core.Common;
 using Game.Core.Equipment;
 using Game.Data.Mongo;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 
-public sealed class CommandHandler : IRequestHandler<Command,Result<EquipmentBlueprint>>
+public sealed class CommandHandler : IRequestHandler<Command, Result<EquipmentBlueprint>>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
     public CommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    
     public async Task<Result<EquipmentBlueprint>> Handle(Command request, CancellationToken cancellationToken)
     {
-        var newTemplate = new EquipmentBlueprint()
+        var newTemplate = new EquipmentBlueprint
         {
             AttributeRanges = request.AttributeRanges,
             EquipmentId = request.EquipmentId,

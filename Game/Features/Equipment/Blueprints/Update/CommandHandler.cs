@@ -1,12 +1,11 @@
 ﻿using Game.Core.Common;
 using Game.Core.Equipment;
 using Game.Data.Mongo;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Update;
 
-public sealed class CommandHandler : IRequestHandler<Command,ResultWithoutValue>
+public sealed class CommandHandler : IRequestHandler<Command, ResultWithoutValue>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
@@ -23,7 +22,7 @@ public sealed class CommandHandler : IRequestHandler<Command,ResultWithoutValue>
         }
         catch (Exception e)
         {
-            return ResultWithoutValue.Failure(new CustomError("500", e.Message));
+            return ResultWithoutValue.Failure(e.Message);
         }
     }
 }

@@ -1,13 +1,9 @@
 using System.Security.Claims;
-using Game.Core;
-using Game.Features.Battle.Models;
-using Game.Features.Players;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Game.Features.Battle.Hubs;
-
 
 //As docs says TCP connections are limited per server.So for scale we need another server...To sync their connection we need to set up Redis backplane(For an unattainable future)
 
@@ -16,14 +12,14 @@ public sealed class BattleHub : Hub
 {
     private const string PlayerIdClaim = "PlayerId";
     private const string BattleCachePrefix = "battle:";
-    
-    private readonly PveBattleManager pveBattleManager;
     private readonly IBattleService battleRedisService;
     private readonly IDistributedCache cache;
     
-
-    public BattleHub(PveBattleManager pveBattleManager,IBattleService battleRedisService,
-         IDistributedCache cache)
+    private readonly PveBattleManager pveBattleManager;
+    
+    
+    public BattleHub(PveBattleManager pveBattleManager, IBattleService battleRedisService,
+        IDistributedCache cache)
     {
         this.pveBattleManager = pveBattleManager;
         this.battleRedisService = battleRedisService;
@@ -33,7 +29,7 @@ public sealed class BattleHub : Hub
     public override async Task OnConnectedAsync()
     {
         string? playerId = GetCurrentPlayerId();
-
+        
         if (playerId is null)
         {
             await SendBattleError("User is not authenticated");
@@ -41,22 +37,20 @@ public sealed class BattleHub : Hub
         }
         
         var battleResult = await battleRedisService.InitializeBattleForPlayerAsync(playerId);
-
+        
         if (battleResult.IsFailure)
         {
             await SendBattleError(battleResult.Error.Description);
             return;
         }
-
+        
         var battle = battleResult.Value;
-
+        
         try
         {
             string cacheKey = GetBattleCacheKey(playerId);
-            await cache.SetStringAsync(cacheKey, battle.Id, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30)
-            });
+            await cache.SetStringAsync(cacheKey, battle.Id,
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
         }
         catch (Exception e)
         {
@@ -69,20 +63,20 @@ public sealed class BattleHub : Hub
         
         await base.OnConnectedAsync();
     }
-
+    
     public async Task UseAbility(string abilityId)
     {
         string? playerId = GetCurrentPlayerId();
-
+        
         if (playerId is null)
         {
             await SendBattleError("User is not authenticated");
             return;
-        }        
+        }
         
         string cacheKey = GetBattleCacheKey(playerId);
         string? battleId = await cache.GetStringAsync(cacheKey);
-
+        
         if (battleId is null)
         {
             await SendBattleError("Can not use ability. Player is not in battle");
@@ -96,12 +90,12 @@ public sealed class BattleHub : Hub
             return;
         }
         
-        await pveBattleManager.ExecutePlayerTurnAsync(abilityId,battleResult.Value);
+        await pveBattleManager.ExecutePlayerTurnAsync(abilityId, battleResult.Value);
     }
     
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        string? playerId= GetCurrentPlayerId();
+        string? playerId = GetCurrentPlayerId();
         
         if (playerId != null)
         {
@@ -109,11 +103,12 @@ public sealed class BattleHub : Hub
             
             //TODO : Handle situations when battleID is removed from cache when user was afk more than 30min
             string? battleId = await cache.GetStringAsync(cacheKey);
-        
+            
             await Groups.RemoveFromGroupAsync(playerId, battleId);
             
             await cache.RemoveAsync($"battle:{playerId}");
         }
+        
         await base.OnDisconnectedAsync(exception);
     }
     
@@ -122,5 +117,5 @@ public sealed class BattleHub : Hub
     private static string GetBattleCacheKey(string playerId) => $"{BattleCachePrefix}{playerId}";
     
     public async Task SendBattleError(string message) =>
-        await Clients.Caller.SendAsync("ReceiveBattleErrorMessage",message);
+        await Clients.Caller.SendAsync("ReceiveBattleErrorMessage", message);
 }

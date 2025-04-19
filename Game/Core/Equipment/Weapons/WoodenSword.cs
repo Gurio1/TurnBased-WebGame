@@ -9,5 +9,4 @@ public class WoodenSword : EquipmentBase
     public override string Name { get; set; } = "Wooden sword";
     
     public override string ImageUrl { get; set; } = "wooden-sword";
-
 }

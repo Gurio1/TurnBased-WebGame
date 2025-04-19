@@ -11,16 +11,14 @@ public class AbilityHomeViewModel
     public string Description { get; set; }
 }
 
-public static partial class Mapper
+public static class Mapper
 {
-    public static AbilityHomeViewModel ToAbilityHomeViewModel(this Ability ability,Player abilityOwner)
-    {
-        return new AbilityHomeViewModel()
+    public static AbilityHomeViewModel ToAbilityHomeViewModel(this Ability ability, Player abilityOwner) =>
+        new()
         {
             Id = ability.Id,
             Name = ability.Name,
             Cooldown = ability.Cooldown,
             Description = ability.GetAbilityDescription(abilityOwner)
         };
-    }
 }

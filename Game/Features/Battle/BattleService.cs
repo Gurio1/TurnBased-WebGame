@@ -1,6 +1,4 @@
-using Game.Core;
 using Game.Core.Common;
-using Game.Core.Models;
 using Game.Features.Battle.Models;
 using Game.Features.Players;
 
@@ -10,8 +8,8 @@ public class BattleService : IBattleService
 {
     private readonly IBattleRepository battleRedisRepository;
     private readonly IPlayersMongoRepository playersMongoRepository;
-
-    public BattleService(IBattleRepository battleRedisRepository,IPlayersMongoRepository playersMongoRepository)
+    
+    public BattleService(IBattleRepository battleRedisRepository, IPlayersMongoRepository playersMongoRepository)
     {
         this.battleRedisRepository = battleRedisRepository;
         this.playersMongoRepository = playersMongoRepository;
@@ -20,11 +18,8 @@ public class BattleService : IBattleService
     public async Task<Result<PveBattle>> InitializeBattleForPlayerAsync(string playerId)
     {
         var playerResult = await playersMongoRepository.GetByIdWithAbilities(playerId);
-
-        if (playerResult.IsFailure)
-        {
-            return playerResult.AsError<PveBattle>();
-        }
+        
+        if (playerResult.IsFailure) return playerResult.AsError<PveBattle>();
         
         var player = playerResult.Value;
         
@@ -32,7 +27,7 @@ public class BattleService : IBattleService
             ? await battleRedisRepository.GetActiveBattleAsync(player.BattleId!)
             : await battleRedisRepository.CreateBattleAsync(player);
     }
-
-    public async Task<Result<PveBattle>> GetActiveBattleAsync(string playerId) => 
+    
+    public async Task<Result<PveBattle>> GetActiveBattleAsync(string playerId) =>
         await battleRedisRepository.GetActiveBattleAsync(playerId);
 }

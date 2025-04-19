@@ -7,13 +7,14 @@ namespace Game.Core.Abilities;
 public class SleepAbility : Ability
 {
     public override string TypeName { get; init; } = nameof(SleepAbility);
-
+    
     public override string Id { get; set; } = "2";
     public override string Name { get; set; } = "Sleep";
     public override string ImageUrl { get; set; }
     public override int Cooldown { get; init; } = 4;
     public override int CurrentCooldown { get; set; }
-    private int Duration { get; init; } = 2;
+    private int Duration { get; } = 2;
+    
     public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
     {
         if (CurrentCooldown != 0)
@@ -21,20 +22,17 @@ public class SleepAbility : Ability
             Console.WriteLine("Can not use this ability");
             return;
         }
-
-        float damage = owner.CalculateDamage(owner.Stats.Damage * 0.7f,context);
-
+        
+        float damage = owner.CalculateDamage(owner.Stats.Damage * 0.7f, context);
+        
         bool tookDamage = target.Defence(damage, context);
-
-        if (tookDamage)
-        {
-            SetDebuff(target,context);
-        }
+        
+        if (tookDamage) SetDebuff(target, context);
         
         CurrentCooldown = Cooldown;
     }
-
-    public override string GetAbilityDescription(Player player) => 
+    
+    public override string GetAbilityDescription(Player player) =>
         throw new NotImplementedException();
     
     private void SetDebuff(CombatEntity target, BattleContext context)
