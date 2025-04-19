@@ -12,13 +12,16 @@ public class Dispatcher : IDispatcher
     public Task<TResponse> Dispatch<TResponse>(IRequest<TResponse> request,
         CancellationToken cancellationToken = default)
     {
-        var handler = (RequestHandlerWrapper<TResponse>)requestHandlers.GetOrAdd(request.GetType(), static requestType =>
-        {
-            var wrapperType = typeof(RequestHandlerWrapper<,>).MakeGenericType(requestType, typeof(TResponse));
-            object wrapper = Activator.CreateInstance(wrapperType) ?? throw new InvalidOperationException($"Could not create wrapper type for {requestType}");
-            return (RequestHandlerBase)wrapper;
-        });
+        var handler = (RequestHandlerWrapper<TResponse>)requestHandlers.GetOrAdd(request.GetType(),
+            static requestType =>
+            {
+                var wrapperType = typeof(RequestHandlerWrapper<,>).MakeGenericType(requestType, typeof(TResponse));
+                object wrapper = Activator.CreateInstance(wrapperType) ??
+                                 throw new InvalidOperationException(
+                                     $"Could not create wrapper type for {requestType}");
+                return (RequestHandlerBase)wrapper;
+            });
         
-        return handler.Handle(request,serviceProvider, cancellationToken);
+        return handler.Handle(request, serviceProvider, cancellationToken);
     }
 }

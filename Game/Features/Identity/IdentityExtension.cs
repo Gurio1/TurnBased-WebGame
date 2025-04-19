@@ -17,7 +17,7 @@ public static class IdentityExtension
         
         services.AddScoped<ITokenFactory, TokenFactory>();
         
-
+        
         return services;
     }
 }

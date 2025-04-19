@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Delete;
 
-public sealed class CommandHandler : IRequestHandler<Command,ResultWithoutValue>
+public sealed class CommandHandler : IRequestHandler<Command, ResultWithoutValue>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
@@ -15,12 +15,12 @@ public sealed class CommandHandler : IRequestHandler<Command,ResultWithoutValue>
     {
         try
         {
-            await collection.DeleteOneAsync(b => b.Id == request.BlueprintId, cancellationToken: cancellationToken);
+            await collection.DeleteOneAsync(b => b.Id == request.BlueprintId, cancellationToken);
             return ResultWithoutValue.Success();
         }
         catch (Exception e)
         {
-            return ResultWithoutValue.Failure(new CustomError("500", e.Message));
+            return ResultWithoutValue.Failure(e.Message);
         }
     }
 }

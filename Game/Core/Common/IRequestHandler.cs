@@ -22,10 +22,11 @@ public class RequestHandlerWrapper<TRequest, TResponse> : RequestHandlerWrapper<
     where TRequest : IRequest<TResponse>
 {
     public override async Task<object?> Handle(object request, IServiceProvider serviceProvider,
-        CancellationToken cancellationToken) => await Handle((IRequest<TResponse>) request, serviceProvider, cancellationToken).ConfigureAwait(false);
+        CancellationToken cancellationToken) =>
+        await Handle((IRequest<TResponse>)request, serviceProvider, cancellationToken).ConfigureAwait(false);
     
     public override Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider serviceProvider,
         CancellationToken cancellationToken) =>
         serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>()
-            .Handle((TRequest) request, cancellationToken);
+            .Handle((TRequest)request, cancellationToken);
 }

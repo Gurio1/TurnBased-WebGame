@@ -18,4 +18,4 @@ public abstract class EquipmentBase : Item
     public void ApplyStats(Player characterBase) => Attributes.ForEach(a => a.ApplyStats(characterBase));
     
     public void RemoveStats(Player characterBase) => Attributes.ForEach(a => a.RemoveStats(characterBase));
-}   
+}

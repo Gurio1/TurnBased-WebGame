@@ -14,7 +14,8 @@ public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<Query>
         
         if (result.IsFailure)
         {
-            await SendAsync(result.Error.Description, Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture), ct);
+            await SendAsync(result.Error.Description, Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture),
+                ct);
             return;
         }
         

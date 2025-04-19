@@ -5,12 +5,9 @@ namespace Game;
 public class ExecutionTimeMiddleware
 {
     private readonly RequestDelegate _next;
-
-    public ExecutionTimeMiddleware(RequestDelegate next)
-    {
-        _next = next;
-    }
-
+    
+    public ExecutionTimeMiddleware(RequestDelegate next) => _next = next;
+    
     public async Task InvokeAsync(HttpContext context)
     {
         var stopwatch = Stopwatch.StartNew();
@@ -20,8 +17,7 @@ public class ExecutionTimeMiddleware
         stopwatch.Stop();
         
         var logger = context.RequestServices.GetRequiredService<ILogger<ExecutionTimeMiddleware>>();
-        logger.LogInformation("Request to {RequestPath} took {StopwatchElapsedMilliseconds}ms", context.Request.Path, stopwatch.ElapsedMilliseconds);
-        
-        
+        logger.LogInformation("Request to {RequestPath} took {StopwatchElapsedMilliseconds}ms", context.Request.Path,
+            stopwatch.ElapsedMilliseconds);
     }
 }

@@ -4,7 +4,7 @@ namespace Game.Features.Identity.Shared;
 
 public class TokenFactory : ITokenFactory
 {
-    public string CreateToken(User user,IConfiguration configuration)
+    public string CreateToken(User user, IConfiguration configuration)
     {
         string jwtSecret = configuration["Auth:JwtSecret"]!;
         
@@ -12,9 +12,9 @@ public class TokenFactory : ITokenFactory
         {
             opt.SigningKey = jwtSecret;
             opt.User["UserId"] = user.Id;
-            opt.User["PlayerId"] = user.PlayerId.ToString();
+            opt.User["PlayerId"] = user.PlayerId;
         });
-
+        
         return token;
     }
 }
