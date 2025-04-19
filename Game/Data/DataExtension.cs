@@ -1,3 +1,4 @@
+using Game.Data.Mongo;
 using Game.Features.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +16,12 @@ public static class DataExtension
         {
             builder.UseNpgsql(connectionString);
         });
-
+        
         services.AddIdentityCore<User>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+        
+        services.AddTransient(typeof(IMongoCollectionProvider<>),
+            typeof(MongoCollectionProvider<>));
         
         return services;
     }
