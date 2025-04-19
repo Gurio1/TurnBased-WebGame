@@ -1,7 +1,6 @@
-using Game.Core.Models;
+using Game.Core.Common;
 using Game.Features.Battle.Models;
 using Game.Features.Battle.PVE.Events;
-using MediatR;
 
 namespace Game.Features.Battle;
 
@@ -9,18 +8,18 @@ public class PveBattleManager
 {
     private readonly BattleContext battleContext;
     private readonly IBattleRepository battleRedisRepository;
-    private readonly IMediator mediator;
+    private readonly IDispatcher dispatcher;
 
 
-    public PveBattleManager(BattleContext battleContext,IBattleRepository battleRedisRepository,IMediator mediator)
+    public PveBattleManager(BattleContext battleContext,IBattleRepository battleRedisRepository,IDispatcher dispatcher)
     {
         this.battleContext = battleContext;
         this.battleRedisRepository = battleRedisRepository;
-        this.mediator = mediator;
+        this.dispatcher = dispatcher;
     }
 
 
-    public async Task ExecutePlayerTurnAsync(string abilityId, PveBattle pveBattle)
+    public async Task<ResultWithoutValue> ExecutePlayerTurnAsync(string abilityId, PveBattle pveBattle)
     {
         battleContext.SetBattleId(pveBattle.Id);
         
@@ -29,7 +28,7 @@ public class PveBattleManager
 
         if (ability is null)
         {
-            return;
+           return ResultWithoutValue.Failure(new CustomError("400",$"The player '{pveBattle.CombatPlayer.Id}' doesnt have ability with id '{abilityId}'"));
         }
 
         var player = pveBattle.CombatPlayer;
@@ -43,8 +42,7 @@ public class PveBattleManager
         
         if (pveBattle.Monster.IsDead())
         {
-            await mediator.Publish(new MonsterDefeatedEvent(pveBattle.Monster, pveBattle.CombatPlayer));
-            return;
+            return await dispatcher.Dispatch(new DefeatMonsterCommand(pveBattle.Monster, pveBattle.CombatPlayer));
         }
 
         ExecuteDebuffs(pveBattle.Monster,battleContext);
@@ -55,12 +53,16 @@ public class PveBattleManager
 
         if (player.IsDead())
         {
-            await mediator.Publish(new PlayerDefeatedEvent(pveBattle.CombatPlayer));
-            return;
+           return await dispatcher.Dispatch(new DefeatPlayerCommand(pveBattle.CombatPlayer));
         }
         
-        await mediator.Publish(new PveBattleDataSentEvent(pveBattle));
+        //TODO : Log if any error
+        await dispatcher.Dispatch(new SendBattleDataCommand(pveBattle));
+        
+        //TODO: Create command. Get rid of Repositories
         await battleRedisRepository.SaveBattleData(pveBattle);
+        
+        return ResultWithoutValue.Success();
     }
     
     private static void  DecreaseAbilityCooldowns(PveBattle pveBattle) => 

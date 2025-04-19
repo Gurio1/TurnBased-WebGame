@@ -12,7 +12,6 @@
         <PackageReference Include="FastEndpoints" Version="5.35.0" />
         <PackageReference Include="FastEndpoints.Security" Version="5.35.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.35.0" />
-        <PackageReference Include="MediatR" Version="12.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="9.0.2" />
@@ -53,35 +52,11 @@
       <Compile Update="Features\Players\Endpoints\UnequipRequest.cs">
         <DependentUpon>Unequip.cs</DependentUpon>
       </Compile>
-      <Compile Update="Features\Identity\Endpoints\CreateRequest.cs">
-        <DependentUpon>Create.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Identity\Endpoints\CreateRequestValidator.cs">
-        <DependentUpon>Create.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Identity\Endpoints\IsEmailUniqueRequest.cs">
-        <DependentUpon>IsEmailUnique.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Identity\Endpoints\IsEmailUniqueRequestValidator.cs">
-        <DependentUpon>IsEmailUnique.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Identity\Endpoints\LoginRequest.cs">
-        <DependentUpon>Login.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Identity\Endpoints\LoginRequestValidator.cs">
-        <DependentUpon>Login.cs</DependentUpon>
-      </Compile>
       <Compile Update="Features\ChatGptImageGeneration\Endpoints\CreateImageRequest.cs">
         <DependentUpon>CreateImage.cs</DependentUpon>
       </Compile>
-      <Compile Update="Features\Monsters\Endpoints\CreateMonsterRequest.cs">
-        <DependentUpon>CreateMonster.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Monsters\Endpoints\GetMonsterByNameRequest.cs">
-        <DependentUpon>GetMonster.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Features\Monsters\Endpoints\DeleteMonsterByNameRequest.cs">
-        <DependentUpon>DeleteMonster.cs</DependentUpon>
+      <Compile Update="Features\EquipmentBlueprint\Endpoints\CreateEquipmentBlueprintRequest.cs">
+        <DependentUpon>CreateEquipmentBlueprint.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

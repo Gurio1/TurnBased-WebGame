@@ -1,36 +1,35 @@
+using Game.Core.Common;
 using Game.Features.Battle.Hubs;
 using Game.Features.Players;
-using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Game.Features.Battle.PVE.Events;
 
-public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
+public class DefeatPlayerCommandHandler : IRequestHandler<DefeatPlayerCommand,ResultWithoutValue>
 {
     private readonly IBattleRepository battleRedisRepository;
     private readonly IPlayersMongoRepository playersMongoRepository;
     private readonly IHubContext<BattleHub> hubContext;
 
-    public PlayerDefeatedHandler(IBattleRepository battleRedisRepository,IPlayersMongoRepository playersMongoRepository,IHubContext<BattleHub> hubContext)
+    public DefeatPlayerCommandHandler(IBattleRepository battleRedisRepository,IPlayersMongoRepository playersMongoRepository,IHubContext<BattleHub> hubContext)
     {
         this.battleRedisRepository = battleRedisRepository;
         this.playersMongoRepository = playersMongoRepository;
         this.hubContext = hubContext;
     }
-    public async Task Handle(PlayerDefeatedEvent notification, CancellationToken cancellationToken)
+    public async Task<ResultWithoutValue> Handle(DefeatPlayerCommand notification, CancellationToken cancellationToken)
     {
         var playerResult = await playersMongoRepository.GetById(notification.CombatPlayer.Id);
 
         if (playerResult.IsFailure)
         {
-            //TODO: Send error
-            return;
+            return ResultWithoutValue.Failure(playerResult.Error);
         }
 
         var player = playerResult.Value;
 
         if (!player.InBattle())
-            throw new InvalidOperationException($"Player is not in battle - {nameof(PlayerDefeatedHandler)}");
+            throw new InvalidOperationException($"Player is not in battle - {nameof(DefeatPlayerCommandHandler)}");
 
         foreach (var usedItem in notification.CombatPlayer.UsedItems)
         {
@@ -67,5 +66,7 @@ public class PlayerDefeatedHandler : INotificationHandler<PlayerDefeatedEvent>
         await playersMongoRepository.UpdateAsync(player);
 
         await hubContext.Clients.User(player.Id).SendAsync("ReceiveBattleLose", true,cancellationToken: cancellationToken);
+        
+        return ResultWithoutValue.Success();
     }
 }

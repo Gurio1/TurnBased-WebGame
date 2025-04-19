@@ -4,6 +4,7 @@ using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using Game;
+using Game.Core.Common;
 using Game.Data;
 using Game.Data.Mongo;
 using Game.Features;
@@ -13,6 +14,7 @@ using Game.Features.Battle.Hubs;
 using Game.Features.Battle.Models;
 using Game.Features.Drop;
 using Game.Features.Equipment;
+using Game.Features.EquipmentBlueprints;
 using Game.Features.Identity;
 using Game.Features.Identity.SignalR;
 using Game.Features.Monsters;
@@ -67,7 +69,7 @@ MongoDbConfig.RegisterDiscriminator();
 
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
-    var connectionString =   builder.Configuration.GetConnectionString("MongoConnection");
+    string? connectionString =   builder.Configuration.GetConnectionString("MongoConnection");
     return new MongoClient(connectionString);
 });
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
@@ -86,11 +88,8 @@ builder.Services.AddScoped<BattleContext>();
 
 
 builder.Services.AddDataServices(builder.Configuration);
-builder.Services.AddIdentityServices(builder.Configuration);
-
-
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddIdentityServices();
+builder.Services.RegisterDispatcher();
 
 builder.Services.AddCors(options =>
 {

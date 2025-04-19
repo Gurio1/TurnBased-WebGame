@@ -1,16 +1,15 @@
-using Game.Logger;
-using MediatR;
+using Game.Core.Common;
 
 namespace Game.Features.Battle.Models;
 
 public class BattleContext
 {
-    private readonly IMediator mediator;
+    private readonly IDispatcher dispatcher;
     private string battleId = string.Empty;
 
-    public BattleContext(IMediator mediator) => this.mediator = mediator;
+    public BattleContext(IDispatcher dispatcher) => this.dispatcher = dispatcher;
     
-    public void PublishActionLog(string message) => mediator.Publish(new ActionLogNotification(battleId,message));
+    public void PublishActionLog(string message) => dispatcher.Dispatch(new SendActionLogCommand(battleId,message));
     
     public string GetBattleId()
     {
