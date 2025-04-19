@@ -1,4 +1,3 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Security;
@@ -7,14 +6,12 @@ using Game;
 using Game.Core.Common;
 using Game.Data;
 using Game.Data.Mongo;
-using Game.Features;
 using Game.Features.Abilities;
 using Game.Features.Battle;
 using Game.Features.Battle.Hubs;
 using Game.Features.Battle.Models;
 using Game.Features.Drop;
 using Game.Features.Equipment;
-using Game.Features.EquipmentBlueprints;
 using Game.Features.Identity;
 using Game.Features.Identity.SignalR;
 using Game.Features.Monsters;
@@ -22,7 +19,6 @@ using Game.Features.Players;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
-using SixLabors.ImageSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +72,6 @@ builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddSingleton<RedisProvider>();
 builder.Services.AddSingleton<IPlayersMongoRepository,PlayersMongoRepository>();
 builder.Services.AddSingleton<IMonstersMongoRepository,MonstersMongoRepository>();
-builder.Services.AddSingleton<IEquipmentTemplateMongoRepository,EquipmentTemplateMongoRepository>();
 builder.Services.AddSingleton<IAbilityMongoRepository, AbilityMongoRepository>();
 builder.Services.AddSingleton<IBattleRepository, BattleRedisRepository>();
 builder.Services.AddSingleton<IBattleService, BattleService>();
