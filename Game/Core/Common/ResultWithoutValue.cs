@@ -1,4 +1,4 @@
-namespace Game.Core;
+namespace Game.Core.Common;
 
 public class ResultWithoutValue
 {
@@ -19,8 +19,8 @@ public class ResultWithoutValue
         this.error = error;
     }
 
-    public static ResultWithoutValue Success() => new ResultWithoutValue(true, CustomError.None);
-    public static ResultWithoutValue Failure(CustomError customError) => new ResultWithoutValue(false, customError);
+    public static ResultWithoutValue Success() => new(true, CustomError.None);
+    public static ResultWithoutValue Failure(CustomError customError) => new(false, customError);
 
 
 }

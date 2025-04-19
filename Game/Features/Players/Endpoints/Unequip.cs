@@ -5,7 +5,7 @@ using Game.Features.Players.Contracts;
 
 namespace Game.Features.Players.Endpoints;
 
-public class Unequip : Endpoint<UnequipRequest>
+public sealed class Unequip : Endpoint<UnequipRequest>
 {
     private readonly IPlayersMongoRepository playersMongoRepository;
 

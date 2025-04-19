@@ -1,7 +1,7 @@
 using FastEndpoints;
 using FluentValidation;
 
-namespace Game.Features.Identity.Endpoints;
+namespace Game.Features.Identity.CreateUser;
 
 public class CreateRequestValidator : Validator<CreateRequest>
 {

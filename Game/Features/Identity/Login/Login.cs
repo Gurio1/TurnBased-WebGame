@@ -1,9 +1,10 @@
 using FastEndpoints;
+using Game.Features.Identity.Shared;
 using Microsoft.AspNetCore.Identity;
 
-namespace Game.Features.Identity.Endpoints;
+namespace Game.Features.Identity.Login;
 
-internal class Login(UserManager<User> userManager,ITokenFactory tokenFactory) : Endpoint<LoginRequest>
+public sealed class Login(UserManager<User> userManager,ITokenFactory tokenFactory) : Endpoint<LoginRequest>
 {
     public override void Configure()
     {

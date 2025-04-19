@@ -1,9 +1,6 @@
 using Game.Core.Models;
-using Game.Features;
 using Game.Features.Battle.Models;
-using MediatR;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
 
 namespace Game.Core.Abilities;
 

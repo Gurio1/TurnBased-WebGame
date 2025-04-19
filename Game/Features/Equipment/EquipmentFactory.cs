@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using Game.Core;
+using Game.Core.Common;
 using Game.Core.Equipment;
 
 namespace Game.Features.Equipment;

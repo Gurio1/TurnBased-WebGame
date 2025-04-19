@@ -1,9 +1,9 @@
 using System.Globalization;
 using FastEndpoints;
 
-namespace Game.Features.Monsters.Endpoints;
+namespace Game.Features.Monsters.DeleteMonster;
 
-public class DeleteMonster : Endpoint<DeleteMonsterByNameRequest>
+public sealed class DeleteMonster : Endpoint<DeleteMonsterByNameRequest>
 {
     private readonly IMonstersMongoRepository monstersMongoRepository;
 

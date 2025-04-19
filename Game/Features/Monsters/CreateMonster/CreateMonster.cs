@@ -1,12 +1,11 @@
 using System.Globalization;
 using FastEndpoints;
-using Game.Core;
 using Game.Core.Models;
 
-namespace Game.Features.Monsters.Endpoints;
+namespace Game.Features.Monsters.CreateMonster;
 
 //TODO : Write validation for all endpoints
-public class CreateMonster : Endpoint<CreateMonsterRequest>
+public sealed class CreateMonster : Endpoint<CreateMonsterRequest>
 {
     private readonly IMonstersMongoRepository monstersMongoRepository;
 
@@ -34,6 +33,6 @@ public class CreateMonster : Endpoint<CreateMonsterRequest>
            return;
        }
        
-       await SendCreatedAtAsync<GetMonster>(new {Name = monster.Name}, result.Value, cancellation: ct);
+       await SendCreatedAtAsync<GetMonster.GetMonster>(new {Name = monster.Name}, result.Value, cancellation: ct);
     }
 }

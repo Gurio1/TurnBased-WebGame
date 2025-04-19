@@ -1,10 +1,9 @@
 using System.Globalization;
 using FastEndpoints;
-using Game.Core;
 
-namespace Game.Features.Monsters.Endpoints;
+namespace Game.Features.Monsters.GetMonster;
 
-public class GetMonster : Endpoint<GetMonsterByNameRequest>
+public sealed class GetMonster : Endpoint<GetMonsterByNameRequest>
 {
     private readonly IMonstersMongoRepository monstersMongoRepository;
 

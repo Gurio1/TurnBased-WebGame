@@ -11,7 +11,7 @@ public abstract class EquipmentBase : Item
     public override ItemType ItemType { get; set; } = ItemType.Equipment;
     public abstract string Slot { get; set; }
     public override ItemInteractions Interactions { get; } = ItemInteractions.Equip | ItemInteractions.Sell;
-    public List<EquipmentAttribute> Attributes { get; set; } = new();
+    public List<EquipmentStat> Attributes { get; set; } = new();
     
     public override int MaxInventorySlotQuantity { get; set; } = 1;
     

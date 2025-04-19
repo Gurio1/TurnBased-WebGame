@@ -1,3 +1,3 @@
-namespace Game.Features.Monsters.Endpoints;
+namespace Game.Features.Monsters.GetMonster;
 
 public record GetMonsterByNameRequest(string MonsterName);

@@ -2,9 +2,9 @@ using FastEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Game.Features.Identity.Endpoints;
+namespace Game.Features.Identity.IsEmailUnique;
 
-internal class IsEmailUnique(UserManager<User> userManager) : Endpoint<IsEmailUniqueRequest>
+public sealed class IsEmailUnique(UserManager<User> userManager) : Endpoint<IsEmailUniqueRequest>
 {
     
     public override void Configure()

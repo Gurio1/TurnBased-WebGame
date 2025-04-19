@@ -1,5 +1,6 @@
 using Game.Core;
 using Game.Core.Abilities;
+using Game.Core.Common;
 using Game.Data.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;

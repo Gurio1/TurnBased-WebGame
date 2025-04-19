@@ -20,8 +20,7 @@ public class ExecutionTimeMiddleware
         stopwatch.Stop();
         
         var logger = context.RequestServices.GetRequiredService<ILogger<ExecutionTimeMiddleware>>();
-        logger.LogInformation(string.Format("Request to {0} took {1}ms", context.Request.Path,
-            stopwatch.ElapsedMilliseconds));
+        logger.LogInformation("Request to {RequestPath} took {StopwatchElapsedMilliseconds}ms", context.Request.Path, stopwatch.ElapsedMilliseconds);
         
         
     }

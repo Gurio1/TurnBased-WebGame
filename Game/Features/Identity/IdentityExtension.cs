@@ -1,3 +1,4 @@
+using Game.Features.Identity.Shared;
 using Microsoft.AspNetCore.Identity;
 
 namespace Game.Features.Identity;
@@ -5,8 +6,7 @@ namespace Game.Features.Identity;
 public static class IdentityExtension
 {
     public static IServiceCollection AddIdentityServices(
-        this IServiceCollection services,
-        ConfigurationManager config)
+        this IServiceCollection services)
     {
         services.Configure<IdentityOptions>(options =>
         {

@@ -12,7 +12,7 @@ namespace Game.Features.Battle.Hubs;
 //As docs says TCP connections are limited per server.So for scale we need another server...To sync their connection we need to set up Redis backplane(For an unattainable future)
 
 [Authorize]
-public class BattleHub : Hub
+public sealed class BattleHub : Hub
 {
     private const string PlayerIdClaim = "PlayerId";
     private const string BattleCachePrefix = "battle:";
@@ -44,7 +44,7 @@ public class BattleHub : Hub
 
         if (battleResult.IsFailure)
         {
-            await SendBattleError(((ResultWithoutValue)battleResult).Error.Description);
+            await SendBattleError(battleResult.Error.Description);
             return;
         }
 
@@ -63,7 +63,6 @@ public class BattleHub : Hub
             Console.WriteLine(e);
             throw;
         }
-        
         
         await Groups.AddToGroupAsync(Context.ConnectionId, battle.Id);
         await Clients.Group(battle.Id).SendAsync("ReceiveBattleData", battle);
@@ -93,7 +92,7 @@ public class BattleHub : Hub
         var battleResult = await battleRedisService.GetActiveBattleAsync(battleId);
         if (battleResult.IsFailure)
         {
-            await SendBattleError(((ResultWithoutValue)battleResult).Error.Description);
+            await SendBattleError(battleResult.Error.Description);
             return;
         }
         
@@ -115,8 +114,6 @@ public class BattleHub : Hub
             
             await cache.RemoveAsync($"battle:{playerId}");
         }
-        
-
         await base.OnDisconnectedAsync(exception);
     }
     

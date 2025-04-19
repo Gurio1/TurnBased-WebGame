@@ -54,6 +54,6 @@ public static class MongoDbConfig
         BsonSerializer.RegisterDiscriminatorConvention(typeof(Ability), discriminatorConvention);
         BsonSerializer.RegisterDiscriminatorConvention(typeof(EquipmentBase), discriminatorConvention);
         BsonSerializer.RegisterDiscriminatorConvention(typeof(Item), discriminatorConvention);
-        BsonSerializer.RegisterDiscriminatorConvention(typeof(EquipmentAttribute), discriminatorConvention);
+        BsonSerializer.RegisterDiscriminatorConvention(typeof(EquipmentStat), discriminatorConvention);
     }
 }

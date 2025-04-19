@@ -1,4 +1,4 @@
-namespace Game.Features.Identity;
+namespace Game.Features.Identity.Shared;
 
 public interface ITokenFactory
 {

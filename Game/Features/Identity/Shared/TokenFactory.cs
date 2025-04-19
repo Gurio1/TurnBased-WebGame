@@ -1,6 +1,6 @@
 using FastEndpoints.Security;
 
-namespace Game.Features.Identity;
+namespace Game.Features.Identity.Shared;
 
 public class TokenFactory : ITokenFactory
 {

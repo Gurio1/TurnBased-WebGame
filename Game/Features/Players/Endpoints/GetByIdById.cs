@@ -4,7 +4,7 @@ using Game.Features.Players.Contracts;
 
 namespace Game.Features.Players.Endpoints;
 
-public class GetByIdById : Endpoint<GetByIdRequest>
+public sealed class GetByIdById : Endpoint<GetByIdRequest>
 {
     private readonly IPlayersMongoRepository playersMongoRepository;
 

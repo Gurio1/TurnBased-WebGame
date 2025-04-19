@@ -1,7 +1,4 @@
-using Game.Core.Models;
-using Game.Features;
 using Game.Features.Battle.Models;
-using MediatR;
 
 namespace Game.Core.AbilityEffects;
 

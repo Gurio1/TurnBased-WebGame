@@ -1,9 +1,6 @@
 using Game.Core.AbilityEffects;
 using Game.Core.Models;
-using Game.Features;
 using Game.Features.Battle.Models;
-using Game.Logger;
-using MediatR;
 
 namespace Game.Core.Abilities;
 

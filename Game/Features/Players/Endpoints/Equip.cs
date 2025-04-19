@@ -8,7 +8,7 @@ namespace Game.Features.Players.Endpoints;
 
 
 //TODO : If player is in battle he cannot equip or sell items.Only use consumables
-public class Equip : Endpoint<EquipRequest>
+public sealed class Equip : Endpoint<EquipRequest>
 {
     private readonly IPlayersMongoRepository playersMongoRepository;
 

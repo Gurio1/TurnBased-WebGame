@@ -1,7 +1,9 @@
 using System.Globalization;
 using Game.Core;
+using Game.Core.Common;
 using Game.Core.Equipment;
 using Game.Features.Attributes;
+using Game.Features.EquipmentBlueprints;
 using Game.Utilities;
 
 namespace Game.Features.Equipment;
@@ -44,11 +46,11 @@ public class EquipmentGenerator : IEquipmentGenerator
 
             float randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
 
-            range.Attribute.Value = range.Attribute is CriticalChanceAttribute or CriticalDamageAttribute
+            range.Stat.Value = range.Stat is CriticalChanceStat or CriticalDamageStat
                 ? randomValue.RoundTo2()
                 : randomValue.RoundTo1();
             
-            equipmentResult.Value.Attributes.Add(range.Attribute);
+            equipmentResult.Value.Attributes.Add(range.Stat);
         }
 
         return equipmentResult;

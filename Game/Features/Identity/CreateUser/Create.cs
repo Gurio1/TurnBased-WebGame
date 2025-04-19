@@ -1,15 +1,16 @@
 using FastEndpoints;
 using Game.Core.Models;
+using Game.Features.Identity.Shared;
 using Game.Features.Players;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Game.Features.Identity.Endpoints;
+namespace Game.Features.Identity.CreateUser;
 
 
 //TODO : Implement refresh token in FastEndpoints(https://fast-endpoints.com/docs/security#jwt-refresh-tokens)
 
-public class Create : Endpoint<CreateRequest>
+public sealed class Create : Endpoint<CreateRequest>
 {
     private readonly UserManager<User> userManager;
     private readonly ITokenFactory tokenFactory;
