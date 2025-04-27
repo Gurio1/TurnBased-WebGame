@@ -6,5 +6,5 @@ public interface IRequest<TResponse>
 
 public interface IDispatcher
 {
-    Task<TResponse> Dispatch<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
+    Task<TResponse> DispatchAsync<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default);
 }

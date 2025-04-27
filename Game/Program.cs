@@ -71,8 +71,6 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddSingleton<RedisProvider>();
 builder.Services.AddSingleton<IPlayersMongoRepository,PlayersMongoRepository>();
-builder.Services.AddSingleton<IMonstersMongoRepository,MonstersMongoRepository>();
-builder.Services.AddSingleton<IAbilityMongoRepository, AbilityMongoRepository>();
 builder.Services.AddSingleton<IBattleRepository, BattleRedisRepository>();
 builder.Services.AddSingleton<IBattleService, BattleService>();
 builder.Services.AddSingleton<IDropService,DropService>();

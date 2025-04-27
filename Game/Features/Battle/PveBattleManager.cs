@@ -41,7 +41,7 @@ public class PveBattleManager
         
         
         if (pveBattle.Monster.IsDead())
-            return await dispatcher.Dispatch(new DefeatMonsterCommand(pveBattle.Monster, pveBattle.CombatPlayer));
+            return await dispatcher.DispatchAsync(new DefeatMonsterCommand(pveBattle.Monster, pveBattle.CombatPlayer));
         
         ExecuteDebuffs(pveBattle.Monster, battleContext);
         
@@ -49,10 +49,10 @@ public class PveBattleManager
         
         enemyAbility!.Execute(pveBattle.Monster, player, battleContext);
         
-        if (player.IsDead()) return await dispatcher.Dispatch(new DefeatPlayerCommand(pveBattle.CombatPlayer));
+        if (player.IsDead()) return await dispatcher.DispatchAsync(new DefeatPlayerCommand(pveBattle.CombatPlayer));
         
         //TODO : Log if any error
-        await dispatcher.Dispatch(new SendBattleDataCommand(pveBattle));
+        await dispatcher.DispatchAsync(new SendBattleDataCommand(pveBattle));
         
         //TODO: Create command. Get rid of Repositories
         await battleRedisRepository.SaveBattleData(pveBattle);
