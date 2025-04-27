@@ -7,7 +7,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Models;
 
-public class Player
+public class Player : IHasAbilityIds
 {
     [BsonElement("Inventory")] private readonly List<InventorySlot> inventory = new();
     

@@ -2,4 +2,4 @@
 
 namespace Game.Features.Monsters.CreateMonster;
 
-public sealed record Request(string Name, Stats Stats, Dictionary<string, float> DropsTable, string[] AbilityIds);
+public sealed record Request(string Name, Stats Stats, Dictionary<string, float> DropsTable, List<string> AbilityIds);

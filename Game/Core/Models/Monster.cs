@@ -8,11 +8,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Models;
 
-public class Monster : CombatEntity
+public class Monster : CombatEntity, IHasAbilityIds
 {
     public Dictionary<string, float> DropsTable { get; init; }
     
-    [JsonIgnore] public string[] AbilityIds { get; set; } = [];
+    [JsonIgnore] public List<string> AbilityIds { get; set; } = [];
     
     [BsonIgnore] public Ability?[] Abilities { get; set; } = [];
     

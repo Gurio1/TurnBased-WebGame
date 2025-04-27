@@ -32,9 +32,7 @@ public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Monster>>
         {
             var lookupResult = await collection.AsQueryable()
                 .Where(p => p.Name == request.MonsterName)
-                .Lookup(mongoDatabase.GetCollection<Ability>(collName),
-                    (m, ab) => ab
-                        .Where(ability => m.AbilityIds.Contains(ability.Id)))
+                .WithAbilities(mongoDatabase.GetCollection<Ability>(collName))
                 .FirstOrDefaultAsync(cancellationToken: cancellationToken);
             
             lookupResult.Local.Abilities = lookupResult.Results.ToArray();
