@@ -5,13 +5,13 @@ using Endpoint = Game.Features.Equipment.Blueprints.GetByEquipmentId.Endpoint;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 
-public sealed class CreateEquipmentBlueprint(IDispatcher dispatcher) : Endpoint<Command>
+public sealed class CreateEquipmentBlueprint(IDispatcher dispatcher) : Endpoint<CreateCommand>
 {
     public override void Configure() => Post(EndpointSettings.EndpointName);
     
-    public override async Task HandleAsync(Command req, CancellationToken ct)
+    public override async Task HandleAsync(CreateCommand req, CancellationToken ct)
     {
-        var result = await dispatcher.Dispatch(req, ct);
+        var result = await dispatcher.DispatchAsync(req, ct);
         
         if (result.IsFailure)
         {

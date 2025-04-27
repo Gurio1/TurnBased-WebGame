@@ -4,7 +4,7 @@ using Game.Core.Common;
 
 namespace Game.Features.Monsters.GetMonster;
 
-public sealed class Endpoint : Endpoint<Query>
+public sealed class Endpoint : Endpoint<GetQuery>
 {
     private readonly IDispatcher dispatcher;
     
@@ -14,12 +14,12 @@ public sealed class Endpoint : Endpoint<Query>
     {
         Get(EndpointSettings.EndpointName + "/{MonsterName}");
         AllowAnonymous();
-        Description(x => x.Accepts<Query>());
+        Description(x => x.Accepts<GetQuery>());
     }
     
-    public override async Task HandleAsync(Query req, CancellationToken ct)
+    public override async Task HandleAsync(GetQuery req, CancellationToken ct)
     {
-        var monsterResult = await dispatcher.Dispatch(req, ct);
+        var monsterResult = await dispatcher.DispatchAsync(req, ct);
         
         if (monsterResult.IsFailure)
         {

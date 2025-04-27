@@ -3,4 +3,4 @@ using Game.Core.Equipment;
 
 namespace Game.Features.Equipment.Blueprints.Update;
 
-public sealed record Command(EquipmentBlueprint Blueprint) : IRequest<ResultWithoutValue>;
+public sealed record UpdateCommand(EquipmentBlueprint Blueprint) : IRequest<ResultWithoutValue>;

@@ -3,7 +3,7 @@ using Game.Core.Equipment;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 
-public sealed record Command(
+public sealed record CreateCommand(
     string EquipmentId,
     List<AttributeRange> AttributeRanges,
     Dictionary<string, double> AttributeCountWeights) : IRequest<Result<EquipmentBlueprint>>;

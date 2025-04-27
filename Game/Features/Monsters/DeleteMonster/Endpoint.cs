@@ -4,7 +4,7 @@ using Game.Core.Common;
 
 namespace Game.Features.Monsters.DeleteMonster;
 
-public sealed class Endpoint : Endpoint<Command>
+public sealed class Endpoint : Endpoint<DeleteCommand>
 {
     private readonly IDispatcher dispatcher;
     
@@ -13,9 +13,9 @@ public sealed class Endpoint : Endpoint<Command>
     public override void Configure() =>
         Delete(EndpointSettings.EndpointName + "/{MonsterName}");
     
-    public override async Task HandleAsync(Command req, CancellationToken ct)
+    public override async Task HandleAsync(DeleteCommand req, CancellationToken ct)
     {
-        var result = await dispatcher.Dispatch(req, ct);
+        var result = await dispatcher.DispatchAsync(req, ct);
         
         if (result.IsFailure)
         {

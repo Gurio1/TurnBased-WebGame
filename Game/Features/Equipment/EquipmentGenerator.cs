@@ -18,7 +18,7 @@ public class EquipmentGenerator : IEquipmentGenerator
         
         if (equipmentResult.IsFailure) return equipmentResult;
         
-        var blueprintResult = await dispatcher.Dispatch(new GetBlueprintQuery(equipmentResult.Value.EquipmentId));
+        var blueprintResult = await dispatcher.DispatchAsync(new GetBlueprintQuery(equipmentResult.Value.EquipmentId));
         
         if (blueprintResult.IsFailure) return blueprintResult.AsError<EquipmentBase>();
         

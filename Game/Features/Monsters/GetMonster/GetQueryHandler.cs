@@ -8,13 +8,13 @@ using MongoDB.Driver.Linq;
 
 namespace Game.Features.Monsters.GetMonster;
 
-public sealed class QueryHandler : IRequestHandler<Query, Result<Monster>>
+public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Monster>>
 {
     private readonly IMongoDatabase mongoDatabase;
     private readonly IOptions<MongoSettings> settings;
     private readonly IMongoCollection<Monster> collection;
     
-    public QueryHandler(IMongoClient mongoClient,
+    public GetQueryHandler(IMongoClient mongoClient,
         IOptions<MongoSettings> settings,IMongoCollectionProvider<Monster> provider)
     {
         this.settings = settings;
@@ -23,7 +23,7 @@ public sealed class QueryHandler : IRequestHandler<Query, Result<Monster>>
         mongoDatabase = mongoClient.GetDatabase(
             settings.Value.DatabaseName);
     }
-    public async Task<Result<Monster>> Handle(Query request, CancellationToken cancellationToken)
+    public async Task<Result<Monster>> Handle(GetQuery request, CancellationToken cancellationToken)
     {
         if (!settings.Value.CollectionNames.TryGetValue(nameof(Ability), out string? collName))
             return Result<Monster>.Failure($"No mongo collection name configured for type '{nameof(Ability)}'");

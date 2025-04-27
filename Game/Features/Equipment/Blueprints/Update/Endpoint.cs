@@ -4,13 +4,13 @@ using Game.Core.Common;
 
 namespace Game.Features.Equipment.Blueprints.Update;
 
-public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<Command>
+public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<UpdateCommand>
 {
     public override void Configure() => Put(EndpointSettings.EndpointName);
     
-    public override async Task HandleAsync(Command req, CancellationToken ct)
+    public override async Task HandleAsync(UpdateCommand req, CancellationToken ct)
     {
-        var result = await dispatcher.Dispatch(req, ct);
+        var result = await dispatcher.DispatchAsync(req, ct);
         
         if (result.IsFailure)
         {

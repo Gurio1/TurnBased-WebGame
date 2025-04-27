@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.GetByEquipmentId;
 
-public sealed class QueryHandler : IRequestHandler<Query, Result<EquipmentBlueprint>>
+public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<EquipmentBlueprint>>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public QueryHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public GetQueryHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
     
-    public async Task<Result<EquipmentBlueprint>> Handle(Query request,
+    public async Task<Result<EquipmentBlueprint>> Handle(GetQuery request,
         CancellationToken cancellationToken)
     {
         try

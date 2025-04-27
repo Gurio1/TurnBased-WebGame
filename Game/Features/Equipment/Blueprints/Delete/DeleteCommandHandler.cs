@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Delete;
 
-public sealed class CommandHandler : IRequestHandler<Command, ResultWithoutValue>
+public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, ResultWithoutValue>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public CommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public DeleteCommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
     
-    public async Task<ResultWithoutValue> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {
         try
         {

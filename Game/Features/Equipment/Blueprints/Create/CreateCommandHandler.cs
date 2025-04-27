@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 
-public sealed class CommandHandler : IRequestHandler<Command, Result<EquipmentBlueprint>>
+public sealed class CreateCommandHandler : IRequestHandler<CreateCommand, Result<EquipmentBlueprint>>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public CommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public CreateCommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
     
-    public async Task<Result<EquipmentBlueprint>> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Result<EquipmentBlueprint>> Handle(CreateCommand request, CancellationToken cancellationToken)
     {
         var newTemplate = new EquipmentBlueprint
         {

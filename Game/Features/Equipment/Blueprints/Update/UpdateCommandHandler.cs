@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Update;
 
-public sealed class CommandHandler : IRequestHandler<Command, ResultWithoutValue>
+public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, ResultWithoutValue>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public CommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public UpdateCommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
     
-    public async Task<ResultWithoutValue> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<ResultWithoutValue> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {
         try
         {

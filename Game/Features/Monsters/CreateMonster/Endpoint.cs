@@ -22,7 +22,7 @@ public sealed class Endpoint : Endpoint<Request>
             Name = req.Name, AbilityIds = req.AbilityIds, Stats = req.Stats, DropsTable = req.DropsTable
         };
         
-        var result = await dispatcher.Dispatch(new Command(monster), ct);
+        var result = await dispatcher.DispatchAsync(new CreateCommand(monster), ct);
         
         if (result.IsFailure)
         {

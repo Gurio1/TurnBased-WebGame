@@ -4,13 +4,13 @@ using Game.Core.Common;
 
 namespace Game.Features.Equipment.Blueprints.GetByEquipmentId;
 
-public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<Query>
+public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<GetQuery>
 {
     public override void Configure() => Get(EndpointSettings.EndpointName + "/{EquipmentId}");
     
-    public override async Task HandleAsync(Query req, CancellationToken ct)
+    public override async Task HandleAsync(GetQuery req, CancellationToken ct)
     {
-        var result = await dispatcher.Dispatch(req, ct);
+        var result = await dispatcher.DispatchAsync(req, ct);
         
         if (result.IsFailure)
         {

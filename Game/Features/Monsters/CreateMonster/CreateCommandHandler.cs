@@ -5,13 +5,13 @@ using MongoDB.Driver;
 
 namespace Game.Features.Monsters.CreateMonster;
 
-public sealed class CommandHandler : IRequestHandler<Command,Result<Monster>>
+public sealed class CreateCommandHandler : IRequestHandler<CreateCommand,Result<Monster>>
 {
     private readonly IMongoCollection<Monster> collection;
     
-    public CommandHandler(IMongoCollectionProvider<Monster> provider) => collection = provider.Collection;
+    public CreateCommandHandler(IMongoCollectionProvider<Monster> provider) => collection = provider.Collection;
     
-    public async Task<Result<Monster>> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Result<Monster>> Handle(CreateCommand request, CancellationToken cancellationToken)
     {
         try
         {

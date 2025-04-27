@@ -5,12 +5,12 @@ using MongoDB.Driver;
 
 namespace Game.Features.Monsters.DeleteMonster;
 
-public sealed class CommandHandler : IRequestHandler<Command,ResultWithoutValue>
+public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand,ResultWithoutValue>
 {
     private readonly IMongoCollection<Monster> collection;
     
-    public CommandHandler(IMongoCollectionProvider<Monster> provider) => collection = provider.Collection;
-    public async Task<ResultWithoutValue> Handle(Command request, CancellationToken cancellationToken)
+    public DeleteCommandHandler(IMongoCollectionProvider<Monster> provider) => collection = provider.Collection;
+    public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {
         try
         {
