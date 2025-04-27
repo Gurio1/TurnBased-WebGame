@@ -17,7 +17,8 @@ public class PlayerViewModel
     public string CharacterType { get; set; }
 }
 
-public static partial class  Mapper {
+public static class Mapper
+{
     public static PlayerViewModel ToViewModel(this Player model) =>
         new()
         {
@@ -27,7 +28,9 @@ public static partial class  Mapper {
             Debuffs = model.Debuffs,
             CharacterType = model.CharacterType,
             Equipment = model.Equipment,
-            InventoryEquipmentItems = model.Inventory.Select(s => s.Item).Where(i => i.ItemType == ItemType.Equipment).Cast<EquipmentBase>().ToList(),
+            InventoryEquipmentItems =
+                model.Inventory.Select(s => s.Item).Where(i => i.ItemType == ItemType.Equipment)
+                    .Cast<EquipmentBase>().ToList(),
             OtherInventoryItems = model.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList()
         };
 }
