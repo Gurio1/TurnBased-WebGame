@@ -1,4 +1,4 @@
-namespace Game.Core.Common;
+namespace Game.Core.SharedKernel;
 
 public interface IRequest<TResponse>
 {

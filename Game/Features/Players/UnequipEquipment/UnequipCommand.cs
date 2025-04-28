@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Game.Core.Common;
+using Game.Core.SharedKernel;
 
 namespace Game.Features.Players.UnequipEquipment;
 

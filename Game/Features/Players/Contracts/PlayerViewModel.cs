@@ -1,6 +1,6 @@
-using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
 using Game.Core.Models;
+using Game.Core.StatusEffects;
 using Game.Features.Abilities.Contracts;
 
 namespace Game.Features.Players.Contracts;

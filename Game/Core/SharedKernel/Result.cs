@@ -1,4 +1,4 @@
-namespace Game.Core.Common;
+namespace Game.Core.SharedKernel;
 
 public class Result<T> : ResultWithoutValue
 {
@@ -15,11 +15,12 @@ public class Result<T> : ResultWithoutValue
     public Result<TA> AsError<TA>() => Result<TA>.CustomError(Error);
     
 #pragma warning disable CA1000
-    public static Result<T> Success(T result) => new(true, result, Common.CustomError.None);
-    public static Result<T> NotFound(string message) => new(false, default, new CustomError("404", message));
-    public static Result<T> Invalid(string message) => new(false, default, new CustomError("400", message));
-    public static Result<T> Failure(string message) => new(false, default, new CustomError("500", message));
+    public static Result<T> Success(T result) => new(true, result, SharedKernel.CustomError.None);
+    public static new Result<T> NotFound(string message) => new(false, default, new CustomError("404", message));
+    public static new Result<T> Invalid(string message) => new(false, default, new CustomError("400", message));
+    public static new Result<T> Failure(string message) => new(false, default, new CustomError("500", message));
     public static Result<T> CustomError(CustomError customError) => new(false, default, customError);
+    
 #pragma warning restore CA1000
 }
 

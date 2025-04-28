@@ -1,6 +1,6 @@
 using System.Globalization;
 using FastEndpoints;
-using Game.Core.Common;
+using Game.Core.SharedKernel;
 using Game.Features.Identity.Shared;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

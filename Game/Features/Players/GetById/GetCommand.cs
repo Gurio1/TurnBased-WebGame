@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
-using Game.Core.Common;
 using Game.Core.Models;
+using Game.Core.SharedKernel;
 
 namespace Game.Features.Players.GetById;
 

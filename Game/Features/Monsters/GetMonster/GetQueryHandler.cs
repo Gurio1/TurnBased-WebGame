@@ -1,6 +1,6 @@
 ﻿using Game.Core.Abilities;
-using Game.Core.Common;
 using Game.Core.Models;
+using Game.Core.SharedKernel;
 using Game.Data.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -8,6 +8,7 @@ using MongoDB.Driver.Linq;
 
 namespace Game.Features.Monsters.GetMonster;
 
+//TODO: Index monster name
 public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Monster>>
 {
     private readonly IMongoDatabase mongoDatabase;

@@ -1,5 +1,6 @@
-using Game.Core.Common;
+using Game.Core.Equipment.EquipmentGeneration;
 using Game.Core.Models;
+using Game.Core.SharedKernel;
 using Game.Features.Equipment;
 using Game.Utilities;
 

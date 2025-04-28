@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Game.Core.Common;
+namespace Game.Core.SharedKernel;
 
 public class Dispatcher : IDispatcher
 {

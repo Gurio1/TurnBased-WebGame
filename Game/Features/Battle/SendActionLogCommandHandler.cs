@@ -1,4 +1,4 @@
-﻿using Game.Core.Common;
+﻿using Game.Core.SharedKernel;
 using Game.Features.Battle.Hubs;
 using Microsoft.AspNetCore.SignalR;
 

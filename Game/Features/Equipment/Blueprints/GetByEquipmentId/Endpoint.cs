@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Core.Common;
+using Game.Core.SharedKernel;
 
 namespace Game.Features.Equipment.Blueprints.GetByEquipmentId;
 
