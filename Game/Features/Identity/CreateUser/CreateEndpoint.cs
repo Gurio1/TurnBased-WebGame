@@ -24,7 +24,7 @@ public sealed class CreateEndpoint : Endpoint<CreateRequest>
     
     public override void Configure()
     {
-        Post("/users");
+        Post(EndpointSettings.EndpointName);
         AllowAnonymous();
     }
     

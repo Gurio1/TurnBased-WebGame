@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Game.Features.Identity.Login;
 
-public sealed class LoginEndpoint(UserManager<User> userManager, ITokenFactory tokenFactory) : Endpoint<LoginRequest>
+public sealed class Endpoint(UserManager<User> userManager, ITokenFactory tokenFactory) : Endpoint<Request>
 {
     public override void Configure()
     {
-        Post("/users/login");
+        Post($"{EndpointSettings.EndpointName}/login");
         AllowAnonymous();
     }
     
-    public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
+    public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         var user = await userManager.FindByEmailAsync(req.Email);
         

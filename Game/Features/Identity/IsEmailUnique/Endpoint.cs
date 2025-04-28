@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Game.Features.Identity.IsEmailUnique;
 
-public sealed class IsEmailUniqueEndpoint(UserManager<User> userManager) : Endpoint<IsEmailUniqueRequest>
+public sealed class Endpoint(UserManager<User> userManager) : Endpoint<Request>
 {
     public override void Configure()
     {
-        Post("/users/check-email");
+        Post($"{EndpointSettings.EndpointName}/check-email");
         AllowAnonymous();
     }
     
-    public override async Task HandleAsync(IsEmailUniqueRequest req, CancellationToken ct)
+    public override async Task HandleAsync(Request req, CancellationToken ct)
     {
         bool isNotUnique = await userManager.Users.AnyAsync(u => u.Email == req.Email, ct);
         

@@ -1,11 +1,11 @@
 using FastEndpoints;
 using FluentValidation;
 
-namespace Game.Features.Identity.IsEmailUnique;
+namespace Game.Features.Identity.Login;
 
-public class IsEmailUniqueRequestValidator : Validator<IsEmailUniqueRequest>
+public class RequestValidator : Validator<Request>
 {
-    public IsEmailUniqueRequestValidator() =>
+    public RequestValidator() =>
         RuleFor(x => x.Email)
             .NotEmpty()
             .WithMessage("Email address is required")
