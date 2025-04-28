@@ -1,6 +1,6 @@
 using Game.Features.Battle.Models;
 
-namespace Game.Core.AbilityEffects;
+namespace Game.Core.StatusEffects;
 
 public sealed class Bleed : IDebuff
 {

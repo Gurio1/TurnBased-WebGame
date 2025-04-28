@@ -1,5 +1,5 @@
-using Game.Core.AbilityEffects;
 using Game.Core.Models;
+using Game.Core.StatusEffects;
 using Game.Features.Battle.Models;
 
 namespace Game.Core.Abilities;

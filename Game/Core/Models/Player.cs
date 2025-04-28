@@ -1,7 +1,8 @@
 using System.Text.Json.Serialization;
 using Game.Core.Abilities;
-using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
+using Game.Core.SharedKernel;
+using Game.Core.StatusEffects;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -31,7 +32,8 @@ public class Player : IHasAbilityIds
     
     public void Equip(EquipmentBase equipmentItem)
     {
-        if (Equipment.TryGetValue(equipmentItem.Slot, out var equippedItem) && equippedItem is not null)
+        if (Equipment.TryGetValue(equipmentItem.Slot, out var equippedItem)
+            && equippedItem is not null)
         {
             AddToInventory(equippedItem);
             equippedItem.RemoveStats(this);
@@ -42,17 +44,20 @@ public class Player : IHasAbilityIds
         equipmentItem.ApplyStats(this);
     }
     
-    public bool Unequip(string equipmentSlot)
+    public ResultWithoutValue Unequip(string equipmentSlot)
     {
-        if (!Equipment.TryGetValue(equipmentSlot, out var equippedItem)) return false;
+        if (!Equipment.TryGetValue(equipmentSlot, out var equippedItem))
+            return ResultWithoutValue.Invalid($"'{equipmentSlot} slot doesn't exist as equipment slot");
         
-        if (equippedItem is null) return false;
+        if (equippedItem == null)
+            return ResultWithoutValue.Invalid($"Player with id '{Id}' doesn't have equipped item on slot '{equipmentSlot}'");;
+        
         
         equippedItem.RemoveStats(this);
         Equipment.Remove(equipmentSlot);
         AddToInventory(equippedItem);
         
-        return true;
+        return ResultWithoutValue.Success();
     }
     
     public void AddToInventory(Item item)
@@ -65,6 +70,7 @@ public class Player : IHasAbilityIds
             slot.Quantity++;
     }
     
+    //TODO : Add validation if slot item quantity <= 0
     public void RemoveSlotFromInventory(InventorySlot slot) => inventory.Remove(slot);
     
     public void RemoveItemFromInventory(Item item)

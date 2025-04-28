@@ -1,8 +1,8 @@
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Game.Core.Abilities;
-using Game.Core.AbilityEffects;
 using Game.Core.Equipment;
+using Game.Core.StatusEffects;
 using Game.Features.Battle.Models;
 using MongoDB.Bson.Serialization.Attributes;
 
