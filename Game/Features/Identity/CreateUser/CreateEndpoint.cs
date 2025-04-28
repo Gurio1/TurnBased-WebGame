@@ -1,7 +1,7 @@
+using System.Globalization;
 using FastEndpoints;
-using Game.Core.Models;
+using Game.Core.Common;
 using Game.Features.Identity.Shared;
-using Game.Features.Players;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,16 +11,15 @@ namespace Game.Features.Identity.CreateUser;
 
 public sealed class CreateEndpoint : Endpoint<CreateRequest>
 {
-    private readonly IPlayersMongoRepository playersMongoRepository;
     private readonly ITokenFactory tokenFactory;
     private readonly UserManager<User> userManager;
+    private readonly IDispatcher dispatcher;
     
-    public CreateEndpoint(UserManager<User> userManager, ITokenFactory tokenFactory,
-        IPlayersMongoRepository playersMongoRepository)
+    public CreateEndpoint(UserManager<User> userManager, ITokenFactory tokenFactory,IDispatcher dispatcher)
     {
         this.userManager = userManager;
+        this.dispatcher = dispatcher;
         this.tokenFactory = tokenFactory;
-        this.playersMongoRepository = playersMongoRepository;
     }
     
     public override void Configure()
@@ -31,40 +30,43 @@ public sealed class CreateEndpoint : Endpoint<CreateRequest>
     
     public override async Task HandleAsync(CreateRequest req, CancellationToken ct)
     {
-        bool isEmailNotUnique = await userManager.Users.AnyAsync(u => u.Email == req.Email, ct);
-        
-        if (isEmailNotUnique) ThrowError(request => request.Email, "This email is already taken");
-        
         var newUser = new User { UserName = req.Email, Email = req.Email };
         
-        var character = new Player
-        {
-            AbilityIds =
-                ["0", "1", "2"],
-            Stats = new Stats
-            {
-                MaxHealth = 250,
-                CriticalDamage = 1.3f,
-                CriticalChance = 0.1f,
-                Damage = 20f,
-                CurrentHealth = 250f
-            }
-        };
+        string playerId = await CreatePlayerAsync(ct);
         
-        await playersMongoRepository.CreateAsync(character);
+        newUser.PlayerId = playerId;
         
-        newUser.PlayerId = character.Id;
-        
-        var result = await userManager.CreateAsync(newUser, req.Password);
-        
-        if (!result.Succeeded)
-        {
-            foreach (var er in result.Errors) AddError(er.Description);
-            ThrowIfAnyErrors();
-        }
+        await CreateUserAsync(newUser,req.Password,ct);
         
         string token = tokenFactory.CreateToken(newUser, Config);
         
         await SendOkAsync(new { token }, ct);
+    }
+    
+    private async Task<string> CreatePlayerAsync(CancellationToken ct)
+    {
+        var result = await dispatcher.DispatchAsync(new CreatePlayerCommand(), ct);
+        
+        if (result.IsFailure)
+        {
+            ThrowError(r => r, result.Error.Description,Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture));
+        }
+        
+        return result.Value;
+    }
+    
+    private async Task CreateUserAsync(User user, string password, CancellationToken ct)
+    {
+        var result = await userManager.CreateAsync(user, password);
+        
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                AddError(error.Description);
+            }
+            
+            ThrowIfAnyErrors();
+        }
     }
 }
