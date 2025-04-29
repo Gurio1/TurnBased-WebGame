@@ -1,9 +1,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Game.Core.Common;
-using Game.Core.Equipment;
+using Game.Core.SharedKernel;
 
-namespace Game.Features.Equipment;
+namespace Game.Core.Equipment.Generation;
 
 public static class EquipmentFactory
 {
@@ -24,7 +23,7 @@ public static class EquipmentFactory
         }
     }
     
-    public static Result<EquipmentBase> CreateDrop(string typeName) =>
+    public static Result<EquipmentBase> CreateEmpty(string typeName) =>
         equipmentFactory.TryGetValue(typeName, out var factoryMethod)
             ? Result<EquipmentBase>.Success(factoryMethod())
             : Result<EquipmentBase>.NotFound($"Equipment type '{typeName}' not found.");

@@ -1,22 +1,25 @@
-using Game.Core.Equipment.EquipmentGeneration;
+using Game.Core.Equipment.Generation;
 using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Features.Equipment;
+using Game.Features.Loot;
 using Game.Utilities;
 
-namespace Game.Features.Drop;
+namespace Game.Core.Loot;
 
-public class DropService : IDropService
+public class LootService : ILootService
 {
-    private readonly EquipmentGenerator equipmentGenerator;
+    //Implement application logic
+    //THis is definitely domain logic,so should be moved in core
+    private readonly IEquipmentGenerator equipmentGenerator;
     
-    public DropService(EquipmentGenerator equipmentGenerator)
+    public LootService(IEquipmentGenerator equipmentGenerator)
         => this.equipmentGenerator = equipmentGenerator;
     
     public async Task<Result<Item?>> GenerateDrop(Monster monster)
     {
         float random = (float)RandomHelper.Instance.NextDouble();
         float cumulativeRate = 0f;
+        
         foreach (var pair in monster.DropsTable)
         {
             cumulativeRate += pair.Value;

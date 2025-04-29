@@ -1,6 +1,4 @@
-using Game.Core.Equipment;
-
-namespace Game.Features.Equipment;
+namespace Game.Core.Equipment.Generation;
 
 public sealed class BlueprintAttributes
 {

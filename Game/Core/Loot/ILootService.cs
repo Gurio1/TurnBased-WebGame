@@ -1,9 +1,9 @@
 using Game.Core.Models;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Drop;
+namespace Game.Features.Loot;
 
-public interface IDropService
+public interface ILootService
 {
     Task<Result<Item?>> GenerateDrop(Monster monster);
 }

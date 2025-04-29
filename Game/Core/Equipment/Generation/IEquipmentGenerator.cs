@@ -1,7 +1,6 @@
-using Game.Core.Common;
-using Game.Core.Equipment;
+using Game.Core.SharedKernel;
 
-namespace Game.Features.Equipment;
+namespace Game.Core.Equipment.Generation;
 
 public interface IEquipmentGenerator
 {

@@ -1,9 +1,10 @@
-using Game.Core.Common;
 using Game.Core.Equipment;
+using Game.Core.Equipment.Generation;
+using Game.Core.SharedKernel;
 using Game.Data.Mongo;
 using MongoDB.Driver;
 
-namespace Game.Features.Equipment;
+namespace Game.Features.Equipment.Generation;
 
 public sealed class GetBlueprintQueryHandler : IRequestHandler<GetBlueprintQuery, Result<BlueprintAttributes>>
 {
