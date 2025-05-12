@@ -1,6 +1,6 @@
-﻿using Game.Core.Common;
-using Game.Core.Equipment;
-using Game.Data.Mongo;
+﻿using Game.Core.Equipment;
+using Game.Core.SharedKernel;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Create;
@@ -9,7 +9,7 @@ public sealed class CommandHandler : IRequestHandler<Command, Result<EquipmentBl
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public CommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public CommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<Result<EquipmentBlueprint>> Handle(Command request, CancellationToken cancellationToken)
     {
