@@ -13,14 +13,14 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
 {
     private readonly IDispatcher dispatcher;
     private readonly GetMonsterQuery getMonsterQuery;
-    private readonly IMongoCollectionProvider mongoProdiver;
+    private readonly IMongoCollectionProvider mongoProvider;
     
     public StartBattleCommandHandler(IMongoCollectionProvider provider, IDispatcher dispatcher,
         GetMonsterQuery getMonsterQuery)
     {
         this.dispatcher = dispatcher;
         this.getMonsterQuery = getMonsterQuery;
-        mongoProdiver = provider;
+        mongoProvider = provider;
     }
     
     public async Task<Result<PveBattle>> Handle(StartBattleCommand request, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         
         var update = Builders<Player>.Update.Set(p => p.BattleId, battle.Id);
         
-        var updateResult = await mongoProdiver.GetCollection<Player>()
+        var updateResult = await mongoProvider.GetCollection<Player>()
             .UpdateOneAsync(p => p.Id == playerResult.Value.Id, update, cancellationToken: cancellationToken);
         
         return updateResult.ModifiedCount == 0
@@ -56,9 +56,9 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
     
     private async Task<Result<CombatPlayer>> GetCombatPlayer(string playerId, CancellationToken cancellationToken)
     {
-        var combatPlayer = await mongoProdiver.GetCollection<Player>().AsQueryable()
+        var combatPlayer = await mongoProvider.GetCollection<Player>().AsQueryable()
             .Where(p => p.Id == playerId)
-            .WithAbilities(mongoProdiver.GetCollection<Ability>())
+            .WithAbilities(mongoProvider.GetCollection<Ability>())
             .Select(p => new CombatPlayer
             {
                 Id = p.Local.Id,

@@ -13,19 +13,13 @@ public class Player : IHasAbilityIds
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
-    
     public string? BattleId { get; set; }
     public Stats Stats { get; set; } = new();
-    
     [BsonIgnore] public List<Ability> Abilities { get; set; } = [];
-    
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
-    
-    public List<InventorySlot> Inventory { get; } = [];
-    
+    public List<InventorySlot> Inventory { get; set; } = [];
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; } = "Player";
-    
     [JsonIgnore] public required List<string> AbilityIds { get; set; } = [];
     
     public void Equip(EquipmentBase equipmentItem)
@@ -50,8 +44,6 @@ public class Player : IHasAbilityIds
         if (equippedItem == null)
             return ResultWithoutValue.Invalid(
                 $"Player with id '{Id}' doesn't have equipped item on slot '{equipmentSlot}'");
-        ;
-        
         
         equippedItem.RemoveStats(this);
         Equipment.Remove(equipmentSlot);
@@ -79,7 +71,8 @@ public class Player : IHasAbilityIds
         
         slot.Quantity--;
         
-        if (slot.Quantity == 0) Inventory.Remove(slot);
+        if (slot.Quantity == 0)
+            RemoveSlotFromInventory(slot);
     }
     
     public bool InBattle() => BattleId is not null;
