@@ -1,21 +1,21 @@
-using Game.Core.Common;
+using Game.Core.Models;
+using Game.Core.SharedKernel;
 using Game.Features.Battle.Models;
-using Game.Features.Battle.PVE.Events;
+using Game.Features.Battle.PVE;
+using Game.Features.Battle.PVE.Commands;
+using Game.Features.Battle.PVE.EndBattle;
 
 namespace Game.Features.Battle;
 
 public class PveBattleManager
 {
     private readonly BattleContext battleContext;
-    private readonly IBattleRepository battleRedisRepository;
     private readonly IDispatcher dispatcher;
     
     
-    public PveBattleManager(BattleContext battleContext, IBattleRepository battleRedisRepository,
-        IDispatcher dispatcher)
+    public PveBattleManager(BattleContext battleContext, IDispatcher dispatcher)
     {
         this.battleContext = battleContext;
-        this.battleRedisRepository = battleRedisRepository;
         this.dispatcher = dispatcher;
     }
     
@@ -41,7 +41,10 @@ public class PveBattleManager
         
         
         if (pveBattle.Monster.IsDead())
-            return await dispatcher.Dispatch(new DefeatMonsterCommand(pveBattle.Monster, pveBattle.CombatPlayer));
+        {
+            await dispatcher.DispatchAsync(new DefeatMonsterCommand(pveBattle.Monster, pveBattle.CombatPlayer));
+            return await dispatcher.DispatchAsync(new EndBattleCommand(pveBattle.Id));
+        }
         
         ExecuteDebuffs(pveBattle.Monster, battleContext);
         
@@ -49,15 +52,20 @@ public class PveBattleManager
         
         enemyAbility!.Execute(pveBattle.Monster, player, battleContext);
         
-        if (player.IsDead()) return await dispatcher.Dispatch(new DefeatPlayerCommand(pveBattle.CombatPlayer));
+        if (player.IsDead())
+        {
+            await dispatcher.DispatchAsync(new DefeatPlayerCommand(pveBattle.CombatPlayer));
+            return await dispatcher.DispatchAsync(new EndBattleCommand(pveBattle.Id));
+        }
         
         //TODO : Log if any error
-        await dispatcher.Dispatch(new SendBattleDataCommand(pveBattle));
+        await dispatcher.DispatchAsync(new SendBattleDataCommand(pveBattle));
         
-        //TODO: Create command. Get rid of Repositories
-        await battleRedisRepository.SaveBattleData(pveBattle);
+        var saveResult = await dispatcher.DispatchAsync(new SaveBattleInRedisCommand(pveBattle));
         
-        return ResultWithoutValue.Success();
+        return saveResult.IsFailure
+            ? ResultWithoutValue.CreateError(saveResult.Error)
+            : ResultWithoutValue.Success();
     }
     
     private static void DecreaseAbilityCooldowns(PveBattle pveBattle) =>

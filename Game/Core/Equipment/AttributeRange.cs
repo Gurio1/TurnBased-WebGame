@@ -1,5 +1,3 @@
-using Game.Features.Attributes;
-
 namespace Game.Core.Equipment;
 
 public class AttributeRange

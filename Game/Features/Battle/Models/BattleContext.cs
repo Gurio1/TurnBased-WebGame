@@ -1,4 +1,4 @@
-using Game.Core.Common;
+using Game.Core.SharedKernel;
 
 namespace Game.Features.Battle.Models;
 
@@ -9,7 +9,8 @@ public class BattleContext
     
     public BattleContext(IDispatcher dispatcher) => this.dispatcher = dispatcher;
     
-    public void PublishActionLog(string message) => dispatcher.Dispatch(new SendActionLogCommand(battleId, message));
+    public void PublishActionLog(string message) =>
+        dispatcher.DispatchAsync(new SendActionLogCommand(battleId, message));
     
     public string GetBattleId()
     {

@@ -1,16 +1,16 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Core.Common;
+using Game.Core.SharedKernel;
 
 namespace Game.Features.Equipment.Blueprints.Delete;
 
-public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<Command>
+public sealed class Endpoint(IDispatcher dispatcher) : Endpoint<DeleteCommand>
 {
     public override void Configure() => Delete(EndpointSettings.EndpointName + "/{BlueprintId}");
     
-    public override async Task HandleAsync(Command req, CancellationToken ct)
+    public override async Task HandleAsync(DeleteCommand req, CancellationToken ct)
     {
-        var result = await dispatcher.Dispatch(req, ct);
+        var result = await dispatcher.DispatchAsync(req, ct);
         
         if (result.IsFailure)
         {

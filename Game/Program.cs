@@ -1,21 +1,21 @@
 using System.Text.Json.Serialization;
+using DotNetEnv;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
-using Game;
-using Game.Core.Common;
-using Game.Data;
-using Game.Data.Mongo;
-using Game.Features.Abilities;
+using Game.Application;
+using Game.Core.Equipment.Generation;
+using Game.Core.Loot;
+using Game.Core.SharedKernel;
 using Game.Features.Battle;
-using Game.Features.Battle.Hubs;
 using Game.Features.Battle.Models;
-using Game.Features.Drop;
-using Game.Features.Equipment;
+using Game.Features.Battle.PVE;
+using Game.Features.Equipment.Generation;
 using Game.Features.Identity;
 using Game.Features.Identity.SignalR;
-using Game.Features.Monsters;
-using Game.Features.Players;
+using Game.Persistence;
+using Game.Persistence.Mongo;
+using Game.Utilities.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
@@ -48,7 +48,8 @@ builder.Services.AddAuthentication(o => o.DefaultAuthenticateScheme = JwtBearerD
 builder.Services.AddAuthorization();
 
 builder.Services.AddSignalR()
-    .AddJsonProtocol(options => {
+    .AddJsonProtocol(options =>
+    {
         options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
@@ -65,18 +66,12 @@ MongoDbConfig.RegisterDiscriminator();
 
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
-    string? connectionString =   builder.Configuration.GetConnectionString("MongoConnection");
+    string? connectionString = builder.Configuration.GetConnectionString("MongoConnection");
     return new MongoClient(connectionString);
 });
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-builder.Services.AddSingleton<RedisProvider>();
-builder.Services.AddSingleton<IPlayersMongoRepository,PlayersMongoRepository>();
-builder.Services.AddSingleton<IMonstersMongoRepository,MonstersMongoRepository>();
-builder.Services.AddSingleton<IAbilityMongoRepository, AbilityMongoRepository>();
-builder.Services.AddSingleton<IBattleRepository, BattleRedisRepository>();
-builder.Services.AddSingleton<IBattleService, BattleService>();
-builder.Services.AddSingleton<IDropService,DropService>();
-builder.Services.AddSingleton<EquipmentGenerator>();
+builder.Services.AddSingleton<ILootService, LootService>();
+builder.Services.AddSingleton<IEquipmentGenerator, EquipmentGenerator>();
 
 builder.Services.AddScoped<PveBattleManager>();
 builder.Services.AddScoped<BattleContext>();
@@ -91,15 +86,21 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("https://localhost:4200","http://localhost:4200")
+            policyBuilder.WithOrigins("https://localhost:4200", "http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
 });
 
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
+
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider.InitializeAbilities();
+}
 
 app.UseMiddleware<WebSocketsMiddleware>();
 
@@ -110,15 +111,12 @@ app.UseFastEndpoints()
     .UseSwaggerGen();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ExecutionTimeMiddleware>();
-DotNetEnv.Env.Load();
+Env.Load();
 
-app.MapHub<BattleHub>("/hubs/battle");
+app.MapHub<PveBattleHub>("/hubs/battle");
 
 app.Run();

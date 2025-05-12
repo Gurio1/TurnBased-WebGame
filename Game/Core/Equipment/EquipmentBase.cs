@@ -1,5 +1,4 @@
 using Game.Core.Models;
-using Game.Features.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Equipment;
