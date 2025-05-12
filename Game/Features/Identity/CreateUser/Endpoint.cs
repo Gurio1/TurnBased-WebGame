@@ -3,7 +3,6 @@ using FastEndpoints;
 using Game.Core.SharedKernel;
 using Game.Features.Identity.Shared;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Game.Features.Identity.CreateUser;
 
@@ -11,11 +10,11 @@ namespace Game.Features.Identity.CreateUser;
 
 public sealed class Endpoint : Endpoint<CreateRequest>
 {
+    private readonly IDispatcher dispatcher;
     private readonly ITokenFactory tokenFactory;
     private readonly UserManager<User> userManager;
-    private readonly IDispatcher dispatcher;
     
-    public Endpoint(UserManager<User> userManager, ITokenFactory tokenFactory,IDispatcher dispatcher)
+    public Endpoint(UserManager<User> userManager, ITokenFactory tokenFactory, IDispatcher dispatcher)
     {
         this.userManager = userManager;
         this.dispatcher = dispatcher;
@@ -36,7 +35,7 @@ public sealed class Endpoint : Endpoint<CreateRequest>
         
         newUser.PlayerId = playerId;
         
-        await CreateUserAsync(newUser,req.Password,ct);
+        await CreateUserAsync(newUser, req.Password, ct);
         
         string token = tokenFactory.CreateToken(newUser, Config);
         
@@ -48,9 +47,8 @@ public sealed class Endpoint : Endpoint<CreateRequest>
         var result = await dispatcher.DispatchAsync(new CreatePlayerCommand(), ct);
         
         if (result.IsFailure)
-        {
-            ThrowError(r => r, result.Error.Description,Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture));
-        }
+            ThrowError(r => r, result.Error.Description,
+                Convert.ToInt32(result.Error.Code, CultureInfo.InvariantCulture));
         
         return result.Value;
     }
@@ -61,10 +59,7 @@ public sealed class Endpoint : Endpoint<CreateRequest>
         
         if (!result.Succeeded)
         {
-            foreach (var error in result.Errors)
-            {
-                AddError(error.Description);
-            }
+            foreach (var error in result.Errors) AddError(error.Description);
             
             ThrowIfAnyErrors();
         }

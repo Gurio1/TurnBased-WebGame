@@ -1,9 +1,8 @@
 ﻿using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Persistence.Mongo;
 using Game.Persistence.Queries;
 
-namespace Game.Application.Features.Monsters.GetMonster;
+namespace Game.Features.Monsters.Get;
 
 //TODO: Index monster name
 public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Monster>>

@@ -1,5 +1,4 @@
-﻿using Game.Utilities;
-using Game.Utilities.Extensions;
+﻿using Game.Utilities.Extensions;
 
 namespace Game.Core.Equipment.Generation;
 
@@ -16,12 +15,8 @@ public sealed class EquipmentGenerationPipeline
     public EquipmentBase Execute(EquipmentGenerationContext context)
     {
         foreach (var step in steps)
-        {
             if (step.CanApply(context) && RandomHelper.Instance.NextDouble() <= step.Weight)
-            {
                 step.Apply(context);
-            }
-        }
         
         return context.Equipment;
     }

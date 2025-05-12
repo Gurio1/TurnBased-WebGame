@@ -6,6 +6,5 @@ namespace Game.Features.Players.GetById;
 
 public sealed class GetQuery : IRequest<Result<Player>>
 {
-    [FromClaim]
-    public required string PlayerId { get; set; }
+    [FromClaim] public required string PlayerId { get; set; }
 }

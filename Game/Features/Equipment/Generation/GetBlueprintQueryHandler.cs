@@ -4,7 +4,7 @@ using Game.Core.SharedKernel;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
-namespace Game.Application.Features.Equipment.Generation;
+namespace Game.Features.Equipment.Generation;
 
 public sealed class GetBlueprintQueryHandler : IRequestHandler<GetBlueprintQuery, Result<BlueprintAttributes>>
 {

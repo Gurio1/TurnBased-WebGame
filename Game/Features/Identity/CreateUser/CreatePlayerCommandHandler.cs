@@ -5,11 +5,12 @@ using MongoDB.Driver;
 
 namespace Game.Features.Identity.CreateUser;
 
-public sealed class CreatePlayerCommandHandler : IRequestHandler<CreatePlayerCommand,Result<string>>
+public sealed class CreatePlayerCommandHandler : IRequestHandler<CreatePlayerCommand, Result<string>>
 {
     private readonly IMongoCollection<Player> collection;
     
-    public CreatePlayerCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<Player>();
+    public CreatePlayerCommandHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<Player>();
     
     public async Task<Result<string>> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
     {

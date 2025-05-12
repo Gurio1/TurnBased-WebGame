@@ -1,15 +1,14 @@
 using System.Security.Claims;
-using Game.Application.Features.Battle.PVE.GetBattle;
-using Game.Application.Features.Battle.PVE.StartBattle;
 using Game.Core.SharedKernel;
-using Game.Features.Battle;
 using Game.Features.Battle.Models;
+using Game.Features.Battle.PVE.GetBattle;
+using Game.Features.Battle.PVE.StartBattle;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Game.Application.Features.Battle.PVE;
+namespace Game.Features.Battle.PVE;
 
 //As docs says TCP connections are limited per server.So for scale we need another server...To sync their connection we need to set up Redis backplane(For an unattainable future)
 [Authorize]
@@ -19,12 +18,12 @@ public sealed class PveBattleHub : Hub
     private const string BattleIdClaim = "BattleId";
     private const string BattleCachePrefix = "battle:";
     private readonly IDistributedCache cache;
+    private readonly IDispatcher dispatcher;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly PveBattleManager pveBattleManager;
-    private readonly IDispatcher dispatcher;
     
     
-    public PveBattleHub(PveBattleManager pveBattleManager,IDispatcher dispatcher,
+    public PveBattleHub(PveBattleManager pveBattleManager, IDispatcher dispatcher,
         IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
     {
         this.pveBattleManager = pveBattleManager;
@@ -48,13 +47,9 @@ public sealed class PveBattleHub : Hub
         Result<PveBattle> pveBattleResult;
         
         if (battleId is null)
-        {
             pveBattleResult = await dispatcher.DispatchAsync(new StartBattleCommand("Goblin", playerId));
-        }
         else
-        {
             pveBattleResult = await dispatcher.DispatchAsync(new GetBattleQuery(battleId));
-        }
         
         if (pveBattleResult.IsFailure)
         {
@@ -135,6 +130,7 @@ public sealed class PveBattleHub : Hub
     
     private string? GetCurrentPlayerId() => Context.User?.FindFirstValue(PlayerIdClaim);
     private string? TryGetBattleId() => Context.User?.FindFirstValue(BattleIdClaim);
+    
     private void AppendBattleIdToClaims(string battleId)
     {
         var currentUser = httpContextAccessor.HttpContext!.User;
@@ -148,7 +144,9 @@ public sealed class PveBattleHub : Hub
         var principal = new ClaimsPrincipal(identity!);
         httpContextAccessor.HttpContext.SignInAsync(principal);
     }
+    
     private static string GetBattleCacheKey(string playerId) => $"{BattleCachePrefix}{playerId}";
+    
     public async Task SendBattleError(string message) =>
         await Clients.Caller.SendAsync("ReceiveBattleErrorMessage", message);
 }

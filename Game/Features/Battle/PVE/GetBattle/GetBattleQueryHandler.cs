@@ -6,18 +6,19 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 
-namespace Game.Application.Features.Battle.PVE.GetBattle;
+namespace Game.Features.Battle.PVE.GetBattle;
 
-public sealed class GetBattleQueryHandler : IRequestHandler<GetBattleQuery,Result<PveBattle>>
+public sealed class GetBattleQueryHandler : IRequestHandler<GetBattleQuery, Result<PveBattle>>
 {
-    private readonly RedisProvider redisProvider;
     private readonly IMongoCollectionProvider mongoCollectionProvider;
+    private readonly RedisProvider redisProvider;
     
-    public GetBattleQueryHandler(RedisProvider redisProvider,IMongoCollectionProvider mongoCollectionProvider)
+    public GetBattleQueryHandler(RedisProvider redisProvider, IMongoCollectionProvider mongoCollectionProvider)
     {
         this.redisProvider = redisProvider;
         this.mongoCollectionProvider = mongoCollectionProvider;
     }
+    
     public async Task<Result<PveBattle>> Handle(GetBattleQuery request, CancellationToken cancellationToken)
     {
         var db = redisProvider.GetDatabase();
@@ -30,7 +31,7 @@ public sealed class GetBattleQueryHandler : IRequestHandler<GetBattleQuery,Resul
                 .GetCollection<PveBattle>()
                 .AsQueryable()
                 .Where(b => b.Id == request.BattleId)
-                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
             
             return battleFromMongo is null
                 ? Result<PveBattle>.NotFound($"Battle with id '{request.BattleId}' doesn't exist")

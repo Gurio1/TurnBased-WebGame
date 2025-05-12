@@ -1,6 +1,5 @@
 namespace Game.Core.SharedKernel;
 
-
 //TODO: Yes i know that i have duplication here,but i dont really understand how to deal with it
 public class ResultWithoutValue
 {

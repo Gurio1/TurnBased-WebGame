@@ -1,5 +1,4 @@
 ﻿using FastEndpoints;
-using Game.Core.Models;
 using Game.Core.SharedKernel;
 
 namespace Game.Features.Players.EquipEquipment;

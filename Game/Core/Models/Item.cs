@@ -19,7 +19,6 @@ public abstract class Item
     public bool CanInteract(ItemInteractions interaction) => (Interactions & interaction) == interaction;
 }
 
-
 //TODO : I dont think i need this enum. Can add SetIsRootClass to root classes for mongo 
 public enum ItemType
 {

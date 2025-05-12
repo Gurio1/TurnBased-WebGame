@@ -19,7 +19,7 @@ public sealed class GetMonsterQuery
         var lookupResult = await provider.GetCollection<Monster>().AsQueryable()
             .Where(p => p.Name == monsterName)
             .WithAbilities(provider.GetCollection<Ability>())
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
         
         if (lookupResult.Local is null)
             return Result<Monster>.NotFound($"Monster '{monsterName}' not found");

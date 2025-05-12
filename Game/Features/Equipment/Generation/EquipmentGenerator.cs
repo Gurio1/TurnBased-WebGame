@@ -3,7 +3,7 @@ using Game.Core.Equipment.Generation;
 using Game.Core.Equipment.Generation.Steps;
 using Game.Core.SharedKernel;
 
-namespace Game.Application.Features.Equipment.Generation;
+namespace Game.Features.Equipment.Generation;
 
 public sealed class EquipmentGenerator : IEquipmentGenerator
 {
@@ -23,10 +23,7 @@ public sealed class EquipmentGenerator : IEquipmentGenerator
         
         var blueprintAttributes = blueprintResult.Value;
         
-        var context = new EquipmentGenerationContext(equipmentResult.Value)
-        {
-            Blueprint = blueprintAttributes
-        };
+        var context = new EquipmentGenerationContext(equipmentResult.Value) { Blueprint = blueprintAttributes };
         
         var pipeline = new EquipmentGenerationPipeline()
             .AddStep(new ApplyBlueprintStatsStep());

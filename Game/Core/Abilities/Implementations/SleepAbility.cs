@@ -2,7 +2,7 @@ using Game.Core.Models;
 using Game.Core.StatusEffects;
 using Game.Features.Battle.Models;
 
-namespace Game.Core.Abilities;
+namespace Game.Core.Abilities.Implementations;
 
 public class SleepAbility : Ability
 {

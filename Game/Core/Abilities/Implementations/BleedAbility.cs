@@ -3,7 +3,7 @@ using Game.Core.StatusEffects;
 using Game.Features.Battle.Models;
 using Game.Utilities.Extensions;
 
-namespace Game.Core.Abilities;
+namespace Game.Core.Abilities.Implementations;
 
 public sealed class BleedAbility : Ability
 {

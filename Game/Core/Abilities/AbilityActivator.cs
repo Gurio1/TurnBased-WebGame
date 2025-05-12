@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 
 namespace Game.Core.Abilities;
+
 //TODO: Should i use Result<>?
 public static class AbilityActivator
 {
@@ -10,7 +11,7 @@ public static class AbilityActivator
     public static Ability CreateAbility(Type abilityType)
     {
         ArgumentNullException.ThrowIfNull(abilityType);
-
+        
         if (!typeof(Ability).IsAssignableFrom(abilityType))
             throw new ArgumentException($"Type must inherit from {nameof(Ability)}");
         

@@ -9,7 +9,8 @@ public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public UpdateCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
+    public UpdateCommandHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {

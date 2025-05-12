@@ -1,5 +1,5 @@
-﻿using Game.Application.Features.Battle.PVE;
-using Game.Core.SharedKernel;
+﻿using Game.Core.SharedKernel;
+using Game.Features.Battle.PVE;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Game.Features.Battle;

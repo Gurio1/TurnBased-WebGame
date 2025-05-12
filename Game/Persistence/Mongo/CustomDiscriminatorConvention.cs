@@ -1,7 +1,6 @@
 using Game.Core.Abilities;
 using Game.Core.Equipment;
 using Game.Core.Models;
-using Game.Features.Attributes;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;

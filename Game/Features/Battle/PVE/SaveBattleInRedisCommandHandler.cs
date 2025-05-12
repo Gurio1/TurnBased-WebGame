@@ -2,9 +2,9 @@
 using Game.Persistence.Redis;
 using Newtonsoft.Json;
 
-namespace Game.Application.Features.Battle.PVE;
+namespace Game.Features.Battle.PVE;
 
-public sealed class SaveBattleInRedisCommandHandler : IRequestHandler<SaveBattleInRedisCommand,ResultWithoutValue>
+public sealed class SaveBattleInRedisCommandHandler : IRequestHandler<SaveBattleInRedisCommand, ResultWithoutValue>
 {
     private readonly RedisProvider redisProvider;
     

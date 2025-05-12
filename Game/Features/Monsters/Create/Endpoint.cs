@@ -3,7 +3,7 @@ using FastEndpoints;
 using Game.Core.Models;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Monsters.CreateMonster;
+namespace Game.Features.Monsters.Create;
 
 //TODO : Write validation for all endpoints
 public sealed class Endpoint : Endpoint<Request>
@@ -31,6 +31,6 @@ public sealed class Endpoint : Endpoint<Request>
             return;
         }
         
-        await SendCreatedAtAsync<GetMonster.Endpoint>(new { monster.Name }, result.Value, cancellation: ct);
+        await SendCreatedAtAsync<Get.Endpoint>(new { monster.Name }, result.Value, cancellation: ct);
     }
 }

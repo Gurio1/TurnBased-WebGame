@@ -1,7 +1,7 @@
 using Game.Core.Models;
 using Game.Features.Battle.Models;
 
-namespace Game.Core.Abilities;
+namespace Game.Core.Abilities.Implementations;
 
 public class BaseAttack : Ability
 {

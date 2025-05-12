@@ -25,7 +25,7 @@ public static class PersistenceExtension
         
         services.AddTransient<IMongoCollectionProvider, MongoCollectionProvider>();
         
-        services.AddScoped<IPlayerRepository,PlayerMongoRepository>();
+        services.AddScoped<IPlayerRepository, PlayerMongoRepository>();
         //TODO: Should it be a repo?
         services.AddScoped<GetMonsterQuery>();
         

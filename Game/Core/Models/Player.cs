@@ -17,16 +17,16 @@ public class Player : IHasAbilityIds
     public string? BattleId { get; set; }
     public Stats Stats { get; set; } = new();
     
-    [JsonIgnore] public required List<string> AbilityIds { get; set; } = [];
-    
     [BsonIgnore] public List<Ability> Abilities { get; set; } = [];
     
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     
-    public List<InventorySlot> Inventory { get; private set; } = [];
+    public List<InventorySlot> Inventory { get; } = [];
     
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; } = "Player";
+    
+    [JsonIgnore] public required List<string> AbilityIds { get; set; } = [];
     
     public void Equip(EquipmentBase equipmentItem)
     {
@@ -48,7 +48,9 @@ public class Player : IHasAbilityIds
             return ResultWithoutValue.Invalid($"'{equipmentSlot} slot doesn't exist as equipment slot");
         
         if (equippedItem == null)
-            return ResultWithoutValue.Invalid($"Player with id '{Id}' doesn't have equipped item on slot '{equipmentSlot}'");;
+            return ResultWithoutValue.Invalid(
+                $"Player with id '{Id}' doesn't have equipped item on slot '{equipmentSlot}'");
+        ;
         
         
         equippedItem.RemoveStats(this);

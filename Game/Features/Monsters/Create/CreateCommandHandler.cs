@@ -3,9 +3,9 @@ using Game.Core.SharedKernel;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
-namespace Game.Features.Monsters.CreateMonster;
+namespace Game.Features.Monsters.Create;
 
-public sealed class CreateCommandHandler : IRequestHandler<CreateCommand,Result<Monster>>
+public sealed class CreateCommandHandler : IRequestHandler<CreateCommand, Result<Monster>>
 {
     private readonly IMongoCollection<Monster> collection;
     

@@ -1,9 +1,9 @@
-using Game.Application.Features.Battle.PVE;
-using Game.Application.Features.Battle.PVE.EndBattle;
 using Game.Core.Models;
 using Game.Core.SharedKernel;
 using Game.Features.Battle.Models;
-using Game.Features.Battle.PVE.Events;
+using Game.Features.Battle.PVE;
+using Game.Features.Battle.PVE.Commands;
+using Game.Features.Battle.PVE.EndBattle;
 
 namespace Game.Features.Battle;
 
@@ -13,7 +13,7 @@ public class PveBattleManager
     private readonly IDispatcher dispatcher;
     
     
-    public PveBattleManager(BattleContext battleContext ,IDispatcher dispatcher)
+    public PveBattleManager(BattleContext battleContext, IDispatcher dispatcher)
     {
         this.battleContext = battleContext;
         this.dispatcher = dispatcher;
@@ -63,7 +63,7 @@ public class PveBattleManager
         
         var saveResult = await dispatcher.DispatchAsync(new SaveBattleInRedisCommand(pveBattle));
         
-        return saveResult.IsFailure 
+        return saveResult.IsFailure
             ? ResultWithoutValue.CreateError(saveResult.Error)
             : ResultWithoutValue.Success();
     }

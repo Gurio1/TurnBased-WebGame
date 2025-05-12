@@ -2,7 +2,7 @@
 using FastEndpoints;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Monsters.DeleteMonster;
+namespace Game.Features.Monsters.Delete;
 
 public sealed class Endpoint : Endpoint<DeleteCommand>
 {

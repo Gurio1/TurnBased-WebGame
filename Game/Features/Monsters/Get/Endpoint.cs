@@ -1,9 +1,8 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Application.Features.Monsters.GetMonster;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Monsters.GetMonster;
+namespace Game.Features.Monsters.Get;
 
 public sealed class Endpoint : Endpoint<GetQuery>
 {

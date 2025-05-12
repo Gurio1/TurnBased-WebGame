@@ -1,9 +1,8 @@
-using Game.Application.Features.Battle.PVE;
 using Game.Core.SharedKernel;
 using Game.Features.Battle.Contracts;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Game.Features.Battle.PVE.Events;
+namespace Game.Features.Battle.PVE.Commands;
 
 public class SendBattleDataCommandHandler : IRequestHandler<SendBattleDataCommand, ResultWithoutValue>
 {

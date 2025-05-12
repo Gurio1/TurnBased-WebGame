@@ -8,14 +8,14 @@ using MongoDB.Driver.Linq;
 
 namespace Game.Features.Players.GetById;
 
-public sealed class GetQueryHandler : IRequestHandler<GetQuery,Result<Player>>
+public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Player>>
 {
     private readonly IMongoCollection<Player> collection;
     private readonly IMongoDatabase mongoDatabase;
     private readonly IOptions<MongoSettings> settings;
     
     public GetQueryHandler(IMongoClient mongoClient,
-        IOptions<MongoSettings> settings,IMongoCollectionProvider provider)
+        IOptions<MongoSettings> settings, IMongoCollectionProvider provider)
     {
         this.settings = settings;
         collection = provider.GetCollection<Player>();
@@ -23,6 +23,7 @@ public sealed class GetQueryHandler : IRequestHandler<GetQuery,Result<Player>>
         mongoDatabase = mongoClient.GetDatabase(
             settings.Value.DatabaseName);
     }
+    
     public async Task<Result<Player>> Handle(GetQuery request, CancellationToken cancellationToken)
     {
         if (!settings.Value.CollectionNames.TryGetValue(nameof(Ability), out string? collName))
@@ -33,7 +34,7 @@ public sealed class GetQueryHandler : IRequestHandler<GetQuery,Result<Player>>
             var lookupResult = await collection.AsQueryable()
                 .Where(p => p.Id == request.PlayerId)
                 .WithAbilities(mongoDatabase.GetCollection<Ability>(collName))
-                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(cancellationToken);
             
             lookupResult.Local.Abilities = lookupResult.Results.ToList();
             

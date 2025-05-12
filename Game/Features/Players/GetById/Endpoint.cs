@@ -24,6 +24,6 @@ public sealed class Endpoint : Endpoint<GetQuery>
             return;
         }
         
-        await SendOkAsync(result.Value.ToViewModel(),ct);
+        await SendOkAsync(result.Value.ToViewModel(), ct);
     }
 }

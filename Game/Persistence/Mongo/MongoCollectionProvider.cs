@@ -5,8 +5,8 @@ namespace Game.Persistence.Mongo;
 
 public class MongoCollectionProvider : IMongoCollectionProvider
 {
-    private readonly MongoSettings settings;
     private readonly IMongoDatabase db;
+    private readonly MongoSettings settings;
     
     public MongoCollectionProvider(
         IMongoClient client,

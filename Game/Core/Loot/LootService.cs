@@ -1,8 +1,6 @@
 using Game.Core.Equipment.Generation;
 using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Features.Loot;
-using Game.Utilities;
 using Game.Utilities.Extensions;
 
 namespace Game.Core.Loot;

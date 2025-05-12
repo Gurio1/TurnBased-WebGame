@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using Game.Core.Abilities;
 using Game.Core.Equipment;
 using Game.Core.StatusEffects;
-using Game.Features.Battle.Models;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Models;
@@ -12,9 +11,9 @@ public class Monster : CombatEntity, IHasAbilityIds
 {
     public Dictionary<string, float> DropsTable { get; init; }
     
-    [JsonIgnore] public List<string> AbilityIds { get; set; } = [];
-    
     [BsonIgnore] public Ability?[] Abilities { get; set; } = [];
+    
+    [JsonIgnore] public List<string> AbilityIds { get; set; } = [];
     
     [OnDeserialized]
     internal void OnDeserializedMethod(StreamingContext context)

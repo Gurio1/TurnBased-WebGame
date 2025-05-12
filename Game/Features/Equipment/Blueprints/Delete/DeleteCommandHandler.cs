@@ -9,7 +9,8 @@ public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public DeleteCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
+    public DeleteCommandHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {

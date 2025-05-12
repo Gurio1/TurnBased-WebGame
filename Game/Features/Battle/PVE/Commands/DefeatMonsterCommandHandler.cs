@@ -1,23 +1,21 @@
-using Game.Application.Features.Battle.PVE;
 using Game.Core.Equipment;
+using Game.Core.Loot;
 using Game.Core.Models;
 using Game.Core.Rewards;
 using Game.Core.SharedKernel;
-using Game.Features.Loot;
-using Game.Features.Players;
 using Game.Persistence.Mongo;
 using Game.Persistence.Repositories;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 
-namespace Game.Features.Battle.PVE.Events;
+namespace Game.Features.Battle.PVE.Commands;
 
 public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand, ResultWithoutValue>
 {
-    private readonly ILootService lootService;
-    private readonly IHubContext<PveBattleHub> hubContext;
-    private readonly IPlayerRepository playerRepository;
     private readonly IMongoCollection<Player> collection;
+    private readonly IHubContext<PveBattleHub> hubContext;
+    private readonly ILootService lootService;
+    private readonly IPlayerRepository playerRepository;
     
     public DefeatMonsterCommandHandler(ILootService lootService, IHubContext<PveBattleHub> hubContext,
         IPlayerRepository playerRepository, IMongoCollectionProvider provider)
@@ -90,10 +88,7 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
         
         var updateResult = await UpdatePlayer(player);
         
-        if (updateResult.IsFailure)
-        {
-            return updateResult;
-        }
+        if (updateResult.IsFailure) return updateResult;
         
         await hubContext.Clients.User(notification.CombatPlayer.Id)
             .SendAsync("ReceiveBattleReward", reward, cancellationToken);
@@ -105,7 +100,7 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
     {
         var update = Builders<Player>.Update
             .Set(p => p.Inventory, player.Inventory)
-            .Set(p => p.Stats , player.Stats)
+            .Set(p => p.Stats, player.Stats)
             .Set(p => p.BattleId, player.BattleId);
         
         var result = await collection.UpdateOneAsync(p => p.Id == player.Id, update);

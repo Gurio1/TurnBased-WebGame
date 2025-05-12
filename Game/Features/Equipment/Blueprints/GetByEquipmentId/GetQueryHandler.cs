@@ -9,7 +9,8 @@ public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Equipment
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public GetQueryHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
+    public GetQueryHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<Result<EquipmentBlueprint>> Handle(GetQuery request,
         CancellationToken cancellationToken)

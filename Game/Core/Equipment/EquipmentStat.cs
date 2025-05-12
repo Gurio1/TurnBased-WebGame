@@ -1,7 +1,7 @@
 using Game.Core.Models;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Game.Features.Attributes;
+namespace Game.Core.Equipment;
 
 [BsonDiscriminator(Required = true)]
 public abstract class EquipmentStat

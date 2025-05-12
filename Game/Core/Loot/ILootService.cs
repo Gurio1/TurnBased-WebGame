@@ -1,7 +1,7 @@
 using Game.Core.Models;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Loot;
+namespace Game.Core.Loot;
 
 public interface ILootService
 {

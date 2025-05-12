@@ -1,9 +1,9 @@
 ﻿using Game.Core.SharedKernel;
 using Game.Persistence.Redis;
 
-namespace Game.Application.Features.Battle.PVE.EndBattle;
+namespace Game.Features.Battle.PVE.EndBattle;
 
-public sealed class EndBattleCommandHandler : IRequestHandler<EndBattleCommand,ResultWithoutValue>
+public sealed class EndBattleCommandHandler : IRequestHandler<EndBattleCommand, ResultWithoutValue>
 {
     private readonly RedisProvider redisProvider;
     

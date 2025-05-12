@@ -1,7 +1,6 @@
-﻿using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Core.SharedKernel;
 using Game.Features.Battle.Models;
 
-namespace Game.Application.Features.Battle.PVE.StartBattle;
+namespace Game.Features.Battle.PVE.StartBattle;
 
 public record StartBattleCommand(string MonsterName, string PlayerId) : IRequest<Result<PveBattle>>;
