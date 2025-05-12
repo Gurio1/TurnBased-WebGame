@@ -15,11 +15,13 @@ public sealed class EquipmentGenerator : IEquipmentGenerator
     {
         var equipmentResult = EquipmentFactory.CreateEmpty(equipmentType);
         
-        if (equipmentResult.IsFailure) return equipmentResult;
+        if (equipmentResult.IsFailure)
+            return equipmentResult;
         
         var blueprintResult = await dispatcher.DispatchAsync(new GetBlueprintQuery(equipmentResult.Value.EquipmentId));
         
-        if (blueprintResult.IsFailure) return blueprintResult.AsError<EquipmentBase>();
+        if (blueprintResult.IsFailure)
+            return blueprintResult.AsError<EquipmentBase>();
         
         var blueprintAttributes = blueprintResult.Value;
         

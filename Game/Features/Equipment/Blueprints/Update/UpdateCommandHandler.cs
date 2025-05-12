@@ -9,21 +9,21 @@ public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public UpdateCommandHandler(IMongoCollectionProvider provider) =>
-        collection = provider.GetCollection<EquipmentBlueprint>();
+    public UpdateCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {
-        try
+        var result = await collection.ReplaceOneAsync(x => x.Id == request.Blueprint.Id,
+            request.Blueprint, cancellationToken: cancellationToken);
+        
+        if (result.MatchedCount == 0)
         {
-            await collection.ReplaceOneAsync(x => x.Id == request.Blueprint.Id,
-                request.Blueprint, cancellationToken: cancellationToken);
-            
-            return ResultWithoutValue.Success();
+            return ResultWithoutValue.NotFound($"Unable to find EquipmentBlueprint with id '{request.Blueprint.Id}'");
         }
-        catch (Exception e)
-        {
-            return ResultWithoutValue.Failure(e.Message);
-        }
+        
+        return result.ModifiedCount > 0
+            ? ResultWithoutValue.Success()
+            : ResultWithoutValue.Failure(
+                $"Error occured while updating EquipmentBlueprint with id '{request.Blueprint.Id}'");
     }
 }

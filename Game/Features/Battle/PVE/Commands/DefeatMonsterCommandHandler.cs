@@ -104,7 +104,13 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
             .Set(p => p.BattleId, player.BattleId);
         
         var result = await collection.UpdateOneAsync(p => p.Id == player.Id, update);
-        return result.ModifiedCount > 1
+        
+        if (result.MatchedCount == 0 )
+        {
+            return ResultWithoutValue.Failure($"Can't find player with id '{player.Id}'");
+        }
+        
+        return result.ModifiedCount > 0
             ? ResultWithoutValue.Success()
             : ResultWithoutValue.Failure($"Can not update player with id '{player.Id}'");
     }

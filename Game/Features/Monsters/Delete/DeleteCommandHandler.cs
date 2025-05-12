@@ -13,14 +13,10 @@ public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, Result
     
     public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            await collection.DeleteOneAsync(m => m.Name == request.MonsterName, cancellationToken);
-            return ResultWithoutValue.Success();
-        }
-        catch (Exception e)
-        {
-            return ResultWithoutValue.Failure(e.Message);
-        }
+        var deleteResult = await collection.DeleteOneAsync(m => m.Name == request.MonsterName, cancellationToken);
+        
+        return deleteResult.DeletedCount == 0
+            ? ResultWithoutValue.NotFound($"Can't delete monster with name '{request.MonsterName}'. Not found.")
+            : ResultWithoutValue.Success();
     }
 }

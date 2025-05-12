@@ -16,7 +16,8 @@ public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Resu
     {
         var player = await collection.Find(p => p.Id == request.PlayerId).FirstOrDefaultAsync(cancellationToken);
         
-        if (player is null) return ResultWithoutValue.NotFound($"Player with id '{request.PlayerId}' was not found");
+        if (player is null)
+            return ResultWithoutValue.NotFound($"Player with id '{request.PlayerId}' was not found");
         
         var result = player.Unequip(request.EquipmentSlot);
         

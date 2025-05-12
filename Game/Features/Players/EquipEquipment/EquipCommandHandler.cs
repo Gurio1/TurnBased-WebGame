@@ -25,7 +25,8 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, ResultWi
             .FirstOrDefault(s => s.Item.Id == request.ItemId)?
             .Item;
         
-        if (item is null) return ResultWithoutValue.NotFound($"Unable to retrieve item with id '{request.ItemId}'");
+        if (item is null)
+            return ResultWithoutValue.NotFound($"Unable to retrieve item with id '{request.ItemId}'");
         
         if (item is not EquipmentBase equipment || !item.CanInteract(ItemInteractions.Equip))
             return ResultWithoutValue.Invalid($"Item '{item?.Name ?? request.ItemId}' doesn't have equip behaviour.");

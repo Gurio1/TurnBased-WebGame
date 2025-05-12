@@ -14,14 +14,10 @@ public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, Result
     
     public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            await collection.DeleteOneAsync(b => b.Id == request.BlueprintId, cancellationToken);
-            return ResultWithoutValue.Success();
-        }
-        catch (Exception e)
-        {
-            return ResultWithoutValue.Failure(e.Message);
-        }
+        var deleteResult = await collection.DeleteOneAsync(b => b.Id == request.BlueprintId, cancellationToken);
+        
+        return deleteResult.DeletedCount == 0
+            ? ResultWithoutValue.NotFound($"Can't delete EquipmentBlueprint with id '{request.BlueprintId}'. Not found.")
+            : ResultWithoutValue.Success();
     }
 }

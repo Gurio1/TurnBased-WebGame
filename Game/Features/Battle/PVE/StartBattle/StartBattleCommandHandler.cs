@@ -27,11 +27,13 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
     {
         var monsterResult = await getMonsterQuery.GetByNameAsync(request.MonsterName, cancellationToken);
         
-        if (monsterResult.IsFailure) return monsterResult.AsError<PveBattle>();
+        if (monsterResult.IsFailure)
+            return monsterResult.AsError<PveBattle>();
         
         var playerResult = await GetCombatPlayer(request.PlayerId, cancellationToken);
         
-        if (playerResult.IsFailure) return playerResult.AsError<PveBattle>();
+        if (playerResult.IsFailure)
+            return playerResult.AsError<PveBattle>();
         
         if (playerResult.Value.BattleId is not null)
             return Result<PveBattle>.Invalid("Can't create new battle.Player is already in the battle");
@@ -42,15 +44,13 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         
         var saveResult = await dispatcher.DispatchAsync(new SaveBattleInRedisCommand(battle), cancellationToken);
         
-        if (saveResult.IsFailure) return Result<PveBattle>.CustomError(saveResult.Error);
+        if (saveResult.IsFailure)
+            return Result<PveBattle>.CustomError(saveResult.Error);
         
-        var update = Builders<Player>.Update.Set(p => p.BattleId, battle.Id);
+        var updateResult = await SetBattleIdToThePlayer(battle.Id, playerResult.Value.Id, cancellationToken);
         
-        var updateResult = await mongoProvider.GetCollection<Player>()
-            .UpdateOneAsync(p => p.Id == playerResult.Value.Id, update, cancellationToken: cancellationToken);
-        
-        return updateResult.ModifiedCount == 0
-            ? Result<PveBattle>.Failure($"Can not update player battle id - player id '{playerResult.Value.Id}'")
+        return updateResult.IsFailure
+            ? Result<PveBattle>.CustomError(updateResult.Error)
             : Result<PveBattle>.Success(battle);
     }
     
@@ -74,5 +74,17 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         return combatPlayer is null
             ? Result<CombatPlayer>.NotFound($"Player with id '{playerId}'was not found")
             : Result<CombatPlayer>.Success(combatPlayer);
+    }
+    
+    private async Task<ResultWithoutValue> SetBattleIdToThePlayer(string battleId,string playerId, CancellationToken ct)
+    {
+        var update = Builders<Player>.Update.Set(p => p.BattleId, battleId);
+        
+        var updateResult = await mongoProvider.GetCollection<Player>()
+            .UpdateOneAsync(p => p.Id == playerId, update, cancellationToken: ct);
+        
+        return updateResult.ModifiedCount == 0
+            ? ResultWithoutValue.Failure($"Can not update player battle id - player id '{playerId}'")
+            : ResultWithoutValue.Success();
     }
 }
