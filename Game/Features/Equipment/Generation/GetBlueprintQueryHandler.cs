@@ -1,17 +1,17 @@
 using Game.Core.Equipment;
 using Game.Core.Equipment.Generation;
 using Game.Core.SharedKernel;
-using Game.Data.Mongo;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
-namespace Game.Features.Equipment.Generation;
+namespace Game.Application.Features.Equipment.Generation;
 
 public sealed class GetBlueprintQueryHandler : IRequestHandler<GetBlueprintQuery, Result<BlueprintAttributes>>
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public GetBlueprintQueryHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) =>
-        collection = provider.Collection;
+    public GetBlueprintQueryHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<Result<BlueprintAttributes>> Handle(GetBlueprintQuery request,
         CancellationToken cancellationToken)

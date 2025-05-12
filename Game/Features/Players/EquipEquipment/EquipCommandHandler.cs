@@ -1,7 +1,7 @@
 ﻿using Game.Core.Equipment;
 using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Data.Mongo;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Players.EquipEquipment;
@@ -11,7 +11,8 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand,ResultWit
 {
     private readonly IMongoCollection<Player> collection;
     
-    public EquipCommandHandler(IMongoCollectionProvider<Player> provider) => collection = provider.Collection;
+    public EquipCommandHandler(IMongoCollectionProvider provider)
+        => collection = provider.GetCollection<Player>();
     public async Task<ResultWithoutValue> Handle(EquipCommand request, CancellationToken cancellationToken)
     {
         var player = await collection.Find(a => a.Id == request.PlayerId).FirstOrDefaultAsync(cancellationToken: cancellationToken);

@@ -1,6 +1,6 @@
 ﻿using Game.Core.Equipment;
 using Game.Core.SharedKernel;
-using Game.Data.Mongo;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Delete;
@@ -9,7 +9,7 @@ public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public DeleteCommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public DeleteCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(DeleteCommand request, CancellationToken cancellationToken)
     {

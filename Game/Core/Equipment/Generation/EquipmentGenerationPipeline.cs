@@ -1,4 +1,5 @@
 ﻿using Game.Utilities;
+using Game.Utilities.Extensions;
 
 namespace Game.Core.Equipment.Generation;
 

@@ -1,6 +1,6 @@
 ﻿using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Data.Mongo;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Players.UnequipEquipment;
@@ -9,7 +9,8 @@ public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand,Resul
 {
     private readonly IMongoCollection<Player> collection;
     
-    public UnequipCommandHandler(IMongoCollectionProvider<Player> collectionProvider) => collection = collectionProvider.Collection;
+    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider)
+        => collection = collectionProvider.GetCollection<Player>();
     
     public async Task<ResultWithoutValue> Handle(UnequipCommand request, CancellationToken cancellationToken)
     {

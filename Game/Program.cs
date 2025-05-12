@@ -2,21 +2,24 @@ using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
-using Game;
+using Game.Application;
+using Game.Application.Features.Battle;
+using Game.Application.Features.Battle.PVE;
+using Game.Application.Features.Equipment.Generation;
 using Game.Core.Equipment.Generation;
 using Game.Core.Loot;
 using Game.Core.SharedKernel;
-using Game.Data;
-using Game.Data.Mongo;
 using Game.Features.Battle;
-using Game.Features.Battle.Hubs;
 using Game.Features.Battle.Models;
-using Game.Features.Equipment;
-using Game.Features.Equipment.Generation;
 using Game.Features.Identity;
 using Game.Features.Identity.SignalR;
 using Game.Features.Loot;
-using Game.Features.Players;
+using Game.Persistence;
+using Game.Persistence.Mongo;
+using Game.Persistence.Queries;
+using Game.Persistence.Redis;
+using Game.Persistence.Repositories;
+using Game.Utilities.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
@@ -70,9 +73,6 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     return new MongoClient(connectionString);
 });
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-builder.Services.AddSingleton<RedisProvider>();
-builder.Services.AddSingleton<IBattleRepository, BattleRedisRepository>();
-builder.Services.AddSingleton<IBattleService, BattleService>();
 builder.Services.AddSingleton<ILootService,LootService>();
 builder.Services.AddSingleton<IEquipmentGenerator,EquipmentGenerator>();
 
@@ -95,9 +95,15 @@ builder.Services.AddCors(options =>
         });
 });
 
+
 var app = builder.Build();
 
 app.UseCors("AllowSpecificOrigin");
+
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider.InitializeAbilities();
+}
 
 app.UseMiddleware<WebSocketsMiddleware>();
 
@@ -117,6 +123,6 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ExecutionTimeMiddleware>();
 DotNetEnv.Env.Load();
 
-app.MapHub<BattleHub>("/hubs/battle");
+app.MapHub<PveBattleHub>("/hubs/battle");
 
 app.Run();

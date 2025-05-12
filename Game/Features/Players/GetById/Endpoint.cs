@@ -5,14 +5,14 @@ using Game.Features.Players.Contracts;
 
 namespace Game.Features.Players.GetById;
 
-public sealed class Endpoint : Endpoint<GetCommand>
+public sealed class Endpoint : Endpoint<GetQuery>
 {
     private readonly IDispatcher dispatcher;
     
     public Endpoint(IDispatcher dispatcher) => this.dispatcher = dispatcher;
-    public override void Configure() => Get(EndpointSettings.EndpointName + "/{PlayerId}");
+    public override void Configure() => Get(EndpointSettings.EndpointName);
     
-    public override async Task HandleAsync(GetCommand req, CancellationToken ct)
+    public override async Task HandleAsync(GetQuery req, CancellationToken ct)
     {
         var result = await dispatcher.DispatchAsync(req, ct);
         

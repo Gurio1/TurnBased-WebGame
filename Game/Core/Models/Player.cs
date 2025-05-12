@@ -10,8 +10,6 @@ namespace Game.Core.Models;
 
 public class Player : IHasAbilityIds
 {
-    [BsonElement("Inventory")] private readonly List<InventorySlot> inventory = new();
-    
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
@@ -25,7 +23,7 @@ public class Player : IHasAbilityIds
     
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     
-    [BsonIgnore] public IReadOnlyList<InventorySlot> Inventory => inventory;
+    public List<InventorySlot> Inventory { get; private set; } = [];
     
     public List<IDebuff> Debuffs { get; set; } = [];
     public string CharacterType { get; set; } = "Player";
@@ -65,13 +63,13 @@ public class Player : IHasAbilityIds
         var slot = Inventory.FirstOrDefault(i => i.Item.Id == item.Id && i.Quantity < item.MaxInventorySlotQuantity);
         
         if (slot is null)
-            inventory.Add(new InventorySlot { Item = item, Quantity = 1 });
+            Inventory.Add(new InventorySlot { Item = item, Quantity = 1 });
         else
             slot.Quantity++;
     }
     
     //TODO : Add validation if slot item quantity <= 0
-    public void RemoveSlotFromInventory(InventorySlot slot) => inventory.Remove(slot);
+    public void RemoveSlotFromInventory(InventorySlot slot) => Inventory.Remove(slot);
     
     public void RemoveItemFromInventory(Item item)
     {
@@ -79,7 +77,7 @@ public class Player : IHasAbilityIds
         
         slot.Quantity--;
         
-        if (slot.Quantity == 0) inventory.Remove(slot);
+        if (slot.Quantity == 0) Inventory.Remove(slot);
     }
     
     public bool InBattle() => BattleId is not null;

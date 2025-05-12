@@ -1,6 +1,6 @@
 ﻿using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Data.Mongo;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Identity.CreateUser;
@@ -9,14 +9,14 @@ public sealed class CreatePlayerCommandHandler : IRequestHandler<CreatePlayerCom
 {
     private readonly IMongoCollection<Player> collection;
     
-    public CreatePlayerCommandHandler(IMongoCollectionProvider<Player> provider) => collection = provider.Collection;
+    public CreatePlayerCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<Player>();
     
     public async Task<Result<string>> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
     {
         var player = new Player
         {
             AbilityIds =
-                ["0", "1", "2"],
+                ["0", "1"],
             Stats = new Stats
             {
                 MaxHealth = 250,

@@ -144,7 +144,7 @@ csharp_style_conditional_delegate_call = true:warning # Default: true:suggestion
 
 # Modifier preferences
 csharp_prefer_static_local_function = true:warning # Default: true:suggestion
-csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async
+csharp_preferred_modifier_order = public, private, protected, internal, file, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, required, volatile, async
 csharp_style_prefer_readonly_struct = true:warning # Default: true:suggestion
 csharp_style_prefer_readonly_struct_member = true:warning # Default: true:suggestion
 
@@ -173,9 +173,9 @@ csharp_style_unused_value_expression_statement_preference = discard_variable:war
 
 # 'using' directive preferences
 csharp_using_directive_placement = outside_namespace:warning # Default: outside_namespace:silent
-    # Placing usings outside namespaces lets the closest parent namespace control type name match
-    # It can also make attribute usage more concise
-    # See https://stackoverflow.com/questions/125319/should-using-directives-be-inside-or-outside-the-namespace
+# Placing usings outside namespaces lets the closest parent namespace control type name match
+# It can also make attribute usage more concise
+# See https://stackoverflow.com/questions/125319/should-using-directives-be-inside-or-outside-the-namespace
 
 # Preferences added with .NET 9 / C# 13
 csharp_prefer_system_threading_lock = true:warning # Default: true:suggestion
@@ -241,17 +241,17 @@ csharp_preserve_single_line_statements = true
 # Naming rules
 
 dotnet_naming_rule.interface_should_be_begins_with_i.severity = warning
-    # Default: suggestion
+# Default: suggestion
 dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
 dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
 
 dotnet_naming_rule.types_should_be_pascal_case.severity = warning
-    # Default: suggestion
+# Default: suggestion
 dotnet_naming_rule.types_should_be_pascal_case.symbols = types
 dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
 
 dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = warning
-    # Default: suggestion
+# Default: suggestion
 dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
 dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
@@ -259,35 +259,35 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
 
 dotnet_naming_symbols.interface.applicable_kinds = interface
 dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.interface.required_modifiers = 
+dotnet_naming_symbols.interface.required_modifiers =
 
 dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
 dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.types.required_modifiers = 
+dotnet_naming_symbols.types.required_modifiers =
 
 dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
 dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
-dotnet_naming_symbols.non_field_members.required_modifiers = 
+dotnet_naming_symbols.non_field_members.required_modifiers =
 
 # Naming styles
 
-dotnet_naming_style.pascal_case.required_prefix = 
-dotnet_naming_style.pascal_case.required_suffix = 
-dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.required_prefix =
+dotnet_naming_style.pascal_case.required_suffix =
+dotnet_naming_style.pascal_case.word_separator =
 dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 dotnet_naming_style.begins_with_i.required_prefix = I
-dotnet_naming_style.begins_with_i.required_suffix = 
-dotnet_naming_style.begins_with_i.word_separator = 
+dotnet_naming_style.begins_with_i.required_suffix =
+dotnet_naming_style.begins_with_i.word_separator =
 dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 # Use PascalCase for constant fields (as per https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/identifier-names)
 dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = warning
-dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols  = constant_fields
+dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constant_fields
 dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case
-dotnet_naming_symbols.constant_fields.applicable_kinds            = field
-dotnet_naming_symbols.constant_fields.applicable_accessibilities  = *
-dotnet_naming_symbols.constant_fields.required_modifiers          = const
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+dotnet_naming_symbols.constant_fields.required_modifiers = const
 
 # Start of NO underscore prefix on private fields
 # Define the 'private_fields' symbol group:
@@ -308,9 +308,9 @@ dotnet_naming_rule.private_fields_notunderscored.severity = error
 
 dotnet_analyzer_diagnostic.severity = error
 dotnet_diagnostic.CA1034.severity = suggestion
-    # changed from warning because using namespaces as alternative to nested types for logical grouping or for avoiding name collisions, 
-    # as the rule states, either adds noise (repeated local namespace usings) or does not prevent collisions (global namespace usings)
-    # see https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/CA1034
+# changed from warning because using namespaces as alternative to nested types for logical grouping or for avoiding name collisions, 
+# as the rule states, either adds noise (repeated local namespace usings) or does not prevent collisions (global namespace usings)
+# see https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/CA1034
 dotnet_diagnostic.CA1708.severity = none # CA1708 is not relevant because we do not design binary API's for other languages than C#. See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1708
 dotnet_diagnostic.CA1716.severity = none # CA1716 is not relevant because we do not design binary API's for other languages than C#. See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1716
 dotnet_diagnostic.CA1812.severity = suggestion # changed from warning because too many false positives where external libraries create instances (e.g. DI)
@@ -318,7 +318,7 @@ dotnet_diagnostic.CA1848.severity = suggestion # Not every logging statement nee
 dotnet_diagnostic.CA2225.severity = none # is not relevant because we do not design binary API's for other languages than C#. See https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2225
 dotnet_diagnostic.IDE0055.severity = silent # Nonstandard whitespace formatting can be used to improve readability
 dotnet_diagnostic.IDE0072.severity = suggestion
-    # Populate switch: switch options should be exhaustive for all expected functionality including expected errors,
-    # while truly unexpected returns should throw an exception. Since switch automatically throws a SwitchExpressionException, 
-    # it is valid to not explicitly code cases that throw an exception to indicate the return is truly unexpected.
+# Populate switch: switch options should be exhaustive for all expected functionality including expected errors,
+# while truly unexpected returns should throw an exception. Since switch automatically throws a SwitchExpressionException, 
+# it is valid to not explicitly code cases that throw an exception to indicate the return is truly unexpected.
 dotnet_diagnostic.IDE0130.severity = suggestion # IDE0130 "Namespace does not match folder structure" can be deviated from to prevent overstructuring

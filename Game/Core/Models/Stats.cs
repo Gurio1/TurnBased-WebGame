@@ -1,3 +1,5 @@
+using Game.Utilities.Extensions;
+
 namespace Game.Core.Models;
 
 public class Stats

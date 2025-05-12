@@ -3,7 +3,7 @@ using Game.Core.Equipment.Generation;
 using Game.Core.Equipment.Generation.Steps;
 using Game.Core.SharedKernel;
 
-namespace Game.Features.Equipment.Generation;
+namespace Game.Application.Features.Equipment.Generation;
 
 public sealed class EquipmentGenerator : IEquipmentGenerator
 {

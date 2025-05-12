@@ -3,13 +3,12 @@ using Game.Core.Models;
 using Game.Core.SharedKernel;
 using Game.Features.Loot;
 using Game.Utilities;
+using Game.Utilities.Extensions;
 
 namespace Game.Core.Loot;
 
 public class LootService : ILootService
 {
-    //Implement application logic
-    //THis is definitely domain logic,so should be moved in core
     private readonly IEquipmentGenerator equipmentGenerator;
     
     public LootService(IEquipmentGenerator equipmentGenerator)

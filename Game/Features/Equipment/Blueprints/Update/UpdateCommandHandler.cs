@@ -1,6 +1,6 @@
-﻿using Game.Core.Common;
-using Game.Core.Equipment;
-using Game.Data.Mongo;
+﻿using Game.Core.Equipment;
+using Game.Core.SharedKernel;
+using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Update;
@@ -9,7 +9,7 @@ public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public UpdateCommandHandler(IMongoCollectionProvider<EquipmentBlueprint> provider) => collection = provider.Collection;
+    public UpdateCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {

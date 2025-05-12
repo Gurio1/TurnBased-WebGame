@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using Game.Features.Attributes;
 using Game.Utilities;
+using Game.Utilities.Extensions;
 
 namespace Game.Core.Equipment.Generation.Steps;
 

@@ -6,10 +6,10 @@ public class PveBattle
 {
     public PveBattle() { }
     
-    public PveBattle(Player player, Monster monster, Dictionary<string, int> playerUsedItems)
+    public PveBattle(CombatPlayer player, Monster monster)
     {
         Monster = monster;
-        CombatPlayer = player.ToPlayerBattleModel(playerUsedItems);
+        CombatPlayer = player;
     }
     
     public string Id { get; set; } = Guid.NewGuid().ToString();
