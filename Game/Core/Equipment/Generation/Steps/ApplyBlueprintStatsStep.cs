@@ -7,7 +7,7 @@ public sealed class ApplyBlueprintStatsStep : IEquipmentPipelineStep
 {
     public double Weight => 1.0;
     
-    public bool CanApply(EquipmentGenerationContext context) => context.Blueprint is null;
+    public bool CanApply(EquipmentGenerationContext context) => context.Blueprint is not null;
     
     public EquipmentBase Apply(EquipmentGenerationContext context)
     {
