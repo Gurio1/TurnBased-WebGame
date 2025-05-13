@@ -1,35 +1,39 @@
 ﻿using Game.Core.Models;
 using Game.Core.SharedKernel;
+using Game.Features.Players.Contracts;
 using Game.Persistence.Mongo;
+using Game.Persistence.Requests;
 using MongoDB.Driver;
 
 namespace Game.Features.Players.UnequipEquipment;
 
-public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, ResultWithoutValue>
+public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Result<PlayerViewModel>>
 {
+    private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     private readonly IMongoCollection<Player> collection;
     
-    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider)
-        => collection = collectionProvider.GetCollection<Player>();
+    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider,UpdatePlayerAfterEquipmentInteraction updatePlayerService)
+    {
+        this.updatePlayerService = updatePlayerService;
+        collection = collectionProvider.GetCollection<Player>();
+    }
     
-    public async Task<ResultWithoutValue> Handle(UnequipCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PlayerViewModel>> Handle(UnequipCommand request, CancellationToken cancellationToken)
     {
         var player = await collection.Find(p => p.Id == request.PlayerId).FirstOrDefaultAsync(cancellationToken);
         
         if (player is null)
-            return ResultWithoutValue.NotFound($"Player with id '{request.PlayerId}' was not found");
+            return Result<PlayerViewModel>.NotFound($"Player with id '{request.PlayerId}' was not found");
         
-        var result = player.Unequip(request.EquipmentSlot);
+        var equipResult = player.Unequip(request.EquipmentSlot);
         
-        if (result.IsFailure) return result;
+        if (equipResult.IsFailure)
+            return Result<PlayerViewModel>.CustomError(equipResult.Error);
         
-        var updateDef = PlayerUpdateBuilder.Build(player);
+        var updateResult = await updatePlayerService.Update(player, cancellationToken);
         
-        var updateResult =
-            await collection.UpdateOneAsync(p => p.Id == player.Id, updateDef, cancellationToken: cancellationToken);
-        
-        return updateResult.MatchedCount == 0
-            ? ResultWithoutValue.NotFound($"Player '{player.Id}' not found during update.")
-            : ResultWithoutValue.Success();
+        return updateResult.IsFailure
+            ? updateResult.AsError<PlayerViewModel>()
+            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel());
     }
 }

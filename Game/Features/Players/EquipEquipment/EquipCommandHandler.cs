@@ -1,45 +1,44 @@
-﻿using Game.Core.Equipment;
-using Game.Core.Models;
-using Game.Core.SharedKernel;
-using Game.Persistence.Mongo;
-using MongoDB.Driver;
+﻿using Game.Core.SharedKernel;
+using Game.Features.Players.Contracts;
+using Game.Persistence.Repositories;
+using Game.Persistence.Requests;
 
 namespace Game.Features.Players.EquipEquipment;
 
 //TODO: I dont know.Should i create different commands for getting and updating a player?(This operations are too simple so i dont see any reason)
-public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, ResultWithoutValue>
+public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<PlayerViewModel>>
 {
-    private readonly IMongoCollection<Player> collection;
+    private readonly IPlayerRepository playerRepository;
+    private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     
-    public EquipCommandHandler(IMongoCollectionProvider provider)
-        => collection = provider.GetCollection<Player>();
-    
-    public async Task<ResultWithoutValue> Handle(EquipCommand request, CancellationToken cancellationToken)
+    public EquipCommandHandler(IPlayerRepository playerRepository, UpdatePlayerAfterEquipmentInteraction updatePlayerService)
     {
-        var player = await collection.Find(a => a.Id == request.PlayerId).FirstOrDefaultAsync(cancellationToken);
+        this.playerRepository = playerRepository;
+        this.updatePlayerService = updatePlayerService;
+    }
+    
+    public async Task<Result<PlayerViewModel>> Handle(EquipCommand request, CancellationToken cancellationToken)
+    {
+        var getPlayerResult = await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);;
         
-        if (player is null)
-            return ResultWithoutValue.NotFound($"Unable to retrieve player with id '{request.PlayerId}'");
+        if (getPlayerResult.IsFailure)
+        {
+            return getPlayerResult.AsError<PlayerViewModel>();
+        }
         
-        var item = player.Inventory
-            .FirstOrDefault(s => s.Item.Id == request.ItemId)?
-            .Item;
+        var player = getPlayerResult.Value;
         
-        if (item is null)
-            return ResultWithoutValue.NotFound($"Unable to retrieve item with id '{request.ItemId}'");
+        var equipResult = player.Equip(request.ItemId);
         
-        if (item is not EquipmentBase equipment || !item.CanInteract(ItemInteractions.Equip))
-            return ResultWithoutValue.Invalid($"Item '{item?.Name ?? request.ItemId}' doesn't have equip behaviour.");
+        if (equipResult.IsFailure)
+        {
+            return Result<PlayerViewModel>.CustomError(equipResult.Error);
+        }
         
-        player.Equip(equipment);
+        var updateResult = await updatePlayerService.Update(player, cancellationToken);
         
-        var updateDef = PlayerUpdateBuilder.Build(player);
-        
-        var result =
-            await collection.UpdateOneAsync(p => p.Id == player.Id, updateDef, cancellationToken: cancellationToken);
-        
-        return result.MatchedCount == 0
-            ? ResultWithoutValue.NotFound($"Player '{player.Id}' not found during update.")
-            : ResultWithoutValue.Success();
+        return updateResult.IsFailure
+            ? updateResult.AsError<PlayerViewModel>()
+            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel());
     }
 }

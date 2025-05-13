@@ -1,23 +1,45 @@
-﻿using Game.Core.Models;
+﻿using Game.Core.Abilities;
+using Game.Core.Models;
 using Game.Core.SharedKernel;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace Game.Persistence.Repositories;
 
 public sealed class PlayerMongoRepository : IPlayerRepository
 {
-    private readonly IMongoCollection<Player> collection;
+    private readonly IMongoCollectionProvider provider;
     
     public PlayerMongoRepository(IMongoCollectionProvider provider) =>
-        collection = provider.GetCollection<Player>();
+        this.provider = provider;
     
-    public async Task<Result<Player>> GetById(string playerId)
+    public async Task<Result<Player>> GetById(string playerId, CancellationToken ct = default)
     {
-        var player = await collection.Find(p => p.Id == playerId).FirstOrDefaultAsync();
+        var player = await provider.GetCollection<Player>()
+            .Find(p => p.Id == playerId)
+            .FirstOrDefaultAsync(cancellationToken: ct);
         
         return player is null
             ? Result<Player>.NotFound($"Player with id '{playerId}' does not exist")
             : Result<Player>.Success(player);
+    }
+    
+    public async Task<Result<Player>> GetByIdWithAbilities(string playerId, CancellationToken ct = default)
+    {
+        var lookupResult = await provider.GetCollection<Player>()
+            .AsQueryable()
+            .Where(p => p.Id == playerId)
+            .WithAbilities(provider.GetCollection<Ability>())
+            .FirstOrDefaultAsync(ct);
+        
+        if (lookupResult.Local is null)
+        {
+            return Result<Player>.NotFound($"Unable to retrieve player with id '{playerId}'");
+        }
+        
+        lookupResult.Local.Abilities = lookupResult.Results.ToList();
+        
+        return  Result<Player>.Success(lookupResult.Local);
     }
 }

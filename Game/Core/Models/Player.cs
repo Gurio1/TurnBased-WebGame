@@ -22,18 +22,30 @@ public class Player : IHasAbilityIds
     public string CharacterType { get; set; } = "Player";
     [JsonIgnore] public required List<string> AbilityIds { get; set; } = [];
     
-    public void Equip(EquipmentBase equipmentItem)
+    public ResultWithoutValue Equip(string equipmentId)
     {
-        if (Equipment.TryGetValue(equipmentItem.Slot, out var equippedItem)
+        var item = Inventory
+            .FirstOrDefault(s => s.Item.Id == equipmentId)?
+            .Item;
+        
+        if (item is null)
+            return ResultWithoutValue.NotFound($"Unable to retrieve item with id '{equipmentId}'");
+        
+        if (item is not EquipmentBase equipment || !item.CanInteract(ItemInteractions.Equip))
+            return ResultWithoutValue.Invalid($"Item '{item.Name}' doesn't have equip behaviour.");
+        
+        if (Equipment.TryGetValue(equipment.Slot, out var equippedItem)
             && equippedItem is not null)
         {
             AddToInventory(equippedItem);
             equippedItem.RemoveStats(this);
         }
         
-        Equipment[equipmentItem.Slot] = equipmentItem;
-        RemoveItemFromInventory(equipmentItem);
-        equipmentItem.ApplyStats(this);
+        Equipment[equipment.Slot] = equipment;
+        RemoveItemFromInventory(equipment);
+        equipment.ApplyStats(this);
+        
+        return ResultWithoutValue.Success();
     }
     
     public ResultWithoutValue Unequip(string equipmentSlot)

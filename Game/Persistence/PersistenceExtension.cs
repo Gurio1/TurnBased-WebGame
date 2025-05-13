@@ -1,8 +1,8 @@
 using Game.Features.Identity;
 using Game.Persistence.Mongo;
-using Game.Persistence.Queries;
 using Game.Persistence.Redis;
 using Game.Persistence.Repositories;
+using Game.Persistence.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace Game.Persistence;
@@ -26,8 +26,10 @@ public static class PersistenceExtension
         services.AddTransient<IMongoCollectionProvider, MongoCollectionProvider>();
         
         services.AddScoped<IPlayerRepository, PlayerMongoRepository>();
-        //TODO: Should it be a repo?
+        
+        //TODO: Should it be in a repo?
         services.AddScoped<GetMonsterQuery>();
+        services.AddScoped<UpdatePlayerAfterEquipmentInteraction>();
         
         services.AddSingleton<RedisProvider>();
         
