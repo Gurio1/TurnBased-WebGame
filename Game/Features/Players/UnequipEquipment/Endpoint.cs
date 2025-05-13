@@ -10,7 +10,11 @@ public sealed class Endpoint : Endpoint<UnequipCommand>
     
     public Endpoint(IDispatcher dispatcher) => this.dispatcher = dispatcher;
     
-    public override void Configure() => Post(EndpointSettings.EndpointName + "/unequip/{ItemId}");
+    public override void Configure()
+    {
+        Post(EndpointSettings.EndpointName + "/unequip/{EquipmentSlot}");
+        Description(x => x.Accepts<UnequipCommand>());
+    }
     
     public override async Task HandleAsync(UnequipCommand req, CancellationToken ct)
     {
@@ -24,6 +28,6 @@ public sealed class Endpoint : Endpoint<UnequipCommand>
             return;
         }
         
-        await SendNoContentAsync(ct);
+        await SendOkAsync(result.Value,ct);
     }
 }

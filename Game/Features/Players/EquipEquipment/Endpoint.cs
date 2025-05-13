@@ -12,7 +12,11 @@ public sealed class Endpoint : Endpoint<EquipCommand>
     
     public Endpoint(IDispatcher dispatcher) => this.dispatcher = dispatcher;
     
-    public override void Configure() => Post(EndpointSettings.EndpointName + "/equip/{ItemId}");
+    public override void Configure()
+    {
+        Post(EndpointSettings.EndpointName + "/equip/{ItemId}");
+        Description(x => x.Accepts<EquipCommand>());
+    }
     
     public override async Task HandleAsync(EquipCommand req, CancellationToken ct)
     {
@@ -26,6 +30,6 @@ public sealed class Endpoint : Endpoint<EquipCommand>
             return;
         }
         
-        await SendNoContentAsync(ct);
+        await SendOkAsync(result.Value,ct);
     }
 }
