@@ -69,6 +69,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
     string? connectionString = builder.Configuration.GetConnectionString("MongoConnection");
     return new MongoClient(connectionString);
 });
+
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddSingleton<ILootService, LootService>();
 builder.Services.AddSingleton<IEquipmentGenerator, EquipmentGenerator>();
@@ -111,7 +112,8 @@ app.UseFastEndpoints()
     .UseSwaggerGen();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
+if (app.Environment.IsDevelopment())
+    app.MapOpenApi();
 
 app.UseHttpsRedirection();
 app.UseMiddleware<ExecutionTimeMiddleware>();

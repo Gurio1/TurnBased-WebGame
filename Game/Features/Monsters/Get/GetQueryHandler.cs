@@ -1,6 +1,6 @@
 ﻿using Game.Core.Models;
 using Game.Core.SharedKernel;
-using Game.Persistence.Queries;
+using Game.Persistence.Requests;
 
 namespace Game.Features.Monsters.Get;
 

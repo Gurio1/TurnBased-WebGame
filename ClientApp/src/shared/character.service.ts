@@ -21,7 +21,10 @@ export class CharacterService {
 
   getPlayer(): Observable<PlayerHomeViewModel> {
     return this.http.get<PlayerHomeViewModel>(this.apiUrl).pipe(
-      tap((character) => this.characterSubject.next(character)),
+      tap((character) => {
+        this.characterSubject.next(character);
+        console.log('Character fetched:', character);
+      }),
       catchError(this.handleError)
     );
   }

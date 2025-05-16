@@ -3,7 +3,7 @@ using Game.Core.Models;
 using Game.Core.SharedKernel;
 using Game.Features.Battle.Models;
 using Game.Persistence.Mongo;
-using Game.Persistence.Queries;
+using Game.Persistence.Requests;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
@@ -42,6 +42,7 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         
         playerResult.Value.BattleId = battle.Id;
         
+        //TODO : How to do ACID atomicity???Actually this is a big problem or no? YAGNI?Is ACID applicable here?Can i possibly have that kind of error??
         var saveResult = await dispatcher.DispatchAsync(new SaveBattleInRedisCommand(battle), cancellationToken);
         
         if (saveResult.IsFailure)

@@ -14,6 +14,7 @@ public sealed class CreateCommandHandler : IRequestHandler<CreateCommand, Result
     
     public async Task<Result<EquipmentBlueprint>> Handle(CreateCommand request, CancellationToken cancellationToken)
     {
+        //TODO : Figure out how to deal with EquipmentStat in AttributeRange
         var template = new EquipmentBlueprint
         {
             EquipmentId = request.EquipmentId,

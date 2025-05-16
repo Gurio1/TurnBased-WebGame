@@ -29,8 +29,7 @@ public sealed class GetBattleQueryHandler : IRequestHandler<GetBattleQuery, Resu
         {
             var battleFromMongo = await mongoCollectionProvider
                 .GetCollection<PveBattle>()
-                .AsQueryable()
-                .Where(b => b.Id == request.BattleId)
+                .Find(b => b.Id == request.BattleId)
                 .FirstOrDefaultAsync(cancellationToken);
             
             return battleFromMongo is null

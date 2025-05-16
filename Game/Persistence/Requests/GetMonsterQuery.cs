@@ -5,7 +5,7 @@ using Game.Persistence.Mongo;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace Game.Persistence.Queries;
+namespace Game.Persistence.Requests;
 
 public sealed class GetMonsterQuery
 {
@@ -14,12 +14,12 @@ public sealed class GetMonsterQuery
     public GetMonsterQuery(IMongoCollectionProvider provider) =>
         this.provider = provider;
     
-    public async Task<Result<Monster>> GetByNameAsync(string monsterName, CancellationToken cancellationToken = default)
+    public async Task<Result<Monster>> GetByNameAsync(string monsterName, CancellationToken ct = default)
     {
         var lookupResult = await provider.GetCollection<Monster>().AsQueryable()
             .Where(p => p.Name == monsterName)
             .WithAbilities(provider.GetCollection<Ability>())
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(ct);
         
         if (lookupResult.Local is null)
             return Result<Monster>.NotFound($"Monster '{monsterName}' not found");
