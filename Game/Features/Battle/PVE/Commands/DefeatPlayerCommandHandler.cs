@@ -23,7 +23,7 @@ public class DefeatPlayerCommandHandler : IRequestHandler<DefeatPlayerCommand, R
     
     public async Task<ResultWithoutValue> Handle(DefeatPlayerCommand notification, CancellationToken cancellationToken)
     {
-        var playerResult = await playerRepository.GetById(notification.CombatPlayer.Id);
+        var playerResult = await playerRepository.GetById(notification.CombatPlayer.Id,cancellationToken);
         
         if (playerResult.IsFailure) return ResultWithoutValue.CreateError(playerResult.Error);
         
@@ -32,31 +32,7 @@ public class DefeatPlayerCommandHandler : IRequestHandler<DefeatPlayerCommand, R
         if (!player.InBattle())
             throw new InvalidOperationException($"Player is not in battle - {nameof(DefeatPlayerCommandHandler)}");
         
-        foreach (var usedItem in notification.CombatPlayer.UsedItems)
-        {
-            var itemSlots = player.Inventory
-                .Where(i => i.Item.Id == usedItem.Key)
-                .ToArray();
-            
-            int remainingToUse = usedItem.Value;
-            
-            foreach (var slot in itemSlots)
-            {
-                if (remainingToUse <= 0)
-                    break;
-                
-                if (slot.Quantity > remainingToUse)
-                {
-                    slot.Quantity -= remainingToUse;
-                    remainingToUse = 0;
-                }
-                else
-                {
-                    remainingToUse -= slot.Quantity;
-                    player.RemoveSlotFromInventory(slot);
-                }
-            }
-        }
+        player.RemoveUsedItems(notification.CombatPlayer.UsedItems);
         
         player.BattleId = null;
         player.Stats.CurrentHealth = player.Stats.MaxHealth;
@@ -78,14 +54,12 @@ public class DefeatPlayerCommandHandler : IRequestHandler<DefeatPlayerCommand, R
         
         var result = await collection.UpdateOneAsync(p => p.Id == player.Id, update);
         
-        if (result.MatchedCount == 0) return ResultWithoutValue.Failure($"Player with id '{player.Id}' not found");
+        if (result.MatchedCount == 0)
+            return ResultWithoutValue.Failure($"Player with id '{player.Id}' not found");
         
         if (result.ModifiedCount == 0)
-        {
-            var original = await collection.Find(p => p.Id == player.Id).FirstOrDefaultAsync();
             return ResultWithoutValue.Failure($"No changes detected for player '{player.Id}'. " +
                                               $"Inventory/Stats/BattleId may be identical to existing values.");
-        }
         
         return ResultWithoutValue.Success();
     }

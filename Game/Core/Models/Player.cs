@@ -64,6 +64,35 @@ public class Player : IHasAbilityIds
         return ResultWithoutValue.Success();
     }
     
+    public void RemoveUsedItems(Dictionary<string, int> usedItems)
+    {
+        foreach (var usedItem in usedItems)
+        {
+            var itemSlots = Inventory
+                .Where(i => i.Item.Id == usedItem.Key)
+                .ToArray();
+            
+            int remainingToUse = usedItem.Value;
+            
+            foreach (var slot in itemSlots)
+            {
+                if (remainingToUse <= 0)
+                    break;
+                
+                if (slot.Quantity > remainingToUse)
+                {
+                    slot.Quantity -= remainingToUse;
+                    remainingToUse = 0;
+                }
+                else
+                {
+                    remainingToUse -= slot.Quantity;
+                    RemoveSlotFromInventory(slot);
+                }
+            }
+        }
+    }
+    
     public void AddToInventory(Item item)
     {
         var slot = Inventory.FirstOrDefault(i => i.Item.Id == item.Id && i.Quantity < item.MaxInventorySlotQuantity);

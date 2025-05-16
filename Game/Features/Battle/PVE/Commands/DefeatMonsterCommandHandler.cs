@@ -28,7 +28,7 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
     
     public async Task<ResultWithoutValue> Handle(DefeatMonsterCommand notification, CancellationToken cancellationToken)
     {
-        var playerResult = await playerRepository.GetById(notification.CombatPlayer.Id);
+        var playerResult = await playerRepository.GetById(notification.CombatPlayer.Id,cancellationToken);
         
         if (playerResult.IsFailure)
             return ResultWithoutValue.CreateError(playerResult.Error);
@@ -38,37 +38,14 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
         if (player.BattleId == null)
             return ResultWithoutValue.Invalid("Cant receive reward,player is not in battle");
         
-        player.Stats.CurrentHealth = notification.CombatPlayer.Stats.CurrentHealth;
+        player.Stats = notification.CombatPlayer.Stats;
         
-        foreach (var usedItem in notification.CombatPlayer.UsedItems)
-        {
-            var itemSlots = player.Inventory
-                .Where(i => i.Item.Id == usedItem.Key)
-                .ToArray();
-            
-            int remainingToUse = usedItem.Value;
-            
-            foreach (var slot in itemSlots)
-            {
-                if (remainingToUse <= 0)
-                    break;
-                
-                if (slot.Quantity > remainingToUse)
-                {
-                    slot.Quantity -= remainingToUse;
-                    remainingToUse = 0;
-                }
-                else
-                {
-                    remainingToUse -= slot.Quantity;
-                    player.RemoveSlotFromInventory(slot);
-                }
-            }
-        }
+        player.RemoveUsedItems(notification.CombatPlayer.UsedItems);
         
         var dropResult = await lootService.GenerateDrop(notification.Monster);
         
-        if (dropResult.IsFailure) return ResultWithoutValue.CreateError(dropResult.Error);
+        if (dropResult.IsFailure)
+            return ResultWithoutValue.CreateError(dropResult.Error);
         
         var drop = dropResult.Value;
         
@@ -88,7 +65,8 @@ public class DefeatMonsterCommandHandler : IRequestHandler<DefeatMonsterCommand,
         
         var updateResult = await UpdatePlayer(player);
         
-        if (updateResult.IsFailure) return updateResult;
+        if (updateResult.IsFailure)
+            return updateResult;
         
         await hubContext.Clients.User(notification.CombatPlayer.Id)
             .SendAsync("ReceiveBattleReward", reward, cancellationToken);
