@@ -1,6 +1,6 @@
-﻿using Game.Core.Abilities;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Abilities;
 using Game.Core.Models;
-using Game.Core.SharedKernel;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Core.SharedKernel;
+using Game.Application.SharedKernel;
 using Game.Features.Players.Contracts;
 
 namespace Game.Features.Players.GetById;

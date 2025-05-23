@@ -1,5 +1,5 @@
-﻿using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Models;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 

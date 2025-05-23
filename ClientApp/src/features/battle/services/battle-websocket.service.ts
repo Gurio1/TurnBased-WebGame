@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 
 import * as signalR from '@microsoft/signalr';
 import { Observable, Subject } from 'rxjs';
-import { ActionLogResponse } from '../Contracts/Responses/WebSocket/action-log-response';
 import { BattleResponse } from '../Contracts/Responses/WebSocket/battle-response';
 
 import { BattleData } from '../Contracts/models/battle-data';
@@ -15,7 +14,7 @@ import { environment } from '../../../environments/environment';
 export class BattleWebsocketService {
   private hubConnection: signalR.HubConnection;
   private battleSubject = new Subject<BattleData>();
-  private actionLogSubject = new Subject<ActionLogResponse>();
+  private actionLogSubject = new Subject<string>();
   private battleReward = new Subject<Reward>();
   private battleLose = new Subject<boolean>();
 
@@ -49,7 +48,8 @@ export class BattleWebsocketService {
       );
   }
   private subscribeToActionLog() {
-    this.hubConnection.on('Log', (data: ActionLogResponse) => {
+    this.hubConnection.on('log', (data: string) => {
+      console.log(data);
       this.actionLogSubject.next(data);
     });
   }
@@ -61,21 +61,19 @@ export class BattleWebsocketService {
   }
 
   private subscribeToBattleData() {
-    this.hubConnection.on('ReceiveBattleData', (data: BattleData) => {
-      console.log(data);
+    this.hubConnection.on('BattleData', (data: BattleData) => {
       this.battleSubject.next(data);
     });
   }
 
   private subscribeToBattleReward() {
-    this.hubConnection.on('ReceiveBattleReward', (data: Reward) => {
-      console.log(data);
+    this.hubConnection.on('BattleReward', (data: Reward) => {
       this.battleReward.next(data);
     });
   }
 
   private subscribeToBattleLose() {
-    this.hubConnection.on('ReceiveBattleLose', (data: boolean) => {
+    this.hubConnection.on('BattleLose', (data: boolean) => {
       this.battleLose.next(data);
     });
   }
@@ -92,7 +90,7 @@ export class BattleWebsocketService {
     return this.battleLose.asObservable();
   }
 
-  getActionLog(): Observable<ActionLogResponse> {
+  getActionLog(): Observable<string> {
     return this.actionLogSubject.asObservable();
   }
 }

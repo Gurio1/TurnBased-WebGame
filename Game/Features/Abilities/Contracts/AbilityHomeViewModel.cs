@@ -1,5 +1,5 @@
 using Game.Core.Abilities;
-using Game.Core.Models;
+using Game.Core.PlayerProfile;
 
 namespace Game.Features.Abilities.Contracts;
 

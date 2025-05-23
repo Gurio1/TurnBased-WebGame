@@ -1,5 +1,6 @@
-﻿using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.ValueObjects;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 

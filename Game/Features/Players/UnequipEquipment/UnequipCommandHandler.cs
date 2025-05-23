@@ -1,5 +1,5 @@
-﻿using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.PlayerProfile;
 using Game.Features.Players.Contracts;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
@@ -9,10 +9,11 @@ namespace Game.Features.Players.UnequipEquipment;
 
 public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Result<PlayerViewModel>>
 {
-    private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     private readonly IMongoCollection<Player> collection;
+    private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     
-    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider,UpdatePlayerAfterEquipmentInteraction updatePlayerService)
+    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider,
+        UpdatePlayerAfterEquipmentInteraction updatePlayerService)
     {
         this.updatePlayerService = updatePlayerService;
         collection = collectionProvider.GetCollection<Player>();

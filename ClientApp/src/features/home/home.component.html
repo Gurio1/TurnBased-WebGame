@@ -1,74 +1,88 @@
-<div class="rpg-wrapper" *ngIf="character">
-  <!-- Sidebar: Character Stats -->
-  <aside class="rpg-panel stats-panel">
-    <app-player-stats [character]="character"></app-player-stats>
-  </aside>
-
-  <!-- Main Display: Character & Equipment -->
-  <main class="rpg-main">
-    <!-- Left Equipment Slots -->
-    <section class="equipment-column left">
-      <div class="equipment-slot" *ngFor="let slot of leftEquipmentSlots">
-        <label class="slot-label">{{ slot | titlecase }}</label>
-        <ng-container *ngIf="character.equipment[slot]; else emptySlot">
-          <img
-            class="equipment-icon"
-            [src]="character.equipment[slot]?.imageUrl + '.png'"
-            [alt]="character.equipment[slot]?.name"
-          />
-          <button
-            class="unequip-button"
-            (click)="performAction('Unequip', slot)"
-          >
-            ✖
-          </button>
-        </ng-container>
-        <ng-template #emptySlot>
-          <div class="equipment-icon empty"></div>
-        </ng-template>
+<div class="rpg-container" *ngIf="character">
+  <!-- Main Game Area -->
+  <div class="game-area">
+    <!-- Character Display Center Stage -->
+    <div class="character-stage">
+      <!-- Left Equipment (now as floating icons around character) -->
+      <div class="equipment-float left-float">
+        <div class="equipment-slot" *ngFor="let slot of leftEquipmentSlots">
+          <div class="slot-tooltip">{{ slot | titlecase }}</div>
+          <ng-container *ngIf="character.equipment[slot]; else emptySlot">
+            <div
+              class="equipment-icon-wrapper"
+              (click)="performAction('Unequip', slot)"
+            >
+              <img
+                class="equipment-icon"
+                [src]="character.equipment[slot]?.imageUrl + '.png'"
+                [alt]="character.equipment[slot]?.name"
+              />
+              <div class="equipment-hover-effect"></div>
+            </div>
+          </ng-container>
+          <ng-template #emptySlot>
+            <div class="equipment-icon empty" [attr.data-slot]="slot"></div>
+          </ng-template>
+        </div>
       </div>
-    </section>
 
-    <!-- Character Model -->
-    <section class="character-display">
-      <img
-        class="character-image"
-        src="character-placeholder.png"
-        alt="Character Model"
-      />
-    </section>
-
-    <!-- Right Equipment Slots -->
-    <section class="equipment-column right">
-      <div class="equipment-slot" *ngFor="let slot of rightEquipmentSlots">
-        <label class="slot-label">{{ slot | titlecase }}</label>
-        <ng-container *ngIf="character.equipment[slot]; else emptySlot">
-          <img
-            class="equipment-icon"
-            [src]="character.equipment[slot]?.imageUrl + '.png'"
-            [alt]="character.equipment[slot]?.name"
-          />
-          <button
-            class="unequip-button"
-            (click)="performAction('Unequip', slot)"
-          >
-            ✖
-          </button>
-        </ng-container>
-        <ng-template #emptySlot>
-          <div class="equipment-icon empty"></div>
-        </ng-template>
+      <!-- Character Model (now more prominent) -->
+      <div class="character-model">
+        <img
+          class="character-image"
+          src="character-placeholder.png"
+          alt="Character Model"
+        />
+        <div class="character-shadow"></div>
       </div>
-    </section>
-  </main>
 
-  <!-- Inventory Section -->
-  <section class="rpg-panel inventory-panel">
-    <h2 class="section-title">Inventory</h2>
-    <app-inventory
-      class="inventory-grid"
-      [equipmentInventoryItems]="character.inventoryEquipmentItems"
-      [otherInventoryItems]="character.otherInventoryItems"
-    ></app-inventory>
-  </section>
+      <!-- Right Equipment -->
+      <div class="equipment-float right-float">
+        <div class="equipment-slot" *ngFor="let slot of rightEquipmentSlots">
+          <div class="slot-tooltip">{{ slot | titlecase }}</div>
+          <ng-container *ngIf="character.equipment[slot]; else emptySlot">
+            <div
+              class="equipment-icon-wrapper"
+              (click)="performAction('Unequip', slot)"
+            >
+              <img
+                class="equipment-icon"
+                [src]="character.equipment[slot]?.imageUrl + '.png'"
+                [alt]="character.equipment[slot]?.name"
+              />
+              <div class="equipment-hover-effect"></div>
+            </div>
+          </ng-container>
+          <ng-template #emptySlot>
+            <div class="equipment-icon empty" [attr.data-slot]="slot"></div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Panel (now as an overlay that can be toggled) -->
+    <div class="stats-overlay">
+      <button class="toggle-stats" (click)="toggleStats()">
+        {{ statsVisible ? "Hide Stats" : "Show Stats" }}
+      </button>
+      <div class="stats-content" *ngIf="statsVisible">
+        <app-player-stats [character]="character"></app-player-stats>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory (now as a sliding drawer) -->
+  <div class="inventory-drawer">
+    <button class="inventory-toggle" (click)="toggleInventory()">
+      {{ inventoryVisible ? "▼ Hide Inventory" : "▲ Show Inventory" }}
+    </button>
+    <div class="inventory-content" *ngIf="inventoryVisible">
+      <h2 class="inventory-title">Inventory</h2>
+      <app-inventory
+        class="inventory-grid"
+        [equipmentInventoryItems]="character.inventoryEquipmentItems"
+        [otherInventoryItems]="character.otherInventoryItems"
+      ></app-inventory>
+    </div>
+  </div>
 </div>

@@ -1,5 +1,5 @@
-using Game.Core.Models;
-using Game.Features.Battle.Models;
+using Game.Core.Battle;
+using Game.Core.PlayerProfile;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Abilities;

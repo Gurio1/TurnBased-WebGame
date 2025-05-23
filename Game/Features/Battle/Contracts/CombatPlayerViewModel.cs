@@ -1,8 +1,9 @@
 using Game.Core.Abilities;
+using Game.Core.Battle;
 using Game.Core.Equipment;
-using Game.Core.Models;
+using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;
-using Game.Features.Battle.Models;
 
 namespace Game.Features.Battle.Contracts;
 
@@ -10,7 +11,7 @@ public class CombatPlayerViewModel
 {
     public string Id { get; set; }
     public Stats Stats { get; set; }
-    public List<Ability> Abilities { get; set; } = [];
+    public Ability[] Abilities { get; set; } = [];
     public Dictionary<string, EquipmentBase?> Equipment { get; set; } = [];
     public List<InventorySlot> OtherInventoryItems { get; set; } = new();
     public List<IDebuff> Debuffs { get; set; } = [];

@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Core.SharedKernel;
+using Game.Application.SharedKernel;
 
 namespace Game.Features.Equipment.Blueprints.Delete;
 

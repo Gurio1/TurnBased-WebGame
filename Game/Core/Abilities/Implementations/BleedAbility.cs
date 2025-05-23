@@ -1,6 +1,7 @@
-using Game.Core.Models;
+using Game.Core.Battle;
+using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;
-using Game.Features.Battle.Models;
 using Game.Utilities.Extensions;
 
 namespace Game.Core.Abilities.Implementations;

@@ -1,5 +1,5 @@
-﻿using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.PlayerProfile;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
@@ -14,7 +14,7 @@ public sealed class UpdatePlayerAfterEquipmentInteraction
     
     public async Task<Result<Player>> Update(Player player, CancellationToken ct = default)
     {
-        var updateDef =  Builders<Player>.Update
+        var updateDef = Builders<Player>.Update
             .Set(p => p.Equipment, player.Equipment)
             .Set(p => p.Inventory, player.Inventory)
             .Set(p => p.Stats, player.Stats);
@@ -22,10 +22,7 @@ public sealed class UpdatePlayerAfterEquipmentInteraction
         var result =
             await collection.UpdateOneAsync(p => p.Id == player.Id, updateDef, cancellationToken: ct);
         
-        if (result.MatchedCount == 0)
-        {
-            return Result<Player>.NotFound($"Player with id '{player.Id}' not found");
-        }
+        if (result.MatchedCount == 0) return Result<Player>.NotFound($"Player with id '{player.Id}' not found");
         
         return result.ModifiedCount > 0
             ? Result<Player>.Success(player)

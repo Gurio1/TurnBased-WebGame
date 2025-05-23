@@ -1,5 +1,5 @@
-﻿using Game.Core.Equipment;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Equipment;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
@@ -9,7 +9,8 @@ public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result
 {
     private readonly IMongoCollection<EquipmentBlueprint> collection;
     
-    public UpdateCommandHandler(IMongoCollectionProvider provider) => collection = provider.GetCollection<EquipmentBlueprint>();
+    public UpdateCommandHandler(IMongoCollectionProvider provider) =>
+        collection = provider.GetCollection<EquipmentBlueprint>();
     
     public async Task<ResultWithoutValue> Handle(UpdateCommand request, CancellationToken cancellationToken)
     {
@@ -17,9 +18,7 @@ public sealed class UpdateCommandHandler : IRequestHandler<UpdateCommand, Result
             request.Blueprint, cancellationToken: cancellationToken);
         
         if (result.MatchedCount == 0)
-        {
             return ResultWithoutValue.NotFound($"Unable to find EquipmentBlueprint with id '{request.Blueprint.Id}'");
-        }
         
         return result.ModifiedCount > 0
             ? ResultWithoutValue.Success()

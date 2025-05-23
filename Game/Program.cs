@@ -4,11 +4,11 @@ using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using Game.Application;
+using Game.Application.Battle;
+using Game.Application.SharedKernel;
+using Game.Core.Battle;
 using Game.Core.Equipment.Generation;
 using Game.Core.Loot;
-using Game.Core.SharedKernel;
-using Game.Features.Battle;
-using Game.Features.Battle.Models;
 using Game.Features.Battle.PVE;
 using Game.Features.Equipment.Generation;
 using Game.Features.Identity;
@@ -74,8 +74,9 @@ builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 builder.Services.AddSingleton<ILootService, LootService>();
 builder.Services.AddSingleton<IEquipmentGenerator, EquipmentGenerator>();
 
-builder.Services.AddScoped<PveBattleManager>();
+builder.Services.AddScoped<IBattleAuthService, BattleAuthService>();
 builder.Services.AddScoped<BattleContext>();
+builder.Services.AddScoped<BattleCacheManager>();
 
 
 builder.Services.AddDataServices(builder.Configuration);

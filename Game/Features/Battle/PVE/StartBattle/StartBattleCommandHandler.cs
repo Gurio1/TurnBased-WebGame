@@ -1,7 +1,9 @@
-﻿using Game.Core.Abilities;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Abilities;
+using Game.Core.Battle;
+using Game.Core.Battle.PVE;
 using Game.Core.Models;
-using Game.Core.SharedKernel;
-using Game.Features.Battle.Models;
+using Game.Core.PlayerProfile;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
 using MongoDB.Driver;
@@ -13,13 +15,15 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
 {
     private readonly IDispatcher dispatcher;
     private readonly GetMonsterQuery getMonsterQuery;
+    private readonly IBattleRepository battleRepository;
     private readonly IMongoCollectionProvider mongoProvider;
     
     public StartBattleCommandHandler(IMongoCollectionProvider provider, IDispatcher dispatcher,
-        GetMonsterQuery getMonsterQuery)
+        GetMonsterQuery getMonsterQuery, IBattleRepository battleRepository)
     {
         this.dispatcher = dispatcher;
         this.getMonsterQuery = getMonsterQuery;
+        this.battleRepository = battleRepository;
         mongoProvider = provider;
     }
     
@@ -27,32 +31,26 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
     {
         var monsterResult = await getMonsterQuery.GetByNameAsync(request.MonsterName, cancellationToken);
         
-        if (monsterResult.IsFailure)
-            return monsterResult.AsError<PveBattle>();
-        
         var playerResult = await GetCombatPlayer(request.PlayerId, cancellationToken);
         
-        if (playerResult.IsFailure)
-            return playerResult.AsError<PveBattle>();
+        var battleResult = PveBattle.Create(playerResult.Value, monsterResult.Value);
         
-        if (playerResult.Value.BattleId is not null)
-            return Result<PveBattle>.Invalid("Can't create new battle.Player is already in the battle");
-        
-        var battle = new PveBattle(playerResult.Value, monsterResult.Value);
-        
-        playerResult.Value.BattleId = battle.Id;
+        if (battleResult.IsFailure)
+        {
+            return battleResult;
+        }
         
         //TODO : How to do ACID atomicity???Actually this is a big problem or no? YAGNI?Is ACID applicable here?Can i possibly have that kind of error??
-        var saveResult = await dispatcher.DispatchAsync(new SaveBattleInRedisCommand(battle), cancellationToken);
+        var saveResult = await battleRepository.Save(battleResult.Value);
         
         if (saveResult.IsFailure)
             return Result<PveBattle>.CustomError(saveResult.Error);
         
-        var updateResult = await SetBattleIdToThePlayer(battle.Id, playerResult.Value.Id, cancellationToken);
+        var updateResult = await SetBattleIdToThePlayer(battleResult.Value.Id, playerResult.Value.Id, cancellationToken);
         
         return updateResult.IsFailure
             ? Result<PveBattle>.CustomError(updateResult.Error)
-            : Result<PveBattle>.Success(battle);
+            : Result<PveBattle>.Success(battleResult.Value);
     }
     
     private async Task<Result<CombatPlayer>> GetCombatPlayer(string playerId, CancellationToken cancellationToken)
@@ -68,7 +66,7 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
                 Debuffs = p.Local.Debuffs,
                 Equipment = p.Local.Equipment,
                 OtherInventoryItems = p.Local.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList(),
-                Abilities = p.Results.ToList()
+                Abilities = p.Results.ToArray()
             })
             .FirstOrDefaultAsync(cancellationToken);
         
@@ -77,7 +75,8 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
             : Result<CombatPlayer>.Success(combatPlayer);
     }
     
-    private async Task<ResultWithoutValue> SetBattleIdToThePlayer(string battleId,string playerId, CancellationToken ct)
+    private async Task<ResultWithoutValue> SetBattleIdToThePlayer(string battleId, string playerId,
+        CancellationToken ct)
     {
         var update = Builders<Player>.Update.Set(p => p.BattleId, battleId);
         

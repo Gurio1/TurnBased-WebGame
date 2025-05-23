@@ -1,4 +1,5 @@
-﻿using Game.Core.Models;
+﻿using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.ValueObjects;
 
 namespace Game.Features.Monsters.Create;
 

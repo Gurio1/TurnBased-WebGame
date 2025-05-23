@@ -1,6 +1,6 @@
-﻿using Game.Core.Abilities;
-using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Abilities;
+using Game.Core.PlayerProfile;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -10,6 +10,7 @@ namespace Game.Features.Players.GetById;
 public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<Player>>
 {
     private readonly IMongoCollectionProvider provider;
+    
     public GetQueryHandler(IMongoCollectionProvider provider) =>
         this.provider = provider;
     

@@ -1,5 +1,5 @@
-﻿using Game.Core.Equipment;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Equipment;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
@@ -20,10 +20,10 @@ public sealed class CreateCommandHandler : IRequestHandler<CreateCommand, Result
             EquipmentId = request.EquipmentId,
             AttributeRanges = new List<AttributeRange>
             {
-                new AttributeRange { Stat = new AttackStat(), MinValue = 5, MaxValue = 10 },
-                new AttributeRange { Stat = new ArmorStat(), MinValue = 10, MaxValue = 20 },
-                new AttributeRange { Stat = new CriticalChanceStat(), MinValue = 0.05f, MaxValue = 0.12f },
-                new AttributeRange { Stat = new CriticalDamageStat(), MinValue = 0.05f, MaxValue = 0.2f }
+                new() { Stat = new AttackStat(), MinValue = 5, MaxValue = 10 },
+                new() { Stat = new ArmorStat(), MinValue = 10, MaxValue = 20 },
+                new() { Stat = new CriticalChanceStat(), MinValue = 0.05f, MaxValue = 0.12f },
+                new() { Stat = new CriticalDamageStat(), MinValue = 0.05f, MaxValue = 0.2f }
             },
             AttributeCountWeights =
                 new Dictionary<string, double> { { "1", 0.4 }, { "2", 0.3 }, { "3", 0.2 }, { "4", 0.1 } }

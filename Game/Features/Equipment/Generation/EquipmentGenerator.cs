@@ -1,7 +1,7 @@
-﻿using Game.Core.Equipment;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Equipment;
 using Game.Core.Equipment.Generation;
 using Game.Core.Equipment.Generation.Steps;
-using Game.Core.SharedKernel;
 
 namespace Game.Features.Equipment.Generation;
 

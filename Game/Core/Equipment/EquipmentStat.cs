@@ -1,4 +1,4 @@
-using Game.Core.Models;
+using Game.Core.PlayerProfile;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Equipment;

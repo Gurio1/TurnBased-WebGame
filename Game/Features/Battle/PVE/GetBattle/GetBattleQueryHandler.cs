@@ -1,9 +1,8 @@
-﻿using Game.Core.SharedKernel;
-using Game.Features.Battle.Models;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Battle.PVE;
 using Game.Persistence.Mongo;
 using Game.Persistence.Redis;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using Newtonsoft.Json;
 
 namespace Game.Features.Battle.PVE.GetBattle;

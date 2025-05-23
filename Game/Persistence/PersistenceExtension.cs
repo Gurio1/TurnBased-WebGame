@@ -1,3 +1,5 @@
+using Game.Core.Battle;
+using Game.Core.PlayerProfile;
 using Game.Features.Identity;
 using Game.Persistence.Mongo;
 using Game.Persistence.Redis;
@@ -26,6 +28,7 @@ public static class PersistenceExtension
         services.AddTransient<IMongoCollectionProvider, MongoCollectionProvider>();
         
         services.AddScoped<IPlayerRepository, PlayerMongoRepository>();
+        services.AddScoped<IBattleRepository, BattleRedisRepository>();
         
         //TODO: Should it be in a repo?
         services.AddScoped<GetMonsterQuery>();

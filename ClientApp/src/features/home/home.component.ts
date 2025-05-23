@@ -18,6 +18,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   character: PlayerHomeViewModel | null = null;
   leftEquipmentSlots: string[] = ['Head', 'Chest', 'Gloves'];
   rightEquipmentSlots: string[] = ['Weapon', 'Shield', 'Boots'];
+  statsVisible: boolean = true;
+  inventoryVisible: boolean = true;
 
   constructor(private characterService: CharacterService) {}
 
@@ -32,6 +34,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
 
     this.characterService.getPlayer().subscribe();
+  }
+
+  toggleStats(): void {
+    this.statsVisible = !this.statsVisible;
+    // You could add animation triggers here if needed
+  }
+
+  toggleInventory(): void {
+    this.inventoryVisible = !this.inventoryVisible;
+    // You could add animation triggers here if needed
   }
 
   ngOnDestroy(): void {

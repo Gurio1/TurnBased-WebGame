@@ -1,17 +1,17 @@
-﻿using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.PlayerProfile;
 using Game.Features.Players.Contracts;
-using Game.Persistence.Repositories;
 using Game.Persistence.Requests;
 
 namespace Game.Features.Players.EquipEquipment;
 
-//TODO: I dont know.Should i create different commands for getting and updating a player?(This operations are too simple so i dont see any reason)
 public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<PlayerViewModel>>
 {
     private readonly IPlayerRepository playerRepository;
     private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     
-    public EquipCommandHandler(IPlayerRepository playerRepository, UpdatePlayerAfterEquipmentInteraction updatePlayerService)
+    public EquipCommandHandler(IPlayerRepository playerRepository,
+        UpdatePlayerAfterEquipmentInteraction updatePlayerService)
     {
         this.playerRepository = playerRepository;
         this.updatePlayerService = updatePlayerService;
@@ -19,21 +19,16 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<P
     
     public async Task<Result<PlayerViewModel>> Handle(EquipCommand request, CancellationToken cancellationToken)
     {
-        var getPlayerResult = await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);;
+        var getPlayerResult = await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);
+        ;
         
-        if (getPlayerResult.IsFailure)
-        {
-            return getPlayerResult.AsError<PlayerViewModel>();
-        }
+        if (getPlayerResult.IsFailure) return getPlayerResult.AsError<PlayerViewModel>();
         
         var player = getPlayerResult.Value;
         
         var equipResult = player.Equip(request.ItemId);
         
-        if (equipResult.IsFailure)
-        {
-            return Result<PlayerViewModel>.CustomError(equipResult.Error);
-        }
+        if (equipResult.IsFailure) return Result<PlayerViewModel>.CustomError(equipResult.Error);
         
         var updateResult = await updatePlayerService.Update(player, cancellationToken);
         

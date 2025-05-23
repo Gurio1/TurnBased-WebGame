@@ -37,12 +37,12 @@ export class BattleComponent implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.battleService.getBattleData().subscribe((data) => {
-      console.log('Battle Data:', data);
       this.battleData = data;
     });
 
-    this.battleService.getActionLog().subscribe((data) => {
-      this.logs.push(data.message);
+    this.battleService.getActionLog().subscribe((message) => {
+      console.log('LOGS:', message);
+      this.logs.push(message);
     });
 
     this.battleService.getBattleReward().subscribe((reward) => {

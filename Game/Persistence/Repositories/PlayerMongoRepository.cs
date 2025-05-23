@@ -1,6 +1,6 @@
-﻿using Game.Core.Abilities;
-using Game.Core.Models;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Abilities;
+using Game.Core.PlayerProfile;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
@@ -18,7 +18,7 @@ public sealed class PlayerMongoRepository : IPlayerRepository
     {
         var player = await provider.GetCollection<Player>()
             .Find(p => p.Id == playerId)
-            .FirstOrDefaultAsync(cancellationToken: ct);
+            .FirstOrDefaultAsync(ct);
         
         return player is null
             ? Result<Player>.NotFound($"Player with id '{playerId}' does not exist")
@@ -34,12 +34,10 @@ public sealed class PlayerMongoRepository : IPlayerRepository
             .FirstOrDefaultAsync(ct);
         
         if (lookupResult.Local is null)
-        {
             return Result<Player>.NotFound($"Unable to retrieve player with id '{playerId}'");
-        }
         
         lookupResult.Local.Abilities = lookupResult.Results.ToList();
         
-        return  Result<Player>.Success(lookupResult.Local);
+        return Result<Player>.Success(lookupResult.Local);
     }
 }

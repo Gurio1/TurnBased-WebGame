@@ -1,5 +1,4 @@
-using Game.Core.Models;
-using Game.Features.Battle.Models;
+using Game.Core.Battle;
 
 namespace Game.Core.StatusEffects;
 

@@ -1,5 +1,5 @@
+using Game.Core.Battle.PVE;
 using Game.Core.Models;
-using Game.Features.Battle.Models;
 
 namespace Game.Features.Battle.Contracts;
 

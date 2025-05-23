@@ -1,5 +1,6 @@
 using Game.Core.Equipment;
 using Game.Core.Models;
+using Game.Core.PlayerProfile;
 
 namespace Game.Core.Rewards;
 

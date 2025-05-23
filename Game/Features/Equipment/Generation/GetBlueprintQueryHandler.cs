@@ -1,6 +1,6 @@
+using Game.Application.SharedKernel;
 using Game.Core.Equipment;
 using Game.Core.Equipment.Generation;
-using Game.Core.SharedKernel;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 

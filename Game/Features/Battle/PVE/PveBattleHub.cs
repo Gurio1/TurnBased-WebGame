@@ -1,40 +1,35 @@
-using System.Security.Claims;
-using Game.Core.SharedKernel;
-using Game.Features.Battle.Models;
+using Game.Application.Battle;
+using Game.Application.SharedKernel;
+using Game.Core.Battle.PVE;
+using Game.Features.Battle.Contracts;
+using Game.Features.Battle.PVE.ExecutePlayerTurn;
 using Game.Features.Battle.PVE.GetBattle;
 using Game.Features.Battle.PVE.StartBattle;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Game.Features.Battle.PVE;
 
 //As docs says TCP connections are limited per server.So for scale we need another server...To sync their connection we need to set up Redis backplane(For an unattainable future)
 [Authorize]
-public sealed class PveBattleHub : Hub
+public sealed class PveBattleHub : Hub<IPveBattleClient>
 {
-    private const string PlayerIdClaim = "PlayerId";
-    private const string BattleIdClaim = "BattleId";
-    private const string BattleCachePrefix = "battle:";
-    private readonly IDistributedCache cache;
     private readonly IDispatcher dispatcher;
-    private readonly IHttpContextAccessor httpContextAccessor;
-    private readonly PveBattleManager pveBattleManager;
+    private readonly IBattleAuthService authService;
+    private readonly BattleCacheManager cacheManager;
     
     
-    public PveBattleHub(PveBattleManager pveBattleManager, IDispatcher dispatcher,
-        IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
+    public PveBattleHub(IDispatcher dispatcher,IBattleAuthService authService,
+        BattleCacheManager cacheManager)
     {
-        this.pveBattleManager = pveBattleManager;
         this.dispatcher = dispatcher;
-        this.cache = cache;
-        this.httpContextAccessor = httpContextAccessor;
+        this.authService = authService;
+        this.cacheManager = cacheManager;
     }
     
     public override async Task OnConnectedAsync()
     {
-        string? playerId = GetCurrentPlayerId();
+        string? playerId = authService.GetCurrentPlayerId(Context.User);
         
         if (playerId is null)
         {
@@ -42,14 +37,11 @@ public sealed class PveBattleHub : Hub
             return;
         }
         
-        string? battleId = TryGetBattleId();
+        string? battleId = authService.TryGetBattleId(Context.User);
         
-        Result<PveBattle> pveBattleResult;
-        
-        if (battleId is null)
-            pveBattleResult = await dispatcher.DispatchAsync(new StartBattleCommand("Goblin", playerId));
-        else
-            pveBattleResult = await dispatcher.DispatchAsync(new GetBattleQuery(battleId));
+        var pveBattleResult = battleId is null
+            ? await StartNewBattle(playerId)
+            : await GetExistingBattle(battleId);
         
         if (pveBattleResult.IsFailure)
         {
@@ -59,94 +51,73 @@ public sealed class PveBattleHub : Hub
         
         var battle = pveBattleResult.Value;
         
-        AppendBattleIdToClaims(battle.Id);
-        
-        try
-        {
-            string cacheKey = GetBattleCacheKey(playerId);
-            await cache.SetStringAsync(cacheKey, battle.Id,
-                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-        
-        await Groups.AddToGroupAsync(Context.ConnectionId, battle.Id);
-        await Clients.Group(battle.Id).SendAsync("ReceiveBattleData", battle);
+        authService.AppendBattleIdToClaims(Context.User,battle.Id);
+        await cacheManager.SetBattleIdCache(playerId, battle.Id);
+        await ManageGroupMembership(battle.Id, join: true);
+        await Clients.Group(battle.Id).BattleData(battle.ToViewModel());
         
         await base.OnConnectedAsync();
     }
     
     public async Task UseAbility(string abilityId)
     {
-        string? playerId = GetCurrentPlayerId();
+        var battle = await GetBattle();
+        if (battle == null) return;
         
+        await dispatcher.DispatchAsync(new ExecutePlayerTurnCommand(abilityId,battle));
+    }
+    
+    public async Task SendBattleError(string message) => await Clients.Caller.BattleErrorMessage(message);
+    
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        string? playerId = authService.GetCurrentPlayerId(Context.User);
+        if (playerId == null) return;
+        //TODO : Handle situations when battleID is removed from cache when user was afk more than 30min
+        string? battleId = await cacheManager.GetBattleId(playerId);
+        if (battleId != null)
+        {
+            await ManageGroupMembership(battleId, join: false);
+        }
+        
+        await cacheManager.Remove(playerId);
+        await base.OnDisconnectedAsync(exception);
+    }
+    private async Task<PveBattle?> GetBattle()
+    {
+        string? playerId = authService.GetCurrentPlayerId(Context.User);
         if (playerId is null)
         {
             await SendBattleError("User is not authenticated");
-            return;
+            return null;
         }
         
-        string cacheKey = GetBattleCacheKey(playerId);
-        string? battleId = await cache.GetStringAsync(cacheKey);
-        
+        string? battleId = await cacheManager.GetBattleId(playerId);
+        //TODO: Check for battle in mongo
         if (battleId is null)
         {
-            await SendBattleError("Can not use ability. Player is not in battle");
-            return;
+            await SendBattleError("Player is not in battle");
+            return null;
         }
         
         var battleResult = await dispatcher.DispatchAsync(new GetBattleQuery(battleId));
         
-        if (battleResult.IsFailure)
-        {
-            await SendBattleError(battleResult.Error.Description);
-            return;
-        }
+        if (!battleResult.IsFailure) return battleResult.Value;
         
-        await pveBattleManager.ExecutePlayerTurnAsync(abilityId, battleResult.Value);
+        await SendBattleError(battleResult.Error.Description);
+        return null;
+        
     }
+    private async Task<Result<PveBattle>> StartNewBattle(string playerId)
+        => await dispatcher.DispatchAsync(new StartBattleCommand("Goblin", playerId));
     
-    public override async Task OnDisconnectedAsync(Exception? exception)
+    private async Task<Result<PveBattle>> GetExistingBattle(string battleId)
+        => await dispatcher.DispatchAsync(new GetBattleQuery(battleId));
+    private async Task ManageGroupMembership(string battleId, bool join)
     {
-        string? playerId = GetCurrentPlayerId();
-        
-        if (playerId != null)
-        {
-            string cacheKey = GetBattleCacheKey(playerId);
-            
-            //TODO : Handle situations when battleID is removed from cache when user was afk more than 30min
-            string? battleId = await cache.GetStringAsync(cacheKey);
-            
-            await Groups.RemoveFromGroupAsync(playerId, battleId);
-            
-            await cache.RemoveAsync($"battle:{playerId}");
-        }
-        
-        await base.OnDisconnectedAsync(exception);
+        if (join)
+            await Groups.AddToGroupAsync(Context.ConnectionId, battleId);
+        else
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, battleId);
     }
-    
-    private string? GetCurrentPlayerId() => Context.User?.FindFirstValue(PlayerIdClaim);
-    private string? TryGetBattleId() => Context.User?.FindFirstValue(BattleIdClaim);
-    
-    private void AppendBattleIdToClaims(string battleId)
-    {
-        var currentUser = httpContextAccessor.HttpContext!.User;
-        
-        if (currentUser.HasClaim(c => c.Type == BattleIdClaim))
-            return;
-        
-        var identity = currentUser.Identity as ClaimsIdentity;
-        identity?.AddClaim(new Claim("BattleId", battleId));
-        
-        var principal = new ClaimsPrincipal(identity!);
-        httpContextAccessor.HttpContext.SignInAsync(principal);
-    }
-    
-    private static string GetBattleCacheKey(string playerId) => $"{BattleCachePrefix}{playerId}";
-    
-    public async Task SendBattleError(string message) =>
-        await Clients.Caller.SendAsync("ReceiveBattleErrorMessage", message);
 }

@@ -1,5 +1,5 @@
+using Game.Application.SharedKernel;
 using Game.Core.Equipment.Generation;
-using Game.Core.SharedKernel;
 
 namespace Game.Features.Equipment.Generation;
 

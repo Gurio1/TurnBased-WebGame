@@ -1,5 +1,5 @@
-﻿using Game.Core.Equipment;
-using Game.Core.SharedKernel;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Equipment;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
@@ -17,7 +17,8 @@ public sealed class DeleteCommandHandler : IRequestHandler<DeleteCommand, Result
         var deleteResult = await collection.DeleteOneAsync(b => b.Id == request.BlueprintId, cancellationToken);
         
         return deleteResult.DeletedCount == 0
-            ? ResultWithoutValue.NotFound($"Can't delete EquipmentBlueprint with id '{request.BlueprintId}'. Not found.")
+            ? ResultWithoutValue.NotFound(
+                $"Can't delete EquipmentBlueprint with id '{request.BlueprintId}'. Not found.")
             : ResultWithoutValue.Success();
     }
 }

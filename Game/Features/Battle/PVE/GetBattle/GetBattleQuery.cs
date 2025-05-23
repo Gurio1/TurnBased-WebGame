@@ -1,5 +1,5 @@
-﻿using Game.Core.SharedKernel;
-using Game.Features.Battle.Models;
+﻿using Game.Application.SharedKernel;
+using Game.Core.Battle.PVE;
 
 namespace Game.Features.Battle.PVE.GetBattle;
 

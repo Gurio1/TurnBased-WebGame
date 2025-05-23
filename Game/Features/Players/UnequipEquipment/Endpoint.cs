@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using FastEndpoints;
-using Game.Core.SharedKernel;
+using Game.Application.SharedKernel;
 
 namespace Game.Features.Players.UnequipEquipment;
 
@@ -28,6 +28,6 @@ public sealed class Endpoint : Endpoint<UnequipCommand>
             return;
         }
         
-        await SendOkAsync(result.Value,ct);
+        await SendOkAsync(result.Value, ct);
     }
 }
