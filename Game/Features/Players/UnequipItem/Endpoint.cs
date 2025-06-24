@@ -2,11 +2,9 @@
 using FastEndpoints;
 using Game.Application.SharedKernel;
 
-namespace Game.Features.Players.EquipEquipment;
+namespace Game.Features.Players.UnequipItem;
 
-//TODO : If player is in battle he cannot equip or sell items.Only use consumables
-
-public sealed class Endpoint : Endpoint<EquipCommand>
+public sealed class Endpoint : Endpoint<UnequipCommand>
 {
     private readonly IDispatcher dispatcher;
     
@@ -14,11 +12,11 @@ public sealed class Endpoint : Endpoint<EquipCommand>
     
     public override void Configure()
     {
-        Post(EndpointSettings.EndpointName + "/equip/{ItemId}");
-        Description(x => x.Accepts<EquipCommand>());
+        Post(EndpointSettings.DefaultName + "/unequip/{EquipmentSlot}");
+        Description(x => x.Accepts<UnequipCommand>());
     }
     
-    public override async Task HandleAsync(EquipCommand req, CancellationToken ct)
+    public override async Task HandleAsync(UnequipCommand req, CancellationToken ct)
     {
         var result = await dispatcher.DispatchAsync(req, ct);
         

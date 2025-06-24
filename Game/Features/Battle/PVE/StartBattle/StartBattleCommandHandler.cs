@@ -4,6 +4,7 @@ using Game.Core.Battle;
 using Game.Core.Battle.PVE;
 using Game.Core.Models;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
 using MongoDB.Driver;
@@ -33,7 +34,7 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         
         var playerResult = await GetCombatPlayer(request.PlayerId, cancellationToken);
         
-        var battleResult = PveBattle.Create(playerResult.Value, monsterResult.Value);
+        var battleResult = PveBattle.Create(playerResult, monsterResult);
         
         if (battleResult.IsFailure)
         {
@@ -55,7 +56,7 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
     
     private async Task<Result<CombatPlayer>> GetCombatPlayer(string playerId, CancellationToken cancellationToken)
     {
-        var combatPlayer = await mongoProvider.GetCollection<Player>().AsQueryable()
+        var combatPlayer = await mongoProvider.GetCollection<GamePlayer>().AsQueryable()
             .Where(p => p.Id == playerId)
             .WithAbilities(mongoProvider.GetCollection<Ability>())
             .Select(p => new CombatPlayer
@@ -75,12 +76,15 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
             : Result<CombatPlayer>.Success(combatPlayer);
     }
     
+    
+    //TODO: Well,do i need to set it right now,after battle creation or i should set it after cache expires?
+    //Should Player hold battle id at all?
     private async Task<ResultWithoutValue> SetBattleIdToThePlayer(string battleId, string playerId,
         CancellationToken ct)
     {
-        var update = Builders<Player>.Update.Set(p => p.BattleId, battleId);
+        var update = Builders<GamePlayer>.Update.Set(p => p.BattleId, battleId);
         
-        var updateResult = await mongoProvider.GetCollection<Player>()
+        var updateResult = await mongoProvider.GetCollection<GamePlayer>()
             .UpdateOneAsync(p => p.Id == playerId, update, cancellationToken: ct);
         
         return updateResult.ModifiedCount == 0

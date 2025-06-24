@@ -1,22 +1,24 @@
 ﻿using Game.Application.SharedKernel;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Features.Players.Contracts;
+using Game.Features.Players.UnequipItem;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
 using MongoDB.Driver;
 
-namespace Game.Features.Players.UnequipEquipment;
+namespace Game.Features.Players.Equipment.Unequip;
 
 public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Result<PlayerViewModel>>
 {
-    private readonly IMongoCollection<Player> collection;
+    private readonly IMongoCollection<GamePlayer> collection;
     private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
     
     public UnequipCommandHandler(IMongoCollectionProvider collectionProvider,
         UpdatePlayerAfterEquipmentInteraction updatePlayerService)
     {
         this.updatePlayerService = updatePlayerService;
-        collection = collectionProvider.GetCollection<Player>();
+        collection = collectionProvider.GetCollection<GamePlayer>();
     }
     
     public async Task<Result<PlayerViewModel>> Handle(UnequipCommand request, CancellationToken cancellationToken)

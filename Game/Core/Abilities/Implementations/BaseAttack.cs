@@ -1,5 +1,6 @@
 using Game.Core.Battle;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 
 namespace Game.Core.Abilities.Implementations;
 
@@ -10,7 +11,7 @@ public class BaseAttack : Ability
     public override string Name { get; set; } = "BaseAttack";
     public override string ImageUrl { get; set; } = "BaseAttack.png";
     public override int Cooldown { get; init; }
-    public override int CurrentCooldown { get; set; }
+    public override int CurrentCooldown { get; protected set; }
     
     public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
     {
@@ -18,6 +19,6 @@ public class BaseAttack : Ability
         target.Defence(damage, context);
     }
     
-    public override string GetAbilityDescription(Player player) =>
-        $"Performs a basic attack that deals damage equal to the player's Damage stat: {player.Stats.Damage}.";
+    public override string GetAbilityDescription(GamePlayer gamePlayer) =>
+        $"Performs a basic attack that deals damage equal to the player's Damage stat: {gamePlayer.Stats.Damage}.";
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Player } from '../core/models/player';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -33,6 +32,7 @@ export class CharacterService {
     actionName: string,
     equipmentId: string
   ): Observable<PlayerHomeViewModel> {
+    console.log(`${this.apiUrl}/${actionName.toLowerCase()}/${equipmentId}`);
     return this.http
       .post<PlayerHomeViewModel>(
         `${this.apiUrl}/${actionName.toLowerCase()}/${equipmentId}`,

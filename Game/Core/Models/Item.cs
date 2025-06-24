@@ -1,3 +1,4 @@
+using Game.Core.Marketplace;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -8,6 +9,7 @@ public abstract class Item
 {
     public string Id { get; set; } = Guid.CreateVersion7().ToString();
     public abstract string Name { get; set; }
+    public abstract Currency SellPrice { get; set; }
     
     [BsonRepresentation(BsonType.String)] public abstract ItemType ItemType { get; set; }
     

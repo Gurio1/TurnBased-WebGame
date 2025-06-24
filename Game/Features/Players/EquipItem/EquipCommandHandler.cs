@@ -3,7 +3,7 @@ using Game.Core.PlayerProfile;
 using Game.Features.Players.Contracts;
 using Game.Persistence.Requests;
 
-namespace Game.Features.Players.EquipEquipment;
+namespace Game.Features.Players.EquipItem;
 
 public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<PlayerViewModel>>
 {
@@ -20,7 +20,6 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<P
     public async Task<Result<PlayerViewModel>> Handle(EquipCommand request, CancellationToken cancellationToken)
     {
         var getPlayerResult = await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);
-        ;
         
         if (getPlayerResult.IsFailure) return getPlayerResult.AsError<PlayerViewModel>();
         

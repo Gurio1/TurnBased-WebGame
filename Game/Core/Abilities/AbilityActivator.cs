@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 namespace Game.Core.Abilities;
 
 //TODO: Should i use Result<>?
+//TODO: Do i need this cache field here?
 public static class AbilityActivator
 {
     private static readonly ConcurrentDictionary<Type, Func<Ability>> cache = new();

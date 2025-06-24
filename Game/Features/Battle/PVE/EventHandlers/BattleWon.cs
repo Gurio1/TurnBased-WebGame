@@ -4,6 +4,7 @@ using Game.Core.Battle.PVE.Events;
 using Game.Core.Equipment;
 using Game.Core.Loot;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Core.Rewards;
 using Game.Persistence.Mongo;
 using Microsoft.AspNetCore.SignalR;
@@ -13,7 +14,7 @@ namespace Game.Features.Battle.PVE.EventHandlers;
 
 public class BattleWon : INotificationHandler<PveBattleWon>
 {
-    private readonly IMongoCollection<Player> collection;
+    private readonly IMongoCollection<GamePlayer> collection;
     private readonly IHubContext<PveBattleHub, IPveBattleClient> hubContext;
     private readonly ILootService lootService;
     private readonly IPlayerRepository playerRepository;
@@ -26,7 +27,7 @@ public class BattleWon : INotificationHandler<PveBattleWon>
         this.hubContext = hubContext;
         this.playerRepository = playerRepository;
         this.battleRepository = battleRepository;
-        collection = provider.GetCollection<Player>();
+        collection = provider.GetCollection<GamePlayer>();
     }
     
     public async Task Handle(PveBattleWon notification, CancellationToken ct = default)
@@ -58,7 +59,7 @@ public class BattleWon : INotificationHandler<PveBattleWon>
         
         if (dropResult.IsFailure)
         {
-            await hubContext.Clients.User(notification.CombatPlayer.Id)
+            await hubContext.Clients.User(player.Id)
                 .BattleErrorMessage(dropResult.Error.Description);
             return;
         }
@@ -84,12 +85,12 @@ public class BattleWon : INotificationHandler<PveBattleWon>
         
         if (updateResult.IsFailure)
         {
-            await hubContext.Clients.User(notification.CombatPlayer.Id)
+            await hubContext.Clients.User(player.Id)
                 .BattleErrorMessage(updateResult.Error.Description);
             return;
         }
         
-        var removeBattleResult = await battleRepository.Delete(notification.CombatPlayer.BattleId!);
+        var removeBattleResult = await battleRepository.Delete(notification.CombatPlayer.BattleId);
         
         if (removeBattleResult.IsFailure)
         {
@@ -100,19 +101,19 @@ public class BattleWon : INotificationHandler<PveBattleWon>
             .BattleReward(reward);
     }
     
-    private async Task<ResultWithoutValue> UpdatePlayer(Player player)
+    private async Task<ResultWithoutValue> UpdatePlayer(GamePlayer gamePlayer)
     {
-        var update = Builders<Player>.Update
-            .Set(p => p.Inventory, player.Inventory)
-            .Set(p => p.Stats, player.Stats)
-            .Set(p => p.BattleId, player.BattleId);
+        var update = Builders<GamePlayer>.Update
+            .Set(p => p.Inventory, gamePlayer.Inventory)
+            .Set(p => p.Stats, gamePlayer.Stats)
+            .Set(p => p.BattleId, gamePlayer.BattleId);
         
-        var result = await collection.UpdateOneAsync(p => p.Id == player.Id, update);
+        var result = await collection.UpdateOneAsync(p => p.Id == gamePlayer.Id, update);
         
-        if (result.MatchedCount == 0) return ResultWithoutValue.Failure($"Can't find player with id '{player.Id}'");
+        if (result.MatchedCount == 0) return ResultWithoutValue.Failure($"Can't find player with id '{gamePlayer.Id}'");
         
         return result.ModifiedCount > 0
             ? ResultWithoutValue.Success()
-            : ResultWithoutValue.Failure($"Can not update player with id '{player.Id}'");
+            : ResultWithoutValue.Failure($"Can not update player with id '{gamePlayer.Id}'");
     }
 }

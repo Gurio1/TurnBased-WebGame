@@ -1,6 +1,7 @@
 using Game.Core.Equipment;
 using Game.Core.Models;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;
 using Game.Features.Abilities.Contracts;
@@ -21,7 +22,7 @@ public class PlayerViewModel
 
 public static class Mapper
 {
-    public static PlayerViewModel ToViewModel(this Player model) =>
+    public static PlayerViewModel ToViewModel(this GamePlayer model) =>
         new()
         {
             Id = model.Id,

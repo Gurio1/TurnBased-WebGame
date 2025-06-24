@@ -2,7 +2,7 @@
 using Game.Application.SharedKernel;
 using Game.Features.Players.Contracts;
 
-namespace Game.Features.Players.UnequipEquipment;
+namespace Game.Features.Players.UnequipItem;
 
 public class UnequipCommand : IRequest<Result<PlayerViewModel>>
 {

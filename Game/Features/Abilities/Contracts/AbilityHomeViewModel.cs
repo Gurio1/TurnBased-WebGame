@@ -1,5 +1,6 @@
 using Game.Core.Abilities;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 
 namespace Game.Features.Abilities.Contracts;
 
@@ -13,7 +14,7 @@ public class AbilityHomeViewModel
 
 public static class Mapper
 {
-    public static AbilityHomeViewModel ToAbilityHomeViewModel(this Ability ability, Player abilityOwner) =>
+    public static AbilityHomeViewModel ToAbilityHomeViewModel(this Ability ability, GamePlayer abilityOwner) =>
         new()
         {
             Id = ability.Id,

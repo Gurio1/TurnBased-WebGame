@@ -36,6 +36,7 @@ export class BattleWebsocketService {
     this.subscribeToBattleData();
     this.subscribeToBattleReward();
     this.subscribeToBattleLose();
+    this.subscribeToBattleErrorMessage();
   }
 
   private startConnection() {
@@ -47,6 +48,13 @@ export class BattleWebsocketService {
         console.error('Error connecting to SignalR hub:', err)
       );
   }
+
+  private subscribeToBattleErrorMessage() {
+    this.hubConnection.on('BattleErrorMessage', (data: string) => {
+      console.log(data);
+    });
+  }
+
   private subscribeToActionLog() {
     this.hubConnection.on('log', (data: string) => {
       console.log(data);

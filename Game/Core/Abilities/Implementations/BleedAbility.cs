@@ -1,5 +1,6 @@
 using Game.Core.Battle;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;
 using Game.Utilities.Extensions;
@@ -16,7 +17,7 @@ public sealed class BleedAbility : Ability
     public override string Name { get; set; } = "Bleed";
     public override string ImageUrl { get; set; } = "BleedSlash.png";
     public override int Cooldown { get; init; } = 4;
-    public override int CurrentCooldown { get; set; }
+    public override int CurrentCooldown { get; protected set; }
     
     
     public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
@@ -38,10 +39,10 @@ public sealed class BleedAbility : Ability
     private static float GetBleedDamage(Stats ownerStats) =>
         (ownerStats.Damage * BleedDamageMultiplier).RoundTo1();
     
-    public override string GetAbilityDescription(Player player) =>
-        $"The player unleashes a bleeding slash, dealing {GetAbilityDamage(player.Stats)} damage" +
+    public override string GetAbilityDescription(GamePlayer gamePlayer) =>
+        $"The player unleashes a bleeding slash, dealing {GetAbilityDamage(gamePlayer.Stats)} damage" +
         $" and inflicting a bleed effect that causes the target to take additional damage" +
-        $" equal to 10% of the player's Damage stat: {GetBleedDamage(player.Stats)} per turn for {Duration} turns.";
+        $" equal to 10% of the player's Damage stat: {GetBleedDamage(gamePlayer.Stats)} per turn for {Duration} turns.";
     
     private static void ApplyBleedDebuff(CombatEntity target, float damage, BattleContext context)
     {

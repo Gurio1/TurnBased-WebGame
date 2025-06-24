@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Game.Core.Battle;
 
+//TODO: I actually dont like this class. Looks like code smell.Need to reflex about this.
+//upd. Publish log event and create handler that takes battle id from the BattleAuthService?
 public class BattleContext
 {
     private readonly IHubContext<PveBattleHub, IPveBattleClient> hubContext;

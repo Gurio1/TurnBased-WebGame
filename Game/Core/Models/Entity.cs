@@ -1,7 +1,7 @@
 ﻿using Game.Application.SharedKernel;
 using Newtonsoft.Json;
 
-namespace Game.Core;
+namespace Game.Core.Models;
 
 public abstract class Entity
 {

@@ -1,18 +1,22 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
-using Game.Features.Players.Contracts;
 
-namespace Game.Features.Players.GetById;
+namespace Game.Features.Players.Sell;
 
-public sealed class Endpoint : Endpoint<GetQuery>
+public sealed class Endpoint : Endpoint<SellCommand>
 {
     private readonly IDispatcher dispatcher;
     
     public Endpoint(IDispatcher dispatcher) => this.dispatcher = dispatcher;
-    public override void Configure() => Get(EndpointSettings.DefaultName);
     
-    public override async Task HandleAsync(GetQuery req, CancellationToken ct)
+    public override void Configure()
+    {
+        Post(EndpointSettings.DefaultName + "/sell/{ItemId}");
+        Description(x => x.Accepts<SellCommand>());
+    }
+    
+    public override async Task HandleAsync(SellCommand req, CancellationToken ct)
     {
         var result = await dispatcher.DispatchAsync(req, ct);
         
@@ -24,6 +28,6 @@ public sealed class Endpoint : Endpoint<GetQuery>
             return;
         }
         
-        await SendOkAsync(result.Value.ToViewModel(), ct);
+        await SendOkAsync(result.Value, ct);
     }
 }

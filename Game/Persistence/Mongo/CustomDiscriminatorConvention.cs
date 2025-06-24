@@ -1,5 +1,6 @@
 using Game.Core.Abilities;
 using Game.Core.Equipment;
+using Game.Core.Marketplace;
 using Game.Core.Models;
 using Game.Core.PlayerProfile;
 using MongoDB.Bson;
@@ -50,6 +51,7 @@ public static class MongoDbConfig
         var discriminatorConvention = new CustomDiscriminatorConvention();
         
         BsonSerializer.RegisterDiscriminatorConvention(typeof(Ability), discriminatorConvention);
+        BsonSerializer.RegisterDiscriminatorConvention(typeof(Currency), discriminatorConvention);
         BsonSerializer.RegisterDiscriminatorConvention(typeof(EquipmentBase), discriminatorConvention);
         BsonSerializer.RegisterDiscriminatorConvention(typeof(Item), discriminatorConvention);
         BsonSerializer.RegisterDiscriminatorConvention(typeof(EquipmentStat), discriminatorConvention);

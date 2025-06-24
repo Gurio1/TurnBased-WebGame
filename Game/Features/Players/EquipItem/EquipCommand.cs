@@ -2,7 +2,7 @@
 using Game.Application.SharedKernel;
 using Game.Features.Players.Contracts;
 
-namespace Game.Features.Players.EquipEquipment;
+namespace Game.Features.Players.EquipItem;
 
 public sealed class EquipCommand : IRequest<Result<PlayerViewModel>>
 {

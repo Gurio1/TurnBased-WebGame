@@ -1,13 +1,32 @@
 using Game.Application.SharedKernel;
 using Game.Core.Battle.PVE.Events;
 using Game.Core.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Newtonsoft.Json;
 
 namespace Game.Core.Battle.PVE;
 
 public class PveBattle : Entity
 {
-    private PveBattle() { }
+    public string Id { get; }
+    public CombatPlayer CombatPlayer { get; }
+    public Monster Monster { get; }
+    
+    private PveBattle(CombatPlayer player, Monster monster)
+    {
+        Id = Guid.NewGuid().ToString();
+        CombatPlayer = player;
+        CombatPlayer.BattleId = Id;
+        Monster = monster;
+    }
+    
+    // Json.NET will use this
+    [JsonConstructor]
+    private PveBattle(string id, CombatPlayer combatPlayer, Monster monster)
+    {
+        Id = id;
+        CombatPlayer = combatPlayer;
+        Monster = monster;
+    }
     
     public static Result<PveBattle> Create(Result<CombatPlayer> playerResult, Result<Monster> monsterResult)
     {
@@ -20,15 +39,8 @@ public class PveBattle : Entity
         if (monsterResult.IsFailure)
             return monsterResult.AsError<PveBattle>();
         
-        return Result<PveBattle>.Success(new PveBattle()
-        {
-            Monster = monsterResult.Value, CombatPlayer = playerResult.Value
-        });
+        return Result<PveBattle>.Success(new PveBattle(playerResult.Value, monsterResult.Value));
     }
-    
-    public string Id { get; set; } = Guid.NewGuid().ToString();
-    public CombatPlayer CombatPlayer { get; private init; }
-    public Monster Monster { get; private init; }
     
     public ResultWithoutValue ExecuteTurn(string abilityId, BattleContext battleContext)
     {

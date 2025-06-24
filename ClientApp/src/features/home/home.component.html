@@ -71,18 +71,31 @@
     </div>
   </div>
 
-  <!-- Inventory (now as a sliding drawer) -->
-  <div class="inventory-drawer">
+  <!-- Inventory (now as a right side panel) -->
+  <div class="inventory-drawer" [class.collapsed]="!inventoryVisible">
     <button class="inventory-toggle" (click)="toggleInventory()">
-      {{ inventoryVisible ? "▼ Hide Inventory" : "▲ Show Inventory" }}
+      {{ inventoryVisible ? "Hide Inventory" : "Show Inventory" }}
     </button>
     <div class="inventory-content" *ngIf="inventoryVisible">
       <h2 class="inventory-title">Inventory</h2>
       <app-inventory
-        class="inventory-grid"
+        *ngIf="inventoryVisible"
         [equipmentInventoryItems]="character.inventoryEquipmentItems"
         [otherInventoryItems]="character.otherInventoryItems"
+        (itemHover)="showTooltip($event)"
+        (itemLeave)="hideTooltip()"
       ></app-inventory>
     </div>
+
+    <div
+      #tooltipAnchor
+      style="position: fixed; top: 0; left: 0; width: 0; height: 0"
+    ></div>
+    <app-inventory-tooltip
+      *ngIf="activeTooltipItem"
+      [item]="activeTooltipItem"
+      [position]="tooltipPosition"
+    >
+    </app-inventory-tooltip>
   </div>
 </div>

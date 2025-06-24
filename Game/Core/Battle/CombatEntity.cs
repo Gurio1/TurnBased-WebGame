@@ -1,6 +1,7 @@
 using Game.Application.SharedKernel;
 using Game.Core.Abilities;
 using Game.Core.Equipment;
+using Game.Core.Models;
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;

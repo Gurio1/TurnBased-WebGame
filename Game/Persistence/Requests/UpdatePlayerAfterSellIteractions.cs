@@ -5,19 +5,18 @@ using MongoDB.Driver;
 
 namespace Game.Persistence.Requests;
 
-public sealed class UpdatePlayerAfterEquipmentInteraction
+public sealed class UpdatePlayerAfterSellInteraction
 {
     private readonly IMongoCollection<GamePlayer> collection;
     
-    public UpdatePlayerAfterEquipmentInteraction(IMongoCollectionProvider provider) =>
+    public UpdatePlayerAfterSellInteraction(IMongoCollectionProvider provider) =>
         collection = provider.GetCollection<GamePlayer>();
     
     public async Task<Result<GamePlayer>> Update(GamePlayer gamePlayer, CancellationToken ct = default)
     {
         var updateDef = Builders<GamePlayer>.Update
-            .Set(p => p.Equipment, gamePlayer.Equipment)
             .Set(p => p.Inventory, gamePlayer.Inventory)
-            .Set(p => p.Stats, gamePlayer.Stats);
+            .Set(p => p.Currencies, gamePlayer.Currencies);
         
         var result =
             await collection.UpdateOneAsync(p => p.Id == gamePlayer.Id, updateDef, cancellationToken: ct);

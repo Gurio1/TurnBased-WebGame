@@ -52,6 +52,7 @@ public sealed class PveBattleHub : Hub<IPveBattleClient>
         var battle = pveBattleResult.Value;
         
         authService.AppendBattleIdToClaims(Context.User,battle.Id);
+        
         await cacheManager.SetBattleIdCache(playerId, battle.Id);
         await ManageGroupMembership(battle.Id, join: true);
         await Clients.Group(battle.Id).BattleData(battle.ToViewModel());

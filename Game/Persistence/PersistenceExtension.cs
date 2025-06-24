@@ -33,6 +33,7 @@ public static class PersistenceExtension
         //TODO: Should it be in a repo?
         services.AddScoped<GetMonsterQuery>();
         services.AddScoped<UpdatePlayerAfterEquipmentInteraction>();
+        services.AddScoped<UpdatePlayerAfterSellInteraction>();
         
         services.AddSingleton<RedisProvider>();
         

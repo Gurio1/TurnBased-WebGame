@@ -37,7 +37,10 @@ public sealed class GetBattleQueryHandler : IRequestHandler<GetBattleQuery, Resu
         }
         
         var battle = JsonConvert.DeserializeObject<PveBattle>(getResult.ToString(),
-            new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+            new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
         
         return battle is null
             ? Result<PveBattle>.Failure($"Could not deserialize battle with id '{request.BattleId}'")

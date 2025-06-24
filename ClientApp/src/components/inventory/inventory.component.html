@@ -1,47 +1,42 @@
-<div
-  *ngFor="let item of equipmentInventoryItems"
-  class="inventory-item"
-  (contextmenu)="openContextMenu($event, item)"
->
-  <span class="mat-tooltip">{{ getEquipmentTooltip(item) }}</span>
-  <img [src]="item.imageUrl + '.png'" alt="{{ item.name }}" />
-
-  <div
-    *ngIf="hoveredItem === item"
-    class="item-tooltip"
-    matTooltip="Info about the action"
-    matTooltipPosition="left"
-  >
-    <p>{{ item.name }}</p>
-    <p>{{ item.description }}</p>
+<!-- inventory.component.html -->
+<div class="inventory-panel">
+  <div class="inventory-items-container">
+    <div
+      *ngFor="let item of allInventoryItems"
+      class="inventory-item"
+      (contextmenu)="openContextMenu($event, item)"
+      (mouseover)="onItemHover(item, $event)"
+      (mouseleave)="onItemLeave()"
+    >
+      <div class="item-image-container">
+        <img
+          [src]="item.imageUrl + '.png'"
+          [alt]="item.name"
+          class="item-image"
+        />
+      </div>
+    </div>
   </div>
-</div>
-<div
-  *ngFor="let item of otherInventoryItems"
-  class="inventory-item"
-  (contextmenu)="openContextMenu($event, item)"
-  (mouseover)="onItemHover(item)"
-  (mouseleave)="onItemLeave()"
->
-  <img [src]="item.imageUrl + '.png'" alt="{{ item.name }}" />
 
-  <!-- Tooltip or Popup for item description and equipment attributes -->
-  <div *ngIf="hoveredItem === item" class="item-tooltip">
-    <p>{{ item.name }}</p>
-    <p>{{ item.description }}</p>
-  </div>
-</div>
-
-<div
-  *ngIf="contextMenuVisible"
-  class="context-menu"
-  [style.left.px]="contextMenuX"
-  [style.top.px]="contextMenuY"
->
+  <!-- Context Menu -->
   <div
-    *ngFor="let action of (selectedItem?.interactions ?? '').split(', ')"
-    (click)="performAction(action, selectedItem?.id ?? '')"
+    *ngIf="contextMenuVisible"
+    class="context-menu"
+    [style.left.px]="contextMenuX"
+    [style.top.px]="contextMenuY"
   >
-    {{ action }}
+    <div
+      *ngFor="let action of (selectedItem?.interactions ?? '').split(', ')"
+      class="context-menu-item"
+      (click)="performAction(action, selectedItem?.id ?? '')"
+      (mouseenter)="highlightItem($event)"
+      (mouseleave)="unhighlightItem($event)"
+    >
+      <span
+        class="action-icon"
+        [ngClass]="'action-' + action.toLowerCase()"
+      ></span>
+      <span>{{ action }}</span>
+    </div>
   </div>
 </div>

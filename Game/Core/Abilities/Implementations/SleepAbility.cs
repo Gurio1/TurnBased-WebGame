@@ -1,5 +1,6 @@
 using Game.Core.Battle;
 using Game.Core.PlayerProfile;
+using Game.Core.PlayerProfile.Aggregates;
 using Game.Core.StatusEffects;
 
 namespace Game.Core.Abilities.Implementations;
@@ -12,7 +13,7 @@ public class SleepAbility : Ability
     public override string Name { get; set; } = "Sleep";
     public override string ImageUrl { get; set; }
     public override int Cooldown { get; init; } = 4;
-    public override int CurrentCooldown { get; set; }
+    public override int CurrentCooldown { get; protected set; }
     private int Duration { get; } = 2;
     
     public override void Execute(CombatEntity owner, CombatEntity target, BattleContext context)
@@ -32,7 +33,7 @@ public class SleepAbility : Ability
         CurrentCooldown = Cooldown;
     }
     
-    public override string GetAbilityDescription(Player player) =>
+    public override string GetAbilityDescription(GamePlayer gamePlayer) =>
         throw new NotImplementedException();
     
     private void SetDebuff(CombatEntity target, BattleContext context)

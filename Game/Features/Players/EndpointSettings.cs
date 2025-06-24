@@ -2,5 +2,5 @@
 
 public static class EndpointSettings
 {
-    public const string EndpointName = "/players";
+    public const string DefaultName = "/players";
 }
