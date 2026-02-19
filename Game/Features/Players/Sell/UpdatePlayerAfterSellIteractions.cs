@@ -3,7 +3,7 @@ using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
 using MongoDB.Driver;
 
-namespace Game.Persistence.Requests;
+namespace Game.Features.Players.Sell;
 
 public sealed class UpdatePlayerAfterSellInteraction
 {
@@ -15,8 +15,7 @@ public sealed class UpdatePlayerAfterSellInteraction
     public async Task<Result<GamePlayer>> Update(GamePlayer gamePlayer, CancellationToken ct = default)
     {
         var updateDef = Builders<GamePlayer>.Update
-            .Set(p => p.Inventory, gamePlayer.Inventory)
-            .Set(p => p.Currencies, gamePlayer.Currencies);
+            .Set(p => p.Inventory, gamePlayer.Inventory);
         
         var result =
             await collection.UpdateOneAsync(p => p.Id == gamePlayer.Id, updateDef, cancellationToken: ct);

@@ -2,6 +2,7 @@
 using Game.Core.Abilities;
 using Game.Core.Battle;
 using Game.Core.Battle.PVE;
+using Game.Core.Equipment;
 using Game.Core.Models;
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
@@ -59,14 +60,14 @@ public sealed class StartBattleCommandHandler : IRequestHandler<StartBattleComma
         var combatPlayer = await mongoProvider.GetCollection<GamePlayer>().AsQueryable()
             .Where(p => p.Id == playerId)
             .WithAbilities(mongoProvider.GetCollection<Ability>())
-            .Select(p => new CombatPlayer
+            .Select(p => new CombatPlayer   
             {
                 Id = p.Local.Id,
                 Stats = p.Local.Stats,
                 CharacterType = p.Local.CharacterType,
                 Debuffs = p.Local.Debuffs,
                 Equipment = p.Local.Equipment,
-                OtherInventoryItems = p.Local.Inventory.Where(i => i.Item.ItemType != ItemType.Equipment).ToList(),
+                OtherInventoryItems = p.Local.Inventory.Where(i => !(i.Item.GetType() ==  typeof(EquipmentBase))).ToList(),
                 Abilities = p.Results.ToArray()
             })
             .FirstOrDefaultAsync(cancellationToken);

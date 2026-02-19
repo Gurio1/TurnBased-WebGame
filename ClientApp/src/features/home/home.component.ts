@@ -118,8 +118,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   performAction(action: string, itemId: string): void {
     if (!itemId) return;
 
-    this.characterService.makeAction(action, itemId).subscribe({
+    this.characterService.makeAction(action).subscribe({
       error: (error) => console.error('Action failed:', error),
+    });
+  }
+
+  unequipItem(slot: string): void {
+    console.log(`Unequip item called for slot: ${slot}`);
+    this.characterService.unequipItem(slot).subscribe({
+      error: (error) => console.error('Unequip failed:', error),
     });
   }
 }

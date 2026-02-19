@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Game.Features.Identity;
+namespace Game.Core.Models;
 
 public class User : IdentityUser
 {

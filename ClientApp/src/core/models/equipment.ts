@@ -1,4 +1,4 @@
-import { EquipmentAttribute } from './equipment-attribute';
+import { EquipmentStat } from './equipment-attribute';
 import { Item } from './item';
 
 export interface Equipment extends Item {
@@ -6,5 +6,5 @@ export interface Equipment extends Item {
   equipmentId: string;
   name: string;
   slot: string;
-  attributes: EquipmentAttribute[];
+  attributes: EquipmentStat[];
 }

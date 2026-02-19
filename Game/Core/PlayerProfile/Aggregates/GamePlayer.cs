@@ -18,15 +18,18 @@ public class GamePlayer : IHasAbilityIds
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; init; } = ObjectId.GenerateNewId().ToString();
-    public List<Currency> Currencies { get; set; } = CurrencyInitializer.InitializeAllCurrencies();
+    
     public string? BattleId { get; private set; }
     public Stats Stats { get; set; } = new();
     [BsonIgnore] public List<Ability> Abilities { get; set; } = [];
     public Dictionary<string, EquipmentBase?> Equipment { get; init; } = [];
-    public Inventory Inventory { get; init; } = [];
+    public Inventory Inventory { get; init; } = new();
     public List<IDebuff> Debuffs { get; init; } = [];
     public string CharacterType { get; set; } = "Player";
     [JsonIgnore] public List<string> AbilityIds { get; init; } = [];
+    
+    public bool InBattle() => BattleId is not null;
+    public void ResetBattleId() => BattleId = null;
     
     public ResultWithoutValue Equip(string itemId)
     {
@@ -39,8 +42,8 @@ public class GamePlayer : IHasAbilityIds
         
         var item = itemResult.Value;
         
-        if (item is not EquipmentBase equipment || !item.CanInteract(ItemInteractions.Equip))
-            return ResultWithoutValue.Invalid($"Item '{item.Name}' doesn't have equip behaviour.");
+        if (item is not EquipmentBase equipment)
+            return ResultWithoutValue.Invalid($"Item '{item.Name}' is not equipment.");
         
         var spec = new EquipmentAction();
         var result = spec.IsSatisfiedBy(this);
@@ -53,7 +56,7 @@ public class GamePlayer : IHasAbilityIds
         if (Equipment.TryGetValue(equipment.Slot, out var equippedItem)
             && equippedItem is not null)
         {
-            Inventory.Add(equippedItem);
+            Inventory.Add(equippedItem, 1);
             equippedItem.RemoveStats(this);
         }
         
@@ -66,7 +69,7 @@ public class GamePlayer : IHasAbilityIds
     public ResultWithoutValue Unequip(string equipmentSlot)
     {
         if (!Equipment.TryGetValue(equipmentSlot, out var equippedItem))
-            return ResultWithoutValue.Invalid($"'{equipmentSlot} slot doesn't exist as equipment slot");
+            return ResultWithoutValue.Invalid($"{equipmentSlot} slot doesn't exist as equipment slot");
         
         if (equippedItem == null)
             return ResultWithoutValue.Invalid(
@@ -83,12 +86,11 @@ public class GamePlayer : IHasAbilityIds
         
         equippedItem.RemoveStats(this);
         Equipment.Remove(equipmentSlot);
-        Inventory.Add(equippedItem);
+        Inventory.Add(equippedItem, 1);
         
         return ResultWithoutValue.Success();
     }
-    
-    public Result<Currency> Sell(string itemId)
+    public ResultWithoutValue Sell(string itemId)
     {
         var itemResult = Inventory.GetItem(itemId);
         
@@ -99,18 +101,13 @@ public class GamePlayer : IHasAbilityIds
         
         var item = itemResult.Value;
         
-        if (!item.CanInteract(ItemInteractions.Sell))
-            return Result<Currency>.Invalid($"Item '{item.Name}' doesn't have sell behaviour.");
+        if (item is not ISellable sellableItem)
+            return ResultWithoutValue.Invalid($"Item '{item.Name}' can not be sold.");
         
-        var actualCurrency = Currencies.FirstOrDefault(x => x.Name == item.SellPrice.Name);
-        
-        actualCurrency!.Amount += item.SellPrice.Amount;
+        Inventory.Add(sellableItem.SellPrice, sellableItem.SellPrice.Quantity);
         
         Inventory.RemoveItem(item);
         
-        return Result<Currency>.Success(actualCurrency);
+        return ResultWithoutValue.Success();
     }
-    
-    public bool InBattle() => BattleId is not null;
-    public void ResetBattleId() => BattleId = null;
 }

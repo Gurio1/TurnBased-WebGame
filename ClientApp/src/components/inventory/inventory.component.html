@@ -2,18 +2,21 @@
 <div class="inventory-panel">
   <div class="inventory-items-container">
     <div
-      *ngFor="let item of allInventoryItems"
+      *ngFor="let slot of inventory"
       class="inventory-item"
-      (contextmenu)="openContextMenu($event, item)"
-      (mouseover)="onItemHover(item, $event)"
+      (contextmenu)="openContextMenu($event, slot.item)"
+      (mouseover)="onItemHover(slot.item, $event)"
       (mouseleave)="onItemLeave()"
     >
-      <div class="item-image-container">
+      <div class="item-image-container" [class.has-qty]="slot.quantity > 1">
         <img
-          [src]="item.imageUrl + '.png'"
-          [alt]="item.name"
+          [src]="slot.item.imageUrl + '.png'"
+          [alt]="slot.item.name"
           class="item-image"
         />
+        <span class="item-quantity" *ngIf="slot.quantity > 1">
+          {{ slot.quantity }}
+        </span>
       </div>
     </div>
   </div>
@@ -26,17 +29,14 @@
     [style.top.px]="contextMenuY"
   >
     <div
-      *ngFor="let action of (selectedItem?.interactions ?? '').split(', ')"
+      *ngFor="let action of selectedItem?.itemActions"
       class="context-menu-item"
-      (click)="performAction(action, selectedItem?.id ?? '')"
-      (mouseenter)="highlightItem($event)"
+      (click)="selectedItem && performAction(action.href)"
+      (mouseenter)="highlightItem($event, action)"
       (mouseleave)="unhighlightItem($event)"
     >
-      <span
-        class="action-icon"
-        [ngClass]="'action-' + action.toLowerCase()"
-      ></span>
-      <span>{{ action }}</span>
+      <span class="action-icon" [ngClass]="'action-' + action.key"></span>
+      <span>{{ action.key }}</span>
     </div>
   </div>
 </div>

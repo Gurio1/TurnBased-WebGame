@@ -20,7 +20,7 @@ public class SleepAbility : Ability
     {
         if (CurrentCooldown != 0)
         {
-            Console.WriteLine("Can not use this ability");
+            context.PublishActionLog($"Can not use {Name} ability");
             return;
         }
         

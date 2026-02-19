@@ -1,0 +1,69 @@
+<!-- world-map.component.html -->
+<div class="map-shell">
+  <div class="map-area">
+    <img class="map-image" [src]="mapImageUrl" alt="World map" />
+
+    <button
+      *ngFor="let loc of locations; trackBy: trackById"
+      type="button"
+      class="marker"
+      [style.left.%]="loc.x"
+      [style.top.%]="loc.y"
+      [class.is-selected]="selected?.id === loc.id"
+      (click)="select(loc)"
+      [attr.aria-label]="'Open ' + loc.name"
+      [title]="loc.name"
+    >
+      <span class="marker-dot"></span>
+    </button>
+  </div>
+
+  <!-- Overlay (click to close) -->
+  <button
+    *ngIf="selected"
+    type="button"
+    class="overlay"
+    (click)="closeSidebar()"
+    aria-label="Close location details"
+  ></button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.open]="!!selected" *ngIf="selected as s">
+    <div class="sidebar-header">
+      <div class="title">
+        <h2>{{ s.name }}</h2>
+        <div class="difficulty" *ngIf="s.difficulty as d">
+          <span *ngFor="let _ of [].constructor(d)">✦</span>
+        </div>
+      </div>
+
+      <button type="button" class="close" (click)="closeSidebar()">✕</button>
+    </div>
+
+    <img class="preview" [src]="s.imageUrl" [alt]="s.name" />
+
+    <p class="desc">{{ s.description }}</p>
+
+    <section class="block">
+      <h3>Monsters</h3>
+      <ul>
+        <li *ngFor="let m of s.monsters">{{ m }}</li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h3>Loot</h3>
+      <ul class="loot">
+        <li *ngFor="let l of s.loot">
+          <span class="loot-name">{{ l.name }}</span>
+          <span class="loot-chance">{{ l.chance }}%</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="primary">Explore</button>
+      <button type="button">Back</button>
+    </div>
+  </aside>
+</div>

@@ -1,4 +1,5 @@
 using FastEndpoints.Security;
+using Game.Core.Models;
 
 namespace Game.Features.Identity.Shared;
 

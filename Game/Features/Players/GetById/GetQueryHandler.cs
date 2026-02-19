@@ -10,22 +10,10 @@ namespace Game.Features.Players.GetById;
 
 public sealed class GetQueryHandler : IRequestHandler<GetQuery, Result<GamePlayer>>
 {
-    private readonly IMongoCollectionProvider provider;
+    private readonly IPlayerRepository playerRepository;
     
-    public GetQueryHandler(IMongoCollectionProvider provider) =>
-        this.provider = provider;
+    public GetQueryHandler(IPlayerRepository playerRepository) => this.playerRepository = playerRepository;
     
-    public async Task<Result<GamePlayer>> Handle(GetQuery request, CancellationToken cancellationToken)
-    {
-        var lookupResult = await provider.GetCollection<GamePlayer>().AsQueryable()
-            .Where(p => p.Id == request.PlayerId)
-            .WithAbilities(provider.GetCollection<Ability>())
-            .FirstOrDefaultAsync(cancellationToken);
-        
-        lookupResult.Local.Abilities = lookupResult.Results.ToList();
-        
-        return lookupResult.Local is null
-            ? Result<GamePlayer>.NotFound($"Unable to retrieve player with id '{request.PlayerId}'")
-            : Result<GamePlayer>.Success(lookupResult.Local);
-    }
+    public async Task<Result<GamePlayer>> Handle(GetQuery request, CancellationToken cancellationToken) => 
+        await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);
 }

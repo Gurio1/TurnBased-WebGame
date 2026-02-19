@@ -1,7 +1,9 @@
 ﻿using Game.Application.SharedKernel;
+using Game.Contracts;
 using Game.Core.PlayerProfile;
-using Game.Features.Players.Contracts;
 using Game.Persistence.Requests;
+using Game.Utilities;
+using Game.Utilities.Extensions;
 
 namespace Game.Features.Players.EquipItem;
 
@@ -9,12 +11,15 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<P
 {
     private readonly IPlayerRepository playerRepository;
     private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
+    private readonly UrlBuilder urlBuilder;
     
     public EquipCommandHandler(IPlayerRepository playerRepository,
-        UpdatePlayerAfterEquipmentInteraction updatePlayerService)
+        UpdatePlayerAfterEquipmentInteraction updatePlayerService,
+        UrlBuilder urlBuilder)
     {
         this.playerRepository = playerRepository;
         this.updatePlayerService = updatePlayerService;
+        this.urlBuilder = urlBuilder;
     }
     
     public async Task<Result<PlayerViewModel>> Handle(EquipCommand request, CancellationToken cancellationToken)
@@ -33,6 +38,6 @@ public sealed class EquipCommandHandler : IRequestHandler<EquipCommand, Result<P
         
         return updateResult.IsFailure
             ? updateResult.AsError<PlayerViewModel>()
-            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel());
+            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel(urlBuilder));
     }
 }

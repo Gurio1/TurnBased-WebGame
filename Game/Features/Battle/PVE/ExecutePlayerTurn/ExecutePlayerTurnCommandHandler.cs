@@ -1,6 +1,7 @@
 ﻿using Game.Application.SharedKernel;
+using Game.Contracts;
 using Game.Core.Battle;
-using Game.Features.Battle.Contracts;
+using Game.Utilities.Extensions;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Game.Features.Battle.PVE.ExecutePlayerTurn;

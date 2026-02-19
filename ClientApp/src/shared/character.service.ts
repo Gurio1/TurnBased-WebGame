@@ -28,16 +28,17 @@ export class CharacterService {
     );
   }
 
-  makeAction(
-    actionName: string,
-    equipmentId: string
-  ): Observable<PlayerHomeViewModel> {
-    console.log(`${this.apiUrl}/${actionName.toLowerCase()}/${equipmentId}`);
+  makeAction(actionName: string): Observable<PlayerHomeViewModel> {
+    return this.http.post<PlayerHomeViewModel>(actionName, null).pipe(
+      tap((character) => this.characterSubject.next(character)),
+      catchError(this.handleError)
+    );
+  }
+
+  unequipItem(slot: string): Observable<PlayerHomeViewModel> {
+    console.log(`Unequipping item from slot: ${slot}`);
     return this.http
-      .post<PlayerHomeViewModel>(
-        `${this.apiUrl}/${actionName.toLowerCase()}/${equipmentId}`,
-        null
-      )
+      .post<PlayerHomeViewModel>(this.apiUrl + '/unequip/' + slot, null)
       .pipe(
         tap((character) => this.characterSubject.next(character)),
         catchError(this.handleError)

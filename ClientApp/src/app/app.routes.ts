@@ -5,6 +5,7 @@ import { RegisterComponent } from '../features/identity/register/register.compon
 import { HomeComponent } from '../features/home/home.component';
 import { RewardModalComponent } from '../components/reward-modal/reward-modal.component';
 import { DefeatModalComponent } from '../components/defeat-modal/defeat-modal.component';
+import { MapPageComponent } from './map-page/map-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -12,4 +13,5 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'battle', component: BattleComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'map', component: MapPageComponent },
 ];

@@ -38,15 +38,18 @@ public class BattleLost : INotificationHandler<PveBattleLost>
         
         player.Inventory.RemoveUsedItems(notification.CombatPlayer.UsedItems);
         
+        string battleId = player.BattleId!;
+        
         player.ResetBattleId();
         
+        //TODO : This shouldn't be here
         player.Stats.CurrentHealth = player.Stats.MaxHealth;
         
         var updateResult = await UpdatePlayer(player);
         
         if (updateResult.IsFailure) return;
         
-        var deleteBattleResult = await battleRepository.Delete(player.BattleId!);
+        var deleteBattleResult = await battleRepository.Delete(battleId);
         
         if (deleteBattleResult.IsFailure)
         {

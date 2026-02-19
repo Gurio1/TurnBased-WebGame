@@ -1,32 +1,37 @@
 ﻿using Game.Application.SharedKernel;
+using Game.Contracts;
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
-using Game.Features.Players.Contracts;
-using Game.Features.Players.UnequipItem;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
+using Game.Utilities;
+using Game.Utilities.Extensions;
 using MongoDB.Driver;
 
-namespace Game.Features.Players.Equipment.Unequip;
+namespace Game.Features.Players.UnequipItem;
 
 public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Result<PlayerViewModel>>
 {
-    private readonly IMongoCollection<GamePlayer> collection;
+    private readonly IPlayerRepository playerRepository;
     private readonly UpdatePlayerAfterEquipmentInteraction updatePlayerService;
+    private readonly UrlBuilder urlBuilder;
     
-    public UnequipCommandHandler(IMongoCollectionProvider collectionProvider,
-        UpdatePlayerAfterEquipmentInteraction updatePlayerService)
+    public UnequipCommandHandler(IPlayerRepository playerRepository,
+        UpdatePlayerAfterEquipmentInteraction updatePlayerService,
+        UrlBuilder urlBuilder)
     {
+        this.playerRepository = playerRepository;
         this.updatePlayerService = updatePlayerService;
-        collection = collectionProvider.GetCollection<GamePlayer>();
+        this.urlBuilder = urlBuilder;
     }
     
     public async Task<Result<PlayerViewModel>> Handle(UnequipCommand request, CancellationToken cancellationToken)
     {
-        var player = await collection.Find(p => p.Id == request.PlayerId).FirstOrDefaultAsync(cancellationToken);
+        var getPlayerResult = await playerRepository.GetByIdWithAbilities(request.PlayerId, cancellationToken);
         
-        if (player is null)
-            return Result<PlayerViewModel>.NotFound($"Player with id '{request.PlayerId}' was not found");
+        if (getPlayerResult.IsFailure) return getPlayerResult.AsError<PlayerViewModel>();
+        
+        var player = getPlayerResult.Value;
         
         var equipResult = player.Unequip(request.EquipmentSlot);
         
@@ -37,6 +42,6 @@ public sealed class UnequipCommandHandler : IRequestHandler<UnequipCommand, Resu
         
         return updateResult.IsFailure
             ? updateResult.AsError<PlayerViewModel>()
-            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel());
+            : Result<PlayerViewModel>.Success(updateResult.Value.ToViewModel(urlBuilder));
     }
 }

@@ -1,10 +1,11 @@
 using Game.Application.Battle;
 using Game.Application.SharedKernel;
+using Game.Contracts;
 using Game.Core.Battle.PVE;
-using Game.Features.Battle.Contracts;
 using Game.Features.Battle.PVE.ExecutePlayerTurn;
 using Game.Features.Battle.PVE.GetBattle;
 using Game.Features.Battle.PVE.StartBattle;
+using Game.Utilities.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

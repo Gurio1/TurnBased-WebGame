@@ -1,0 +1,30 @@
+<div
+  #tooltip
+  class="tooltip-container"
+  [style.left.px]="position.x"
+  [style.top.px]="position.y"
+>
+  <h4 class="tooltip-title">{{ item.name }}</h4>
+  <p class="tooltip-description">{{ item.description }}</p>
+
+  <div class="tooltip-stats">
+    <div *ngIf="isEquipment(item)" class="stat-row">
+      <span class="stat-name">Slot:</span>
+      <span class="stat-value">{{ item.slot }}</span>
+    </div>
+
+    <div
+      *ngFor="let attr of isEquipment(item) ? item.attributes : []"
+      class="stat-row"
+    >
+      <span class="stat-name">{{ attr.name }}:</span>
+      <span class="stat-value">
+        {{
+          isItPercentStat(attr.name)
+            ? (attr.value * 100 | number : "1.0-2") + "%"
+            : attr.value
+        }}
+      </span>
+    </div>
+  </div>
+</div>

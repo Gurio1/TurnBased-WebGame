@@ -1,6 +1,7 @@
 using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
+using Game.Core.Models;
 using Game.Features.Identity.Shared;
 using Microsoft.AspNetCore.Identity;
 
@@ -59,7 +60,8 @@ public sealed class Endpoint : Endpoint<CreateRequest>
         
         if (!result.Succeeded)
         {
-            foreach (var error in result.Errors) AddError(error.Description);
+            foreach (var error in result.Errors)
+                AddError(error.Description);
             
             ThrowIfAnyErrors();
         }

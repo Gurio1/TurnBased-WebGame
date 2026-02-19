@@ -16,6 +16,6 @@ public class Monster : CombatEntity, IHasAbilityIds
     internal void OnDeserializedMethod(StreamingContext context)
     {
         Equipment ??= new Dictionary<string, EquipmentBase?>();
-        Debuffs ??= new List<IDebuff>();
+        Debuffs ??= [];
     }
 }

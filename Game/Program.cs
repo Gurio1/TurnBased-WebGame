@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using DotNetEnv;
 using FastEndpoints;
@@ -15,6 +16,7 @@ using Game.Features.Identity;
 using Game.Features.Identity.SignalR;
 using Game.Persistence;
 using Game.Persistence.Mongo;
+using Game.Utilities;
 using Game.Utilities.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
@@ -26,6 +28,11 @@ builder.Host.UseDefaultServiceProvider(opt =>
 {
     opt.ValidateScopes = true;
     opt.ValidateOnBuild = true;
+});
+
+builder.Services.ConfigureHttpJsonOptions(o =>
+{
+    o.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 });
 
 builder.Services.ConfigureHttpJsonOptions(opt =>
@@ -77,6 +84,9 @@ builder.Services.AddSingleton<IEquipmentGenerator, EquipmentGenerator>();
 builder.Services.AddScoped<IBattleAuthService, BattleAuthService>();
 builder.Services.AddScoped<BattleContext>();
 builder.Services.AddScoped<BattleCacheManager>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<UrlBuilder>();
 
 
 builder.Services.AddDataServices(builder.Configuration);

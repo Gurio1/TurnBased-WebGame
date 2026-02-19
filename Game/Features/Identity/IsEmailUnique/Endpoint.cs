@@ -1,4 +1,5 @@
 using FastEndpoints;
+using Game.Core.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

@@ -71,7 +71,7 @@ public class BattleWon : INotificationHandler<PveBattleWon>
         
         if (drop is not null)
         {
-            player.Inventory.Add(drop);
+            player.Inventory.Add(drop ,1);
             
             if (drop is EquipmentBase equipment)
                 reward.EquipmentDrop = [equipment];

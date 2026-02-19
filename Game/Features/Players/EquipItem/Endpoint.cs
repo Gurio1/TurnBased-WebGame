@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
+using Game.Utilities;
 
 namespace Game.Features.Players.EquipItem;
 
@@ -16,6 +17,7 @@ public sealed class Endpoint : Endpoint<EquipCommand>
     {
         Post(EndpointSettings.DefaultName + "/equip/{ItemId}");
         Description(x => x.Accepts<EquipCommand>());
+        Options(o => o.WithName(EndpointNames.EquipItemEndpoint));
     }
     
     public override async Task HandleAsync(EquipCommand req, CancellationToken ct)

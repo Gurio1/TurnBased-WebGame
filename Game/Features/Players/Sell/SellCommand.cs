@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using Game.Application.SharedKernel;
-using Game.Features.Players.Contracts;
+using Game.Contracts;
 
 namespace Game.Features.Players.Sell;
 

@@ -1,15 +1,23 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
-using Game.Features.Players.Contracts;
+using Game.Contracts;
+using Game.Utilities;
+using Game.Utilities.Extensions;
 
 namespace Game.Features.Players.GetById;
 
 public sealed class Endpoint : Endpoint<GetQuery>
 {
     private readonly IDispatcher dispatcher;
+    private readonly UrlBuilder urlBuilder;
     
-    public Endpoint(IDispatcher dispatcher) => this.dispatcher = dispatcher;
+    public Endpoint(IDispatcher dispatcher, UrlBuilder urlBuilder)
+    {
+        this.dispatcher = dispatcher;
+        this.urlBuilder = urlBuilder;
+    }
+    
     public override void Configure() => Get(EndpointSettings.DefaultName);
     
     public override async Task HandleAsync(GetQuery req, CancellationToken ct)
@@ -24,6 +32,6 @@ public sealed class Endpoint : Endpoint<GetQuery>
             return;
         }
         
-        await SendOkAsync(result.Value.ToViewModel(), ct);
+        await SendOkAsync(result.Value.ToViewModel(urlBuilder), ct);
     }
 }

@@ -41,7 +41,6 @@ export class BattleComponent implements OnInit, AfterViewChecked {
     });
 
     this.battleService.getActionLog().subscribe((message) => {
-      console.log('LOGS:', message);
       this.logs.push(message);
     });
 

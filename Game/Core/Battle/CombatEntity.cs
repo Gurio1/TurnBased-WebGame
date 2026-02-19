@@ -2,17 +2,15 @@ using Game.Application.SharedKernel;
 using Game.Core.Abilities;
 using Game.Core.Equipment;
 using Game.Core.Models;
-using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.ValueObjects;
 using Game.Core.StatusEffects;
-using MongoDB.Bson.Serialization.Attributes;
+using Game.Utilities.Extensions;
 using Newtonsoft.Json;
 
 namespace Game.Core.Battle;
 
 public abstract class CombatEntity : Entity
 {
-    private static readonly Random Rnd = new();
     public string Id { get; set; }
     public string Name { get; set; }
     public Stats Stats { get; set; }
@@ -45,20 +43,19 @@ public abstract class CombatEntity : Entity
     public virtual float CalculateDamage(float damage, BattleContext context, float damageMultiplier = 1f)
     {
         float finalDamage = damage * damageMultiplier;
-        float rnd = (float)Rnd.NextDouble();
+        float rnd = (float)RandomHelper.Instance.NextDouble();
         
         if (!(rnd <= Stats.CriticalChance)) return finalDamage;
         
         finalDamage *= Stats.CriticalDamage;
         
-        Console.WriteLine($"{CharacterType} did critical hit!");
         context.PublishActionLog($"{CharacterType} did critical hit!");
         return finalDamage;
     }
     
     public virtual bool Defence(float damage, BattleContext context)
     {
-        if (Rnd.NextDouble() <= Stats.DodgeChance)
+        if (RandomHelper.Instance.NextDouble() <= Stats.DodgeChance)
         {
             context.PublishActionLog($"{CharacterType} dodged");
             return false;

@@ -1,5 +1,5 @@
-﻿using Game.Core.Rewards;
-using Game.Features.Battle.Contracts;
+﻿using Game.Contracts;
+using Game.Core.Rewards;
 
 namespace Game.Features.Battle.PVE;
 

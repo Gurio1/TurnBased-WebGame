@@ -1,3 +1,4 @@
+using Game.Core.Models;
 using Game.Features.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;

@@ -1,10 +1,10 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+using Game.Core.Models;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Marketplace;
 
 [BsonDiscriminator(Required = true)]
-public abstract class Currency
+public abstract class Currency : Item
 {
-    public abstract string Name { get;}
-    public int Amount { get; set; }
+    public int Quantity { get; set; }
 }

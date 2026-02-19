@@ -1,8 +1,8 @@
+import { ItemAction } from './itemAction';
 export interface Item {
   id: string;
-  itemType: string;
-  imageUrl: string;
   name: string;
-  interactions: string;
-  description: string;
+  imageUrl: string;
+  type: string;
+  itemActions: ItemAction[];
 }

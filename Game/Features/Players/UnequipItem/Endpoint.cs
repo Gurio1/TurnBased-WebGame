@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
+using Game.Utilities;
 
 namespace Game.Features.Players.UnequipItem;
 
@@ -14,6 +15,7 @@ public sealed class Endpoint : Endpoint<UnequipCommand>
     {
         Post(EndpointSettings.DefaultName + "/unequip/{EquipmentSlot}");
         Description(x => x.Accepts<UnequipCommand>());
+        Options(o => o.WithName(EndpointNames.UnequipItemEndpoint));
     }
     
     public override async Task HandleAsync(UnequipCommand req, CancellationToken ct)

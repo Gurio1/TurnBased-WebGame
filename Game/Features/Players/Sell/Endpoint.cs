@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using FastEndpoints;
 using Game.Application.SharedKernel;
+using Game.Utilities;
 
 namespace Game.Features.Players.Sell;
 
@@ -14,6 +15,7 @@ public sealed class Endpoint : Endpoint<SellCommand>
     {
         Post(EndpointSettings.DefaultName + "/sell/{ItemId}");
         Description(x => x.Accepts<SellCommand>());
+        Options(o => o.WithName(EndpointNames.SellItemEndpoint));
     }
     
     public override async Task HandleAsync(SellCommand req, CancellationToken ct)
