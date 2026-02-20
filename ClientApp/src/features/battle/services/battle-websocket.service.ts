@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 
 import * as signalR from '@microsoft/signalr';
 import { Observable, Subject } from 'rxjs';
-import { BattleResponse } from '../Contracts/Responses/WebSocket/battle-response';
-
-import { BattleData } from '../Contracts/models/battle-data';
+import { BattleData } from '../contracts/models/battle-data';
 import { Reward } from '../../../components/reward-modal/models/reward';
 import { environment } from '../../../environments/environment';
 
