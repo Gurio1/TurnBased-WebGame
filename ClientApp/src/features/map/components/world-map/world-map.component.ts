@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { MapLocation } from '../../core/models/map-location';
+import { MapLocation } from '../../../../core/models/map-location';
 
 @Component({
   selector: 'app-world-map',
