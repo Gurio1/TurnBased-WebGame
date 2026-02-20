@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { MapLocation } from '../../core/models/map-location';
+import { MapLocation } from '../../../../core/models/map-location';
 import { CommonModule } from '@angular/common';
-import { WorldMapComponent } from '../world-map/world-map.component';
+import { WorldMapComponent } from '../../components/world-map/world-map.component';
 
 @Component({
   selector: 'app-map-page',
