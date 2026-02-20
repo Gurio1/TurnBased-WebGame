@@ -1,15 +1,10 @@
-import { Component } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { IdentityService } from '../services/identity.service';
-import { Router, RouterLink } from '@angular/router';
-import { loginUser } from './models/login-user';
-import { passwordValidator } from '../shared/validators/password-validator';
 import { NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { passwordValidator } from '../shared/validators/password-validator';
+import { LoginUser } from './models/login-user';
+import { IdentityService } from '../services/identity.service';
 
 @Component({
   selector: 'app-login',
@@ -20,8 +15,8 @@ import { NgIf } from '@angular/common';
 })
 export class LoginComponent {
   constructor(
-    private identityService: IdentityService,
-    private router: Router
+    private readonly identityService: IdentityService,
+    private readonly router: Router
   ) {}
 
   loginForm = new FormGroup({
@@ -33,20 +28,19 @@ export class LoginComponent {
     ]),
   });
 
-  submitForm() {
-    if (this.loginForm.valid) {
-      let formControls = this.loginForm.controls;
-      let user = new loginUser(
-        this.loginForm.controls.email.value!,
-        this.loginForm.controls.password.value!
-      );
-
-      var result = this.identityService.login(user);
-
-      result.subscribe({
-        next: (value) => this.router.navigate(['/home']),
-        error: (err) => console.error('Observable emitted an error: ' + err),
-      });
+  submitForm(): void {
+    if (!this.loginForm.valid) {
+      return;
     }
+
+    const user: LoginUser = {
+      email: this.loginForm.controls.email.value ?? '',
+      password: this.loginForm.controls.password.value ?? '',
+    };
+
+    this.identityService.login(user).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: (err) => console.error('Observable emitted an error: ' + err),
+    });
   }
 }
