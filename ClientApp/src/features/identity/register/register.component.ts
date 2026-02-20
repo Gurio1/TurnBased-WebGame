@@ -1,18 +1,13 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import {
-  FormGroup,
-  FormControl,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { IdentityService } from '../services/identity.service';
 import { NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { Router, RouterLink } from '@angular/router';
 import { UniqueEmailValidator } from '../shared/validators/unique-email-validator';
+import { IdentityService } from '../services/identity.service';
 import { passwordValidator } from '../shared/validators/password-validator';
+import { RegisterUser } from './models/register-user';
 import { passwordMatchValidator } from './validators/password-match-validator';
-import { registerUser } from './models/register-user';
 
 @Component({
   selector: 'app-register',
@@ -22,21 +17,18 @@ import { registerUser } from './models/register-user';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  email: string = '';
   registerForm!: FormGroup;
 
   constructor(
-    private identityService: IdentityService,
-    private uniqueEmailValidator: UniqueEmailValidator,
-    private router: Router
+    private readonly identityService: IdentityService,
+    private readonly uniqueEmailValidator: UniqueEmailValidator,
+    private readonly router: Router
   ) {
     this.registerForm = new FormGroup(
       {
         userName: new FormControl('', Validators.pattern(/^[a-zA-Z0-9]*$/)),
         email: new FormControl('', {
-          asyncValidators: [
-            this.uniqueEmailValidator.validate.bind(this.uniqueEmailValidator),
-          ],
+          asyncValidators: [this.uniqueEmailValidator.validate.bind(this.uniqueEmailValidator)],
           validators: [Validators.required, Validators.email],
           updateOn: 'blur',
         }),
@@ -51,22 +43,21 @@ export class RegisterComponent {
     );
   }
 
-  submitForm() {
-    if (this.registerForm.valid) {
-      let formControls = this.registerForm.controls;
-
-      let user = new registerUser(
-        formControls['email'].value!,
-        formControls['password'].value!,
-        formControls['confirmPassword'].value!
-      );
-
-      var result = this.identityService.registerUser(user);
-
-      result.subscribe({
-        next: (value) => this.router.navigate(['/battle']),
-        error: (err) => console.error('Observable emitted an error: ' + err),
-      });
+  submitForm(): void {
+    if (!this.registerForm.valid) {
+      return;
     }
+
+    const formControls = this.registerForm.controls;
+    const user: RegisterUser = {
+      email: formControls['email'].value ?? '',
+      password: formControls['password'].value ?? '',
+      confirmedPassword: formControls['confirmPassword'].value ?? '',
+    };
+
+    this.identityService.registerUser(user).subscribe({
+      next: () => this.router.navigate(['/battle']),
+      error: (err) => console.error('Observable emitted an error: ' + err),
+    });
   }
 }

@@ -1,17 +1,28 @@
 import { Routes } from '@angular/router';
-import { BattleComponent } from '../features/battle/battle.component';
-import { LoginComponent } from '../features/identity/login/login.component';
-import { RegisterComponent } from '../features/identity/register/register.component';
-import { HomeComponent } from '../features/home/home.component';
-import { RewardModalComponent } from '../components/reward-modal/reward-modal.component';
-import { DefeatModalComponent } from '../components/defeat-modal/defeat-modal.component';
-import { MapPageComponent } from './map-page/map-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'battle', component: BattleComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'map', component: MapPageComponent },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('../features/identity/login/login.component').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('../features/identity/register/register.component').then((m) => m.RegisterComponent),
+  },
+  {
+    path: 'battle',
+    loadComponent: () =>
+      import('../features/battle/battle.component').then((m) => m.BattleComponent),
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('../features/home/home.component').then((m) => m.HomeComponent),
+  },
+  {
+    path: 'map',
+    loadComponent: () => import('./map-page/map-page.component').then((m) => m.MapPageComponent),
+  },
 ];

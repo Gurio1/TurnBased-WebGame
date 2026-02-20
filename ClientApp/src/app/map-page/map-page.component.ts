@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MapLocation } from '../../core/models/mapLocation';
+import { MapLocation } from '../../core/models/map-location';
 import { CommonModule } from '@angular/common';
 import { WorldMapComponent } from '../world-map/world-map.component';
 
@@ -17,8 +17,7 @@ export class MapPageComponent {
     {
       id: 'newcomers-village',
       name: "Newcomers' Village",
-      description:
-        'A quiet place where weak monsters roam and basic materials can be gathered.',
+      description: 'A quiet place where weak monsters roam and basic materials can be gathered.',
       imageUrl: '/assets/locations/newcomers-village.jpg',
       monsters: ['Rat', 'Wild Dog', 'Lost Bandit'],
       loot: [
