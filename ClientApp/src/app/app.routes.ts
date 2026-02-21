@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../features/identity/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -14,15 +15,19 @@ export const routes: Routes = [
   },
   {
     path: 'battle',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('../features/battle/battle.component').then((m) => m.BattleComponent),
   },
   {
     path: 'home',
+    canActivate: [authGuard],
     loadComponent: () => import('../features/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'map',
-    loadComponent: () => import('./map-page/map-page.component').then((m) => m.MapPageComponent),
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../features/map/map-page/map-page.component').then((m) => m.MapPageComponent),
   },
 ];

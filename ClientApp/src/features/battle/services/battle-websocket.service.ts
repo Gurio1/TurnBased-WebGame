@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as signalR from '@microsoft/signalr';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, filter } from 'rxjs';
 import { BattleData } from '../contracts/models/battle-data';
 import { Reward } from '../../../components/reward-modal/models/reward';
 import { environment } from '../../../environments/environment';
@@ -11,10 +11,10 @@ import { environment } from '../../../environments/environment';
 })
 export class BattleWebsocketService {
   private hubConnection: signalR.HubConnection;
-  private battleSubject = new Subject<BattleData>();
+  private battleSubject = new BehaviorSubject<BattleData | null>(null);
   private actionLogSubject = new Subject<string>();
-  private battleReward = new Subject<Reward>();
-  private battleLose = new Subject<boolean>();
+  private battleReward = new BehaviorSubject<Reward | null>(null);
+  private battleLose = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -68,6 +68,9 @@ export class BattleWebsocketService {
 
   private subscribeToBattleData() {
     this.hubConnection.on('BattleData', (data: BattleData) => {
+      // New battle frame should clear terminal state from previous fights.
+      this.battleReward.next(null);
+      this.battleLose.next(false);
       this.battleSubject.next(data);
     });
   }
@@ -85,11 +88,15 @@ export class BattleWebsocketService {
   }
 
   getBattleData(): Observable<BattleData> {
-    return this.battleSubject.asObservable();
+    return this.battleSubject
+      .asObservable()
+      .pipe(filter((data): data is BattleData => data !== null));
   }
 
   getBattleReward(): Observable<Reward> {
-    return this.battleReward.asObservable();
+    return this.battleReward
+      .asObservable()
+      .pipe(filter((reward): reward is Reward => reward !== null));
   }
 
   getBattleLose(): Observable<boolean> {

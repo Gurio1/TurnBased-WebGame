@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MapLocation } from '../../../../core/models/map-location';
 
 @Component({
@@ -14,11 +14,22 @@ export class WorldMapComponent {
 
   @Input({ required: true }) mapImageUrl!: string;
   @Input({ required: true }) locations: MapLocation[] = [];
+  @Input() isExploring = false;
+  @Input() exploreStatusMessage: string | null = null;
+  @Input() exploreErrorMessage: string | null = null;
+
+  @Output() explore = new EventEmitter<MapLocation>();
 
   selected: MapLocation | null = null;
 
   select(loc: MapLocation): void {
     this.selected = loc;
+  }
+
+  onExplore(): void {
+    if (this.selected) {
+      this.explore.emit(this.selected);
+    }
   }
 
   closeSidebar(): void {

@@ -1,24 +1,57 @@
 // Variables
-$primary-color: #4a2c82;
-$secondary-color: #ff9f1c;
-$dark-bg: #1a1a2e;
-$light-text: #f8f8f8;
-$character-shadow: rgba(0, 0, 0, 0.5);
+$primary-color: #2a2113;
+$secondary-color: #d3aa63;
+$dark-bg: #19130d;
+$light-text: #f2e4c2;
+$character-shadow: rgba(0, 0, 0, 0.55);
+
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
 
 // Main Container
 .rpg-container {
   display: flex;
-  height: 100vh;
-  background: url("/background.png") no-repeat center center fixed;
-  background-size: cover;
+  height: 100%;
+  background:
+    linear-gradient(160deg, rgba(12, 10, 8, 0.55), rgba(12, 10, 8, 0.55)),
+    url("/background.png") no-repeat center center fixed;
+  background-size: cover, cover;
   color: $light-text;
-  font-family: "MedievalSharp", cursive, sans-serif;
+  font-family: "MedievalSharp", cursive, serif;
   position: relative;
   overflow: hidden;
 }
 
+.rpg-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.15), transparent 40%),
+    radial-gradient(circle at 15% 75%, rgba(73, 108, 74, 0.16), transparent 42%);
+  z-index: 0;
+}
+
+.rpg-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 236, 172, 0.1), transparent 32%),
+    radial-gradient(circle at 50% 78%, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5) 90%);
+  mix-blend-mode: screen;
+  z-index: 0;
+  animation: home-breathe 7s ease-in-out infinite;
+}
+
 // Game Area
 .game-area {
+  z-index: 1;
   flex: 1;
   display: flex;
   position: relative;
@@ -90,38 +123,6 @@ $character-shadow: rgba(0, 0, 0, 0.5);
 .equipment-slot {
   position: relative;
   text-align: center;
-
-  &:hover .slot-tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
-}
-
-.slot-tooltip {
-  position: absolute;
-  visibility: hidden;
-  opacity: 0;
-  background: rgba($dark-bg, 0.9);
-  color: $light-text;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: all 0.3s ease;
-
-  .left-float & {
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-right: 15px;
-  }
-
-  .right-float & {
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin-left: 15px;
-  }
 }
 
 .equipment-icon-wrapper {
@@ -185,39 +186,23 @@ $character-shadow: rgba(0, 0, 0, 0.5);
   z-index: 20;
 }
 
-.toggle-stats {
-  background: rgba($primary-color, 0.8);
-  color: $light-text;
-  border: 1px solid $secondary-color;
-  border-radius: 4px;
-  padding: 8px 15px;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba($primary-color, 1);
-    transform: translateY(-2px);
-  }
-}
-
 .stats-content {
-  background: rgba($dark-bg, 0.9);
-  border: 2px solid $secondary-color;
+  background: rgba(22, 17, 12, 0.9);
+  border: 2px solid rgba($secondary-color, 0.9);
   border-radius: 8px;
   padding: 15px;
-  margin-top: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
 .inventory-drawer {
   width: 580px;
-  background: rgba($dark-bg, 0.95);
+  background: rgba(20, 15, 10, 0.96);
   border-left: 3px solid $secondary-color;
-  height: 100vh;
+  height: 100%;
   position: fixed;
   right: 0;
   top: 0;
+  z-index: 2;
   box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
   transition: transform 0.3s ease;
   display: flex;
@@ -254,7 +239,17 @@ $character-shadow: rgba(0, 0, 0, 0.5);
   justify-content: center;
 
   &:hover {
-    background: lighten($primary-color, 10%);
+    background: lighten($primary-color, 6%);
+  }
+}
+
+@keyframes home-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.75;
   }
 }
 

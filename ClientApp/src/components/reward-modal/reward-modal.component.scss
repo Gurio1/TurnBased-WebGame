@@ -20,10 +20,15 @@
 }
 
 .wrapper {
-  display: flex;
-  align-items: center;
-  height: 100vh;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
   width: 100vw;
+  height: 100dvh;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.58);
 }
 
 .background-image {
@@ -32,8 +37,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40rem;
-  margin: auto;
+  width: min(40rem, 92vw);
+  margin: 0;
 }
 
 .modal-container {
@@ -53,6 +58,17 @@
   margin-bottom: 1.5rem;
   @include gold-gradient-text;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.subtitle {
+  margin: 0 0 1.2rem;
+  color: #e7d9b5;
+  text-align: center;
+  line-height: 1.35;
+  font-family: "Merriweather", serif;
+  font-size: 0.92rem;
+  max-width: 90%;
+  text-wrap: balance;
 }
 
 .reward-values {
@@ -97,6 +113,7 @@
   flex-wrap: wrap;
 
   .item {
+    position: relative;
     width: 90px;
     height: 90px;
     background: url("/item-background.png") center/cover no-repeat;
@@ -108,6 +125,17 @@
       width: 80%;
       height: 80%;
       object-fit: contain;
+    }
+
+    .qty {
+      position: absolute;
+      right: 7px;
+      bottom: 7px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: #f8e3a6;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+      font-family: "Cinzel", serif;
     }
   }
 }

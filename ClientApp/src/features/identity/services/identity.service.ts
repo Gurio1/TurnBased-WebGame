@@ -18,6 +18,10 @@ export class IdentityService {
     return localStorage.getItem(environment.jwtToken);
   }
 
+  logout(): void {
+    localStorage.removeItem(environment.jwtToken);
+  }
+
   registerUser(user: RegisterUser): Observable<IdentityTokenResponse> {
     return this.http.post<IdentityTokenResponse>(this.apiUrl, user).pipe(
       tap((response) => {

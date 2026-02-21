@@ -1,1 +1,14 @@
-<router-outlet></router-outlet>
+<div class="app-shell">
+  <app-navbar
+    *ngIf="showNavbar"
+    [isAuthenticated]="isAuthenticated"
+    [userName]="userName"
+    (loginClick)="onLoginClick()"
+    (registerClick)="onRegisterClick()"
+    (logoutClick)="logout()"
+  />
+
+  <main class="page-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

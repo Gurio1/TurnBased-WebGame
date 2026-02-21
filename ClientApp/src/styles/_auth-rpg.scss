@@ -1,0 +1,170 @@
+@mixin theme {
+  :host {
+    --auth-ink: var(--rpg-text, #f2e4c2);
+    --auth-ink-muted: var(--rpg-text-muted, rgba(242, 228, 194, 0.82));
+    --auth-accent: var(--rpg-accent, #d3aa63);
+    --auth-accent-strong: var(--rpg-accent-strong, #e9c47a);
+    --auth-danger: var(--rpg-danger, #ef7373);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 0;
+    padding: clamp(14px, 4vw, 36px);
+    color: var(--auth-ink);
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(234, 195, 117, 0.15), transparent 38%),
+      radial-gradient(circle at 88% 6%, rgba(94, 158, 132, 0.12), transparent 34%),
+      linear-gradient(170deg, #13120e 0%, #161d17 50%, #0f1714 100%);
+  }
+
+  .auth-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(120deg, rgba(6, 8, 7, 0.7), rgba(6, 8, 7, 0.48)),
+      url("/parchment-texture.png") center/cover;
+    opacity: 0.28;
+    animation: auth-overlay-drift 16s ease-in-out infinite alternate;
+  }
+
+  .auth-card {
+    width: min(460px, 100%);
+    border-radius: 18px;
+    border: 1px solid rgba(233, 196, 122, 0.35);
+    background:
+      linear-gradient(180deg, rgba(20, 24, 20, 0.94), rgba(12, 16, 14, 0.95)),
+      url("/wood-texture.png") center/cover;
+    box-shadow:
+      0 22px 45px rgba(0, 0, 0, 0.52),
+      inset 0 1px 0 rgba(255, 242, 212, 0.1);
+    padding: clamp(18px, 3vw, 28px);
+    position: relative;
+    z-index: 1;
+    animation: auth-card-rise 320ms ease-out;
+  }
+
+  .auth-title {
+    margin: 0 0 6px;
+    font-size: clamp(24px, 4vw, 32px);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #f5e9c8;
+  }
+
+  .auth-subtitle {
+    margin: 0 0 18px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: rgba(245, 233, 200, 0.74);
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .form-group {
+    text-align: left;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: var(--auth-ink-muted);
+    letter-spacing: 0.03em;
+  }
+
+  .form-input {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(229, 193, 117, 0.3);
+    background: rgba(9, 12, 11, 0.58);
+    color: var(--auth-ink);
+    padding: 11px 12px;
+    font-size: 14px;
+    outline: none;
+    transition:
+      border-color 120ms ease,
+      box-shadow 120ms ease,
+      background-color 120ms ease;
+  }
+
+  .form-input::placeholder {
+    color: rgba(236, 218, 177, 0.45);
+  }
+
+  .form-input:focus {
+    border-color: rgba(169, 253, 217, 0.7);
+    background: rgba(8, 14, 12, 0.75);
+    box-shadow: 0 0 0 3px rgba(117, 229, 186, 0.18);
+  }
+
+  .auth-error {
+    margin-top: 5px;
+    display: block;
+    font-size: 12px;
+    color: var(--auth-danger);
+    line-height: 1.35;
+  }
+
+  .auth-submit {
+    margin-top: 2px;
+    border: 1px solid rgba(176, 252, 218, 0.42);
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff7df;
+    cursor: pointer;
+    background: linear-gradient(180deg, rgba(136, 232, 189, 0.24), rgba(121, 216, 175, 0.14));
+    transition: transform 120ms ease, filter 120ms ease;
+  }
+
+  .auth-submit:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+  }
+
+  .auth-link-row {
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .auth-link-row a {
+    color: var(--auth-accent-strong);
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .auth-link-row a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes auth-overlay-drift {
+    from {
+      transform: scale(1) translateY(0);
+    }
+    to {
+      transform: scale(1.05) translateY(-8px);
+    }
+  }
+
+  @keyframes auth-card-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

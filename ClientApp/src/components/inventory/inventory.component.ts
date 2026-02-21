@@ -38,6 +38,7 @@ export class InventoryComponent {
   contextMenuY = 0;
   selectedItem: any = null;
   hoveredItem: any = null;
+  private suppressHoverTooltip = false;
 
   disableTooltipInteractivity = true;
 
@@ -46,6 +47,9 @@ export class InventoryComponent {
   openContextMenu(event: MouseEvent, item: any) {
     console.log('Opening context menu for item:', item);
     event.preventDefault();
+    // Close any currently shown tooltip before opening context menu.
+    this.itemLeave.emit();
+    this.suppressHoverTooltip = true;
     this.contextMenuVisible = true;
     this.selectedItem = item;
 
@@ -114,6 +118,9 @@ export class InventoryComponent {
   }
 
   performAction(action: string): void {
+    // Hide tooltip immediately to avoid stale hover tooltip after inventory mutation.
+    this.itemLeave.emit();
+    this.suppressHoverTooltip = true;
     this.characterService.makeAction(action).subscribe({
       error: (error) => console.error('Action failed:', error),
     });
@@ -126,6 +133,10 @@ export class InventoryComponent {
   }
 
   onItemHover(item: any, event: MouseEvent) {
+    if (this.suppressHoverTooltip) {
+      return;
+    }
+
     console.log('Hovering over item:', item);
     console.log(item.imageUrl);
     this.itemHover.emit({
@@ -145,5 +156,14 @@ export class InventoryComponent {
       .querySelectorAll('.inventory-item')
       .forEach((el) => el.classList.remove('context-menu-active'));
     this.contextMenuVisible = false;
+    this.suppressHoverTooltip = true;
+    this.itemLeave.emit();
+  }
+
+  @HostListener('document:mousemove')
+  onDocumentMouseMove() {
+    if (this.suppressHoverTooltip) {
+      this.suppressHoverTooltip = false;
+    }
   }
 }

@@ -1,0 +1,33 @@
+<section class="map-page">
+  <div class="map-page__backdrop" aria-hidden="true"></div>
+  <div class="map-page__aurora" aria-hidden="true"></div>
+
+  <header class="map-page__header">
+    <p class="map-page__eyebrow">World Navigation</p>
+    <h1 class="map-page__title">Choose Your Route</h1>
+  </header>
+
+  <div class="map-page__content">
+    <app-world-map
+      [mapImageUrl]="map"
+      [locations]="locations"
+      [isExploring]="isExploring"
+      [exploreStatusMessage]="exploreStatusMessage"
+      [exploreErrorMessage]="exploreErrorMessage"
+      (explore)="onExplore($event)"
+    />
+  </div>
+
+  <app-reward-modal
+    *ngIf="exploreReward as reward"
+    [title]="'EXPLORE REWARD'"
+    [subtitle]="reward.subtitle"
+    [showCurrencies]="false"
+    [gold]="0"
+    [gems]="0"
+    [items]="reward.items"
+    [buttonLabel]="'Back To Map'"
+    [continueRoute]="null"
+    (closed)="closeExploreReward()"
+  />
+</section>

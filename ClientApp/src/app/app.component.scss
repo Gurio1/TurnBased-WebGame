@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.app-shell {
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: linear-gradient(165deg, var(--rpg-bg-0) 0%, var(--rpg-bg-1) 50%, var(--rpg-bg-2) 100%);
+}
+
+.page-content {
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}

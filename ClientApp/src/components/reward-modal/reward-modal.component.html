@@ -1,9 +1,10 @@
 <div class="wrapper">
   <div class="background-image">
     <div class="modal-container">
-      <h1 class="title">REWARD</h1>
+      <h1 class="title">{{ title }}</h1>
+      <p class="subtitle" *ngIf="subtitle">{{ subtitle }}</p>
 
-      <div class="reward-values">
+      <div class="reward-values" *ngIf="showCurrencies">
         <div class="reward-value">
           <img src="gold.png" alt="Gold" />
           <span>{{ gold }}</span>
@@ -16,12 +17,13 @@
 
       <div class="reward-items">
         <div class="item" *ngFor="let item of items">
-          <img [src]="item.imageUrl + '.png'" [alt]="item.name" />
+          <img [src]="getItemImage(item.imageUrl)" [alt]="item.name" />
+          <span class="qty" *ngIf="item.quantity && item.quantity > 1">x{{ item.quantity }}</span>
         </div>
       </div>
 
-      <button (click)="goHome()" class="fancy-btn">
-        <span class="gold-text">CONTINUE</span>
+      <button (click)="onContinue()" class="fancy-btn">
+        <span class="gold-text">{{ buttonLabel }}</span>
       </button>
     </div>
   </div>

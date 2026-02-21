@@ -30,11 +30,11 @@
       <div class="title">
         <h2>{{ s.name }}</h2>
         <div class="difficulty" *ngIf="s.difficulty as d">
-          <span *ngFor="let level of difficultyLevels | slice: 0 : d">✦</span>
+          <span *ngFor="let level of difficultyLevels | slice: 0 : d">&#10022;</span>
         </div>
       </div>
 
-      <button type="button" class="close" (click)="closeSidebar()">✕</button>
+      <button type="button" class="close" (click)="closeSidebar()">&times;</button>
     </div>
 
     <img class="preview" [src]="s.imageUrl" [alt]="s.name" />
@@ -58,9 +58,14 @@
       </ul>
     </section>
 
+    <p class="desc" *ngIf="exploreStatusMessage">{{ exploreStatusMessage }}</p>
+    <p class="desc" *ngIf="exploreErrorMessage">{{ exploreErrorMessage }}</p>
+
     <div class="actions">
-      <button type="button" class="primary">Explore</button>
-      <button type="button">Back</button>
+      <button type="button" class="primary" [disabled]="isExploring" (click)="onExplore()">
+        {{ isExploring ? 'Exploring...' : 'Explore' }}
+      </button>
+      <button type="button" (click)="closeSidebar()">Back</button>
     </div>
   </aside>
 </div>

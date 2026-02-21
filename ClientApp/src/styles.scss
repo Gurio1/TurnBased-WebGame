@@ -4,8 +4,88 @@
   box-sizing: border-box;
 }
 
+:root {
+  /* Canonical Auth-Derived RPG Spec */
+  --auth-gold-primary: #d4af37;
+  --auth-gold-hover: #b38e27;
+  --auth-text-dark: #1e1e1e;
+  --auth-surface-1: rgba(32, 34, 30, 0.94);
+  --auth-surface-2: rgba(24, 20, 16, 0.94);
+  --auth-input-bg: rgba(33, 38, 33, 0.72);
+  --auth-overlay-dark-top: rgba(0, 0, 0, 0.28);
+  --auth-overlay-dark-bottom: rgba(0, 0, 0, 0.42);
+
+  --rpg-bg-0: #151515;
+  --rpg-bg-1: #1e1e1e;
+  --rpg-bg-2: #111111;
+  --rpg-surface: rgba(30, 30, 30, 0.95);
+  --rpg-surface-2: rgba(38, 38, 38, 0.93);
+  --rpg-text: #d4af37;
+  --rpg-text-muted: rgba(212, 175, 55, 0.8);
+  --rpg-accent: var(--auth-gold-primary);
+  --rpg-accent-strong: #e0bf5a;
+  --rpg-danger: #ef7373;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(170deg, var(--rpg-bg-0) 0%, var(--rpg-bg-1) 50%, var(--rpg-bg-2) 100%);
+  color: var(--rpg-text);
+  font-family: "MedievalSharp", cursive, "Merriweather", serif;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--rpg-accent);
+  font-family: "MedievalSharp", cursive, "Merriweather", serif;
+}
+
+label {
+  color: var(--rpg-accent);
+}
+
+input,
+select,
+textarea {
+  border: 2px solid var(--auth-gold-primary);
+  border-radius: 5px;
+  background: var(--auth-input-bg);
+  color: var(--rpg-accent);
+  font-family: "MedievalSharp", cursive, "Merriweather", serif;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 0;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.26);
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  background: var(--auth-gold-primary);
+  color: var(--auth-text-dark);
+  font-family: "MedievalSharp", cursive, "Merriweather", serif;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--auth-gold-hover);
+}
+
+a {
+  color: var(--rpg-accent);
+}
+
 .text-danger {
-  color: rgb(235, 44, 44);
+  color: var(--rpg-danger);
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
     "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }

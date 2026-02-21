@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="256" viewBox="0 0 2048 256" fill="none">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="0" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2B1B10"/>
+      <stop offset="0.5" stop-color="#1D140E"/>
+      <stop offset="1" stop-color="#140E0A"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D4AF37" stop-opacity="0.34"/>
+      <stop offset="0.08" stop-color="#D4AF37" stop-opacity="0"/>
+      <stop offset="0.92" stop-color="#D4AF37" stop-opacity="0"/>
+      <stop offset="1" stop-color="#D4AF37" stop-opacity="0.28"/>
+    </linearGradient>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9 0.03" numOctaves="2" seed="7"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 0.09"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect width="2048" height="256" fill="url(#base)"/>
+
+  <!-- plank bands -->
+  <rect y="12" width="2048" height="72" fill="#24180F" opacity="0.35"/>
+  <rect y="92" width="2048" height="72" fill="#1A120C" opacity="0.33"/>
+  <rect y="172" width="2048" height="72" fill="#21170F" opacity="0.31"/>
+
+  <!-- long wood grain strokes -->
+  <g stroke="#5E3B1F" stroke-linecap="round" opacity="0.24">
+    <path d="M0 40C180 22 370 61 560 44C730 29 890 18 1090 36C1310 56 1490 54 1700 38C1835 28 1940 33 2048 46"/>
+    <path d="M0 76C140 66 320 97 520 85C710 75 920 60 1150 78C1380 95 1620 98 1860 80C1940 74 1995 72 2048 76"/>
+    <path d="M0 124C210 111 390 132 600 120C790 108 1000 101 1220 116C1450 132 1655 137 1872 120C1945 114 1998 113 2048 118"/>
+    <path d="M0 202C175 184 385 218 580 200C760 185 950 177 1180 192C1410 210 1610 215 1828 202C1920 196 1988 197 2048 203"/>
+  </g>
+
+  <!-- carved rune marks -->
+  <g stroke="#8A632F" stroke-opacity="0.35" stroke-width="2" fill="none">
+    <path d="M236 62L248 44L260 62L248 80Z"/>
+    <path d="M620 142L638 128L620 114M620 128H646"/>
+    <path d="M1012 60L1032 60M1022 46V74"/>
+    <path d="M1418 186L1436 170L1418 154M1418 170H1444"/>
+    <path d="M1828 122L1840 104L1852 122L1840 140Z"/>
+  </g>
+
+  <rect width="2048" height="256" fill="url(#rim)"/>
+  <rect width="2048" height="256" filter="url(#grain)"/>
+</svg>

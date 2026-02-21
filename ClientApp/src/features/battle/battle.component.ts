@@ -25,6 +25,7 @@ import { BattleWebsocketService } from './services/battle-websocket.service';
 })
 export class BattleComponent implements OnInit, AfterViewChecked {
   private readonly destroyRef = inject(DestroyRef);
+  private resetLogsOnNextBattleFrame = false;
 
   battleData?: BattleData;
   reward?: Reward;
@@ -40,6 +41,13 @@ export class BattleComponent implements OnInit, AfterViewChecked {
       .getBattleData()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((data) => {
+        if (this.resetLogsOnNextBattleFrame) {
+          this.logs = [];
+          this.reward = undefined;
+          this.defeat = false;
+          this.resetLogsOnNextBattleFrame = false;
+        }
+
         this.battleData = data;
       });
 
@@ -55,6 +63,7 @@ export class BattleComponent implements OnInit, AfterViewChecked {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((reward) => {
         this.reward = reward;
+        this.resetLogsOnNextBattleFrame = true;
       });
 
     this.battleService
@@ -62,6 +71,9 @@ export class BattleComponent implements OnInit, AfterViewChecked {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((defeat) => {
         this.defeat = defeat;
+        if (defeat) {
+          this.resetLogsOnNextBattleFrame = true;
+        }
       });
   }
 
@@ -91,8 +103,12 @@ export class BattleComponent implements OnInit, AfterViewChecked {
     return (currentHealth / maxHealth) * 100;
   }
 
+  asPercent(value: number): string {
+    return `${Math.round((value || 0) * 100)}%`;
+  }
+
   getLogClass(log: string): string {
-    if (log.includes('heal')) return 'log-heal';
+    if (log.includes('heal')) return 'heal';
     if (log.includes('critical')) return 'critical';
     if (log.includes('miss')) return 'miss';
     return '';

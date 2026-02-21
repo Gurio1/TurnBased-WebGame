@@ -1,0 +1,140 @@
+<header class="navbar" role="banner">
+  <div class="navbar__inner">
+    <a class="brand" routerLink="/home" (click)="closeMobileMenu()">
+      <svg class="brand__crest" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path
+          d="M32 6L50 14V31C50 44 41.5 54.5 32 58C22.5 54.5 14 44 14 31V14L32 6Z"
+          stroke="currentColor"
+          stroke-width="2.6"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M24 25L32 17L40 25"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+        />
+        <path
+          d="M24 35L32 27L40 35"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+        />
+        <path d="M32 36V47" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" />
+        <path
+          d="M24 10C27 10 29 8.5 30.5 6M40 10C37 10 35 8.5 33.5 6"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+      <span>FinalGame</span>
+    </a>
+
+    <nav class="nav-links nav-links--desktop" aria-label="Primary navigation">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.route"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <div class="auth-actions auth-actions--desktop">
+      <ng-container *ngIf="isAuthenticated; else guestActionsDesktop">
+        <button type="button" class="btn btn-primary" (click)="logoutClick.emit()">Logout</button>
+      </ng-container>
+      <ng-template #guestActionsDesktop>
+        <button type="button" class="btn btn-ghost" (click)="loginClick.emit()">Login</button>
+        <button type="button" class="btn btn-primary" (click)="registerClick.emit()">
+          Register
+        </button>
+      </ng-template>
+    </div>
+
+    <button
+      type="button"
+      class="menu-rune"
+      [attr.aria-expanded]="isMobileMenuOpen"
+      aria-controls="mobile-nav-panel"
+      aria-label="Toggle navigation menu"
+      (click)="toggleMobileMenu()"
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5 5L19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path d="M7 12H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path d="M5 19L19 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path
+          d="M12 5V19"
+          stroke="currentColor"
+          stroke-width="1.4"
+          stroke-opacity="0.4"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <svg class="ornate-divider" viewBox="0 0 400 24" fill="none" aria-hidden="true">
+    <path d="M12 12H170M230 12H388" stroke="currentColor" stroke-width="1.6" />
+    <path d="M180 12H220" stroke="currentColor" stroke-width="2.2" />
+    <path d="M190 6L200 12L190 18" stroke="currentColor" stroke-width="1.6" />
+    <path d="M210 6L200 12L210 18" stroke="currentColor" stroke-width="1.6" />
+    <path
+      d="M6 12C9 12 11 10.5 12 8M6 12C9 12 11 13.5 12 16"
+      stroke="currentColor"
+      stroke-width="1.6"
+    />
+    <path
+      d="M394 12C391 12 389 10.5 388 8M394 12C391 12 389 13.5 388 16"
+      stroke="currentColor"
+      stroke-width="1.6"
+    />
+  </svg>
+
+  <div
+    id="mobile-nav-panel"
+    class="mobile-panel"
+    [class.is-open]="isMobileMenuOpen"
+    *ngIf="isMobileMenuOpen"
+  >
+    <nav class="nav-links nav-links--mobile" aria-label="Mobile primary navigation">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.route"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMobileMenu()"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <div class="auth-actions auth-actions--mobile">
+      <ng-container *ngIf="isAuthenticated; else guestActionsMobile">
+        <span class="profile-name">{{ userName || 'Adventurer' }}</span>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="logoutClick.emit(); closeMobileMenu()"
+        >
+          Logout
+        </button>
+      </ng-container>
+      <ng-template #guestActionsMobile>
+        <button type="button" class="btn btn-ghost" (click)="loginClick.emit(); closeMobileMenu()">
+          Login
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="registerClick.emit(); closeMobileMenu()"
+        >
+          Register
+        </button>
+      </ng-template>
+    </div>
+  </div>
+</header>

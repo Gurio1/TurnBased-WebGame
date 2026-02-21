@@ -37,7 +37,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   character: PlayerHomeViewModel | null = null;
   leftEquipmentSlots: string[] = ['Head', 'Chest', 'Gloves'];
   rightEquipmentSlots: string[] = ['Weapon', 'Shield', 'Boots'];
-  statsVisible: boolean = true;
   inventoryVisible: boolean = true;
 
   constructor(private characterService: CharacterService) {}
@@ -98,11 +97,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   hideTooltip() {
     this.activeTooltipItem = null;
-  }
-
-  toggleStats(): void {
-    this.statsVisible = !this.statsVisible;
-    // You could add animation triggers here if needed
   }
 
   toggleInventory(): void {
