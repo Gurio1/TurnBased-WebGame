@@ -1,5 +1,5 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Location;
+﻿using Game.Core.Location;
+using Game.SharedKernel;
 
 namespace Game.Features.Locations.GetByName;
 

@@ -1,7 +1,7 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Battle.PVE;
+﻿using Game.Core.Battle.PVE;
 using Game.Persistence.Mongo;
 using Game.Persistence.Redis;
+using Game.SharedKernel;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 

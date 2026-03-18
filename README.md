@@ -13,7 +13,7 @@
 | Area           | Stack/Tool                        |
 |----------------|-----------------------------------|
 | Frontend       | Angular (SCSS planned)            |
-| Backend        | ASP.NET Core + FastEndpoints      |
+| Backend        | ASP.NET Core MVC controllers      |
 | Architecture   | Vertical Slice                    |
 | Real-time      | SignalR                           |
 | Database       | MongoDB and PostgreSQL            |

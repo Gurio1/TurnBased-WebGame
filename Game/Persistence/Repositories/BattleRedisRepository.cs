@@ -1,7 +1,7 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Battle;
+﻿using Game.Core.Battle;
 using Game.Core.Battle.PVE;
 using Game.Persistence.Redis;
+using Game.SharedKernel;
 using Newtonsoft.Json;
 
 namespace Game.Persistence.Repositories;

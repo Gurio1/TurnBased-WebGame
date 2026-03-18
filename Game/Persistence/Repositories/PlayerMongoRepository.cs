@@ -1,8 +1,8 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Abilities;
+﻿using Game.Core.Abilities;
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 

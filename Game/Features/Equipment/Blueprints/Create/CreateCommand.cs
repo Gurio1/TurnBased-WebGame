@@ -1,5 +1,5 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Equipment;
+﻿using Game.Core.Equipment;
+using Game.SharedKernel;
 
 namespace Game.Features.Equipment.Blueprints.Create;
 

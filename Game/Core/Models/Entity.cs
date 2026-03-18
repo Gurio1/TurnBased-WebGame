@@ -1,4 +1,4 @@
-﻿using Game.Application.SharedKernel;
+﻿using Game.SharedKernel;
 using Newtonsoft.Json;
 
 namespace Game.Core.Models;

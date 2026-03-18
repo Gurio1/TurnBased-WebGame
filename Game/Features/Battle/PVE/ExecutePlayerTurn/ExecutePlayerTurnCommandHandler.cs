@@ -1,6 +1,6 @@
-﻿using Game.Application.SharedKernel;
-using Game.Contracts;
+﻿using Game.Contracts;
 using Game.Core.Battle;
+using Game.SharedKernel;
 using Game.Utilities.Extensions;
 using Microsoft.AspNetCore.SignalR;
 

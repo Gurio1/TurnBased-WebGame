@@ -1,4 +1,4 @@
-﻿using Game.Application.SharedKernel;
+﻿using Game.SharedKernel;
 
 namespace Game.Features.Monsters.Delete;
 

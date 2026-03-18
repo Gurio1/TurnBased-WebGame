@@ -1,5 +1,5 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.PlayerProfile.Aggregates;
+﻿using Game.Core.PlayerProfile.Aggregates;
+using Game.SharedKernel;
 
 namespace Game.Core.PlayerProfile.Specifications;
 

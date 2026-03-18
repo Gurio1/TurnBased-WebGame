@@ -1,6 +1,6 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Equipment;
+﻿using Game.Core.Equipment;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Blueprints.Delete;

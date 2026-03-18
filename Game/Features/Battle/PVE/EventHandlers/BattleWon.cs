@@ -1,4 +1,3 @@
-using Game.Application.SharedKernel;
 using Game.Core.Battle;
 using Game.Core.Battle.PVE.Events;
 using Game.Core.Equipment;
@@ -7,6 +6,7 @@ using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Core.Rewards;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
 using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 

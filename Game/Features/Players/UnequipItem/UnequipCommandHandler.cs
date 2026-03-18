@@ -1,9 +1,9 @@
-﻿using Game.Application.SharedKernel;
-using Game.Contracts;
+﻿using Game.Contracts;
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
+using Game.SharedKernel;
 using Game.Utilities;
 using Game.Utilities.Extensions;
 using MongoDB.Driver;

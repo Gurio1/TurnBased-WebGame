@@ -1,11 +1,9 @@
-using FastEndpoints;
-using Game.Application.SharedKernel;
+using Game.SharedKernel;
 
 namespace Game.Features.Locations.Explore;
 
 public sealed class ExploreCommand : IRequest<Result<ExploreResponse>>
 {
-    [FromClaim] public required string PlayerId { get; set; }
-
-    public required string LocationName { get; set; }
+    public required string PlayerId { get; init; }
+    public required string LocationName { get; init; }
 }

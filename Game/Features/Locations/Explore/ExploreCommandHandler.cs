@@ -1,7 +1,7 @@
-using Game.Application.SharedKernel;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Features.Locations.GetByName;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
 using MongoDB.Driver;
 
 namespace Game.Features.Locations.Explore;

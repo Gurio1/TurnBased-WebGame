@@ -1,27 +1,23 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DotNetEnv;
-using FastEndpoints;
-using FastEndpoints.Security;
-using FastEndpoints.Swagger;
 using Game.Application;
 using Game.Application.Battle;
-using Game.Application.SharedKernel;
 using Game.Core.Battle;
 using Game.Core.Equipment.Generation;
 using Game.Core.Loot;
 using Game.Features.Battle.PVE;
 using Game.Features.Equipment.Generation;
-using Game.Features.Identity;
-using Game.Features.Identity.SignalR;
 using Game.Persistence;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
+using Game.SignalR;
 using Game.Utilities;
 using Game.Utilities.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,30 +27,31 @@ builder.Host.UseDefaultServiceProvider(opt =>
     opt.ValidateOnBuild = true;
 });
 
-builder.Services.ConfigureHttpJsonOptions(o =>
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    o.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
-
-builder.Services.ConfigureHttpJsonOptions(opt =>
-{
-    opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
 builder.Services
-    .AddAuthenticationJwtBearer(options =>
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.SigningKey = builder.Configuration["Auth:JwtSecret"]!;
-    })
-    .AddAuthorization()
-    .AddFastEndpoints()
-    .SwaggerDocument();
+        var jwtSecret = builder.Configuration["Auth:JwtSecret"]!;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ClockSkew = TimeSpan.Zero
+        };
+    });
 
-
-//For SignalR
-builder.Services.AddAuthentication(o => o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization();
 
+//For SignalR
 builder.Services.AddSignalR()
     .AddJsonProtocol(options =>
     {
@@ -90,9 +87,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UrlBuilder>();
 
 
-builder.Services.AddDataServices(builder.Configuration);
-builder.Services.AddIdentityServices();
-builder.Services.RegisterDispatcher();
+builder.Services.AddDataServices();
+builder.Services.RegisterDispatcher(typeof(Program));
 
 builder.Services.AddCors(options =>
 {
@@ -112,9 +108,6 @@ app.UseCors("AllowSpecificOrigin");
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.MigrateAsync();
-
     await scope.ServiceProvider.InitializeAbilities();
 }
 
@@ -123,16 +116,11 @@ app.UseMiddleware<WebSocketsMiddleware>();
 app.UseAuthentication()
     .UseAuthorization();
 
-app.UseFastEndpoints()
-    .UseSwaggerGen();
+app.MapControllers();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-    app.MapOpenApi();
-
 app.UseHttpsRedirection();
 app.UseMiddleware<ExecutionTimeMiddleware>();
-Env.Load();
 
 app.MapHub<PveBattleHub>("/hubs/battle");
 

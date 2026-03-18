@@ -1,5 +1,5 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Models;
+﻿using Game.Core.Models;
+using Game.SharedKernel;
 
 namespace Game.Features.Monsters.Create;
 

@@ -1,5 +1,4 @@
-﻿using Game.Application.SharedKernel;
-using Game.Core.Abilities;
+﻿using Game.Core.Abilities;
 using Game.Core.Battle;
 using Game.Core.Battle.PVE;
 using Game.Core.Equipment;
@@ -8,6 +7,7 @@ using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
 using Game.Persistence.Requests;
+using Game.SharedKernel;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 

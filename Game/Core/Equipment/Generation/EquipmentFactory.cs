@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
-using Game.Application.SharedKernel;
+using Game.SharedKernel;
 
 namespace Game.Core.Equipment.Generation;
 

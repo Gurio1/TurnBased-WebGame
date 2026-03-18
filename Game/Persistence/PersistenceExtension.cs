@@ -1,32 +1,18 @@
 using Game.Core.Battle;
-using Game.Core.Models;
 using Game.Core.PlayerProfile;
-using Game.Features.Identity;
 using Game.Features.Players.Sell;
 using Game.Persistence.Mongo;
 using Game.Persistence.Redis;
 using Game.Persistence.Repositories;
 using Game.Persistence.Requests;
-using Microsoft.EntityFrameworkCore;
 
 namespace Game.Persistence;
 
 public static class PersistenceExtension
 {
     public static IServiceCollection AddDataServices(
-        this IServiceCollection services,
-        ConfigurationManager config)
+        this IServiceCollection services)
     {
-        string? connectionString = config.GetConnectionString("DefaultConnection");
-        
-        services.AddDbContext<ApplicationDbContext>(builder =>
-        {
-            builder.UseNpgsql(connectionString);
-        });
-        
-        services.AddIdentityCore<User>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
-        
         services.AddTransient<IMongoCollectionProvider, MongoCollectionProvider>();
         
         services.AddScoped<IPlayerRepository, PlayerMongoRepository>();

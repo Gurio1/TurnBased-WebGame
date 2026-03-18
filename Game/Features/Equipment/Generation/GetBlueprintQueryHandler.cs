@@ -1,7 +1,7 @@
-using Game.Application.SharedKernel;
 using Game.Core.Equipment;
 using Game.Core.Equipment.Generation;
 using Game.Persistence.Mongo;
+using Game.SharedKernel;
 using MongoDB.Driver;
 
 namespace Game.Features.Equipment.Generation;

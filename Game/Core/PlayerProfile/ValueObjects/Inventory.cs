@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-using Game.Application.SharedKernel;
 using Game.Core.Models;
+using Game.SharedKernel;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 

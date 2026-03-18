@@ -1,6 +1,6 @@
-using Game.Application.SharedKernel;
 using Game.Core.Models;
 using Game.Core.PlayerProfile;
+using Game.SharedKernel;
 
 namespace Game.Core.Loot;
 

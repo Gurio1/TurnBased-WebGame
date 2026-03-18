@@ -10,7 +10,7 @@ import { RegisterUser } from '../register/models/register-user';
   providedIn: 'root',
 })
 export class IdentityService {
-  private readonly apiUrl = `${environment.apiUrl}/users`;
+  private readonly apiUrl = `${environment.identityApiUrl}/users`;
 
   constructor(private readonly http: HttpClient) {}
 
