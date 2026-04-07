@@ -83,7 +83,6 @@ builder.Services.AddScoped<IBattleAuthService, BattleAuthService>();
 builder.Services.AddScoped<BattleContext>();
 builder.Services.AddScoped<BattleCacheManager>();
 
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UrlBuilder>();
 
 
@@ -104,6 +103,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 
 using (var scope = app.Services.CreateScope())
@@ -118,8 +118,6 @@ app.UseAuthentication()
 
 app.MapControllers();
 
-// Configure the HTTP request pipeline.
-app.UseHttpsRedirection();
 app.UseMiddleware<ExecutionTimeMiddleware>();
 
 app.MapHub<PveBattleHub>("/hubs/battle");
