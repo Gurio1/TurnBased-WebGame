@@ -5,4 +5,5 @@ export interface Item {
   imageUrl: string;
   type: string;
   itemActions: ItemAction[];
+  quantity?: number;
 }

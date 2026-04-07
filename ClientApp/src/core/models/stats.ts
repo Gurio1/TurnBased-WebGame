@@ -7,4 +7,5 @@ export interface Stats {
   criticalChance: number;
   criticalDamage: number;
   dodgeChance: number;
+  speed: number;
 }

@@ -60,7 +60,7 @@ export class BattleWebsocketService {
     });
   }
 
-  useAbility(abilityId: number) {
+  useAbility(abilityId: string) {
     this.hubConnection
       .invoke('UseAbility', abilityId)
       .catch((err) => console.error('Error sending ability:', err));

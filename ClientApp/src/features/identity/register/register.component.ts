@@ -1,9 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { Router, RouterLink } from '@angular/router';
-import { UniqueEmailValidator } from '../shared/validators/unique-email-validator';
 import { IdentityService } from '../services/identity.service';
 import { passwordValidator } from '../shared/validators/password-validator';
 import { RegisterUser } from './models/register-user';
@@ -12,26 +10,24 @@ import { passwordMatchValidator } from './validators/password-match-validator';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, NgIf, MatProgressBarModule],
+  imports: [RouterLink, ReactiveFormsModule, NgIf],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
+  @ViewChild('registerFormElement')
+  private readonly registerFormElement?: ElementRef<HTMLFormElement>;
+
   registerForm!: FormGroup;
 
   constructor(
     private readonly identityService: IdentityService,
-    private readonly uniqueEmailValidator: UniqueEmailValidator,
     private readonly router: Router
   ) {
     this.registerForm = new FormGroup(
       {
         userName: new FormControl('', Validators.pattern(/^[a-zA-Z0-9]*$/)),
-        email: new FormControl('', {
-          asyncValidators: [this.uniqueEmailValidator.validate.bind(this.uniqueEmailValidator)],
-          validators: [Validators.required, Validators.email],
-          updateOn: 'blur',
-        }),
+        email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [
           Validators.required,
           Validators.minLength(8),
@@ -43,8 +39,15 @@ export class RegisterComponent {
     );
   }
 
+  ngAfterViewInit(): void {
+    queueMicrotask(() => this.syncDomValuesToForm());
+  }
+
   submitForm(): void {
+    this.syncDomValuesToForm();
+
     if (!this.registerForm.valid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
@@ -59,5 +62,31 @@ export class RegisterComponent {
       next: () => this.router.navigate(['/battle']),
       error: (err) => console.error('Observable emitted an error: ' + err),
     });
+  }
+
+  private syncDomValuesToForm(): void {
+    const formElement = this.registerFormElement?.nativeElement;
+    if (!formElement) {
+      return;
+    }
+
+    const email = formElement.querySelector<HTMLInputElement>('#email')?.value ?? '';
+    const password = formElement.querySelector<HTMLInputElement>('#password')?.value ?? '';
+    const confirmPassword =
+      formElement.querySelector<HTMLInputElement>('#confirmPassword')?.value ?? '';
+
+    this.registerForm.patchValue(
+      {
+        email,
+        password,
+        confirmPassword,
+      },
+      { emitEvent: false }
+    );
+
+    this.registerForm.controls['email'].updateValueAndValidity({ emitEvent: false });
+    this.registerForm.controls['password'].updateValueAndValidity({ emitEvent: false });
+    this.registerForm.controls['confirmPassword'].updateValueAndValidity({ emitEvent: false });
+    this.registerForm.updateValueAndValidity({ emitEvent: false });
   }
 }

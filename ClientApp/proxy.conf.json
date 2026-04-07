@@ -1,4 +1,13 @@
 {
+  "/api/hubs": {
+    "target": "http://localhost:5242",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "pathRewrite": {
+      "^/api/hubs": "/hubs"
+    }
+  },
   "/api": {
     "target": "http://localhost:5284",
     "secure": false,

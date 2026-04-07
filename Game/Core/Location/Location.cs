@@ -1,5 +1,6 @@
 using Game.Core.Loot;
 using Game.Core.PlayerProfile.Aggregates;
+using Game.SharedKernel.Utilities.Extensions;
 using Game.Utilities.Extensions;
 using MongoDB.Bson;
 

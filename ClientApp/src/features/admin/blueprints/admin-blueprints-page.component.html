@@ -1,0 +1,336 @@
+<section class="blueprints-page">
+  <header class="blueprints-page__header">
+    <div>
+      <p class="blueprints-page__eyebrow">Blueprint Forge</p>
+      <h2>Equipment Blueprint Workshop</h2>
+      <p class="blueprints-page__copy">
+        Attach one equipment template, choose the allowed stat pool, and fine-tune how many
+        rolls each generated item can receive.
+      </p>
+    </div>
+
+    <button type="button" class="secondary-action" (click)="startCreate()">
+      New Blueprint
+    </button>
+  </header>
+
+  <p *ngIf="loadError" class="status-banner status-banner--error">{{ loadError }}</p>
+  <p *ngIf="submitError" class="status-banner status-banner--error">{{ submitError }}</p>
+  <p *ngIf="successMessage" class="status-banner status-banner--success">{{ successMessage }}</p>
+
+  <div class="blueprints-page__layout" *ngIf="!isLoading; else loadingState">
+    <section class="blueprint-list panel">
+      <div class="panel__header blueprint-list__header">
+        <div>
+          <p class="panel__eyebrow">Existing Blueprints</p>
+          <h3>Linked Equipment</h3>
+        </div>
+        <span class="panel__meta">{{ blueprints.length }} total</span>
+      </div>
+
+      <label class="field-label" for="linked-equipment-search">Search linked equipment</label>
+      <input
+        id="linked-equipment-search"
+        class="rpg-control blueprint-list__search"
+        type="search"
+        [formControl]="linkedEquipmentSearchControl"
+        placeholder="Search by name, slot, or equipment id"
+      />
+
+      <div class="blueprint-list__items" *ngIf="filteredBlueprints.length > 0; else emptyState">
+        <button
+          type="button"
+          class="blueprint-card"
+          *ngFor="let blueprint of filteredBlueprints; trackBy: trackBlueprint"
+          [class.is-active]="selectedBlueprintId === blueprint.id"
+          (click)="openBlueprint(blueprint.id)"
+        >
+          <div class="blueprint-card__media">
+            <img
+              [src]="getEquipmentImagePath(blueprint.equipmentImageUrl)"
+              [alt]="blueprint.equipmentName"
+            />
+          </div>
+          <div class="blueprint-card__content">
+            <strong>{{ blueprint.equipmentName }}</strong>
+            <span>{{ blueprint.equipmentSlot }}</span>
+            <span>{{ blueprint.statCount }} stats configured</span>
+            <span>Rolls up to {{ blueprint.maxRollCount }} stats</span>
+          </div>
+        </button>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-panel">
+          <p>
+            {{
+              blueprints.length > 0
+                ? 'No linked equipment matches this search.'
+                : 'No blueprints yet. Create the first one from the editor.'
+            }}
+          </p>
+        </div>
+      </ng-template>
+    </section>
+
+    <section class="blueprint-editor panel">
+      <div class="panel__header">
+        <div>
+          <p class="panel__eyebrow">Editor</p>
+          <h3>{{ selectedBlueprintId ? 'Edit Blueprint' : 'Create Blueprint' }}</h3>
+        </div>
+      </div>
+
+      <form class="editor-grid" [formGroup]="blueprintForm" novalidate>
+        <section class="editor-section">
+          <div class="section-heading">
+            <div>
+              <h4>1. Attach Equipment</h4>
+              <p>Drag a catalog item into the binding altar or use the attach button.</p>
+            </div>
+          </div>
+
+          <label class="field-label" for="equipment-search">Search equipment</label>
+          <input
+            id="equipment-search"
+            class="rpg-control"
+            type="search"
+            [formControl]="searchControl"
+            placeholder="Search by name, slot, or equipment id"
+          />
+
+          <div class="equipment-workbench" cdkDropListGroup>
+            <div
+              class="equipment-catalog"
+              cdkDropList
+              #equipmentCatalogList="cdkDropList"
+              [cdkDropListData]="filteredEquipmentCatalog"
+              [cdkDropListConnectedTo]="[attachedEquipmentList]"
+              [cdkDropListSortingDisabled]="true"
+            >
+              <article
+                *ngFor="let equipment of filteredEquipmentCatalog; trackBy: trackEquipment"
+                class="equipment-card"
+                [class.is-unavailable]="!canAttachEquipment(equipment)"
+                [class.is-selected]="isEquipmentSelected(equipment.equipmentId)"
+                cdkDrag
+                [cdkDragData]="equipment"
+                [cdkDragDisabled]="!canAttachEquipment(equipment)"
+              >
+                <div class="equipment-card__media">
+                  <img
+                    [src]="getEquipmentImagePath(equipment.imageUrl)"
+                    [alt]="equipment.name"
+                  />
+                </div>
+                <div class="equipment-card__body">
+                  <div>
+                    <strong>{{ equipment.name }}</strong>
+                    <p>{{ equipment.slot }}</p>
+                  </div>
+                  <span class="equipment-card__tag">
+                    {{
+                      equipment.assignedBlueprintId && equipment.assignedBlueprintId !== selectedBlueprintId
+                        ? 'Bound elsewhere'
+                        : isEquipmentSelected(equipment.equipmentId)
+                          ? 'Attached'
+                          : 'Available'
+                    }}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  class="inline-action"
+                  [disabled]="!canAttachEquipment(equipment)"
+                  (click)="attachEquipment(equipment)"
+                >
+                  Attach
+                </button>
+              </article>
+            </div>
+
+            <div
+              class="equipment-dropzone"
+              cdkDropList
+              #attachedEquipmentList="cdkDropList"
+              [cdkDropListData]="selectedEquipment ? [selectedEquipment] : []"
+              [cdkDropListConnectedTo]="[equipmentCatalogList]"
+              [cdkDropListSortingDisabled]="true"
+              (cdkDropListDropped)="onEquipmentDropped($event)"
+            >
+              <ng-container *ngIf="selectedEquipment as attachedEquipment; else noEquipment">
+                <div class="equipment-dropzone__content">
+                  <img
+                    [src]="getEquipmentImagePath(attachedEquipment.imageUrl)"
+                    [alt]="attachedEquipment.name"
+                  />
+                  <div>
+                    <strong>{{ attachedEquipment.name }}</strong>
+                    <p>{{ attachedEquipment.slot }} &middot; {{ attachedEquipment.equipmentId }}</p>
+                  </div>
+                </div>
+                <button type="button" class="ghost-action" (click)="clearEquipment()">
+                  Clear
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <ng-template #noEquipment>
+            <div class="equipment-dropzone__empty">
+              <strong>Drop equipment here</strong>
+              <p>Every blueprint binds to exactly one equipment item.</p>
+            </div>
+          </ng-template>
+        </section>
+
+        <section class="editor-section">
+          <div class="section-heading">
+            <div>
+              <h4>2. Configure Stat Pool</h4>
+              <p>Pick any supported stat set, then define the min and max roll ranges.</p>
+            </div>
+          </div>
+
+          <div class="inline-field">
+            <div class="inline-field__grow">
+              <label class="field-label" for="stat-add">Available stats</label>
+              <select id="stat-add" class="rpg-control" [formControl]="statToAddControl">
+                <option value="">Choose a stat to add</option>
+                <option
+                  *ngFor="let stat of statCatalog; trackBy: trackStat"
+                  [value]="stat.key"
+                  [disabled]="selectedStatKeys.has(stat.key)"
+                >
+                  {{ stat.name }}
+                </option>
+              </select>
+            </div>
+            <button type="button" class="secondary-action" (click)="addSelectedStat()">
+              Add Stat
+            </button>
+          </div>
+
+          <div class="stat-grid" formArrayName="stats">
+            <article
+              class="stat-card"
+              *ngFor="let statGroup of statsArray.controls; let index = index"
+              [formGroupName]="index"
+            >
+              <div class="stat-card__header">
+                <h5>Stat {{ index + 1 }}</h5>
+                <button type="button" class="ghost-action" (click)="removeStat(index)">
+                  Remove
+                </button>
+              </div>
+
+              <label class="field-label" [attr.for]="'stat-key-' + index">Stat Type</label>
+              <select
+                [id]="'stat-key-' + index"
+                class="rpg-control"
+                formControlName="statKey"
+                (change)="onStatSelectionChanged()"
+              >
+                <option
+                  *ngFor="let stat of getStatOptionsForRow(index); trackBy: trackStat"
+                  [value]="stat.key"
+                >
+                  {{ stat.name }}
+                </option>
+              </select>
+
+              <div class="stat-card__inputs">
+                <div>
+                  <label class="field-label" [attr.for]="'stat-min-' + index">Minimum</label>
+                  <input
+                    [id]="'stat-min-' + index"
+                    class="rpg-control"
+                    type="number"
+                    [attr.step]="getStatInputStep(statGroup.get('statKey')?.value)"
+                    formControlName="minValue"
+                  />
+                </div>
+                <div>
+                  <label class="field-label" [attr.for]="'stat-max-' + index">Maximum</label>
+                  <input
+                    [id]="'stat-max-' + index"
+                    class="rpg-control"
+                    type="number"
+                    [attr.step]="getStatInputStep(statGroup.get('statKey')?.value)"
+                    formControlName="maxValue"
+                  />
+                </div>
+              </div>
+
+              <p class="stat-card__hint">{{ getStatName(statGroup.get('statKey')?.value) }}</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <div class="section-heading">
+            <div>
+              <h4>3. Tune Roll Counts</h4>
+              <p>
+                Control how likely it is for generated equipment to roll 1, 2, or more of
+                the selected stats.
+              </p>
+            </div>
+          </div>
+
+          <div class="weight-grid" formArrayName="countWeights">
+            <div
+              class="weight-row"
+              *ngFor="let weightGroup of countWeightsArray.controls; let index = index"
+              [formGroupName]="index"
+            >
+              <div class="weight-row__count">
+                <span>
+                  {{ weightGroup.get('count')?.value }} stat roll{{
+                    weightGroup.get('count')?.value > 1 ? 's' : ''
+                  }}
+                </span>
+              </div>
+
+              <div class="weight-row__input">
+                <label class="field-label" [attr.for]="'weight-' + index">Weight</label>
+                <input
+                  [id]="'weight-' + index"
+                  class="rpg-control"
+                  type="number"
+                  step="0.01"
+                  formControlName="weight"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="editor-actions">
+          <button
+            type="button"
+            class="ghost-action"
+            [disabled]="!canDeleteSelected"
+            (click)="deleteBlueprint()"
+          >
+            {{ isDeleting ? 'Deleting...' : 'Delete' }}
+          </button>
+          <button
+            type="button"
+            class="primary-action"
+            [disabled]="isSaving"
+            (click)="saveBlueprint()"
+          >
+            {{ isSaving ? 'Saving...' : selectedBlueprintId ? 'Save Changes' : 'Create Blueprint' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <ng-template #loadingState>
+    <div class="panel loading-panel">
+      <p>Loading blueprint workshop...</p>
+    </div>
+  </ng-template>
+</section>

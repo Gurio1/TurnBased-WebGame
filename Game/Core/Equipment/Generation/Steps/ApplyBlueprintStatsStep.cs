@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using Game.SharedKernel.Utilities;
+using Game.SharedKernel.Utilities.Extensions;
 using Game.Utilities.Extensions;
 
 namespace Game.Core.Equipment.Generation.Steps;
@@ -15,20 +17,24 @@ public sealed class ApplyBlueprintStatsStep : IEquipmentPipelineStep
         
         for (int i = 0; i < attributeCount; i++)
         {
-            if (context.Blueprint.AttributeRanges.Count == 0) break;
+            if (context.Blueprint.Stats.Count == 0) break;
             
-            int index = RandomHelper.Instance.Next(context.Blueprint.AttributeRanges.Count);
+            int index = RandomHelper.Instance.Next(context.Blueprint.Stats.Count);
             
-            var range = context.Blueprint.AttributeRanges[index];
-            context.Blueprint.AttributeRanges.RemoveAt(index);
+            var range = context.Blueprint.Stats[index];
+            context.Blueprint.Stats.RemoveAt(index);
             
             float randomValue = (float)Math.Round(RandomHelper.NextFloat(range.MinValue, range.MaxValue), 2);
-            
-            range.Stat.Value = range.Stat is CriticalChanceStat or CriticalDamageStat
-                ? randomValue.RoundTo2()
-                : randomValue.RoundTo1();
-            
-            context.Equipment.Attributes.Add(range.Stat);
+
+            var stat = EquipmentStatRegistry.Create(range.StatKey);
+            stat.Value = stat switch
+            {
+                CriticalChanceStat => CriticalStatPercentages.NormalizeCriticalChance(randomValue),
+                CriticalDamageStat => CriticalStatPercentages.NormalizeCriticalDamage(randomValue),
+                _ => randomValue.RoundTo1()
+            };
+
+            context.Equipment.Attributes.Add(stat);
         }
         
         return context.Equipment;

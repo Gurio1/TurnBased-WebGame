@@ -1,5 +1,6 @@
 using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
+using Game.SharedKernel.Utilities;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Equipment;
@@ -35,26 +36,40 @@ public class SpeedStat : EquipmentStat
 {
     public override string Name { get; } = "Speed";
     public override float Value { get; set; }
-    
-    public override void ApplyStats(GamePlayer character) => throw new NotImplementedException();
-    
-    public override void RemoveStats(GamePlayer character) => character.Stats.Damage -= Value;
+
+    public override void ApplyStats(GamePlayer character) => character.Stats.Speed += Value;
+
+    public override void RemoveStats(GamePlayer character) => character.Stats.Speed -= Value;
 }
 
 public class CriticalChanceStat : EquipmentStat
 {
     public override string Name { get; } = "Critical chance";
     public override float Value { get; set; }
-    public override void ApplyStats(GamePlayer character) => character.Stats.CriticalChance += Value;
+    public override void ApplyStats(GamePlayer character) =>
+        character.Stats.CriticalChance = Math.Clamp(
+            character.Stats.CriticalChance + CriticalStatPercentages.NormalizeCriticalChance(Value),
+            0,
+            100);
     
-    public override void RemoveStats(GamePlayer character) => character.Stats.CriticalChance -= Value;
+    public override void RemoveStats(GamePlayer character) =>
+        character.Stats.CriticalChance = Math.Clamp(
+            character.Stats.CriticalChance - CriticalStatPercentages.NormalizeCriticalChance(Value),
+            0,
+            100);
 }
 
 public class CriticalDamageStat : EquipmentStat
 {
     public override string Name { get; } = "Critical damage";
     public override float Value { get; set; }
-    public override void ApplyStats(GamePlayer character) => character.Stats.CriticalDamage += Value;
+    public override void ApplyStats(GamePlayer character) =>
+        character.Stats.CriticalDamage = Math.Max(
+            0,
+            character.Stats.CriticalDamage + CriticalStatPercentages.NormalizeCriticalDamage(Value));
     
-    public override void RemoveStats(GamePlayer character) => character.Stats.CriticalDamage -= Value;
+    public override void RemoveStats(GamePlayer character) =>
+        character.Stats.CriticalDamage = Math.Max(
+            0,
+            character.Stats.CriticalDamage - CriticalStatPercentages.NormalizeCriticalDamage(Value));
 }

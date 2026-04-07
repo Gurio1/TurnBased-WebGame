@@ -107,6 +107,28 @@ export class BattleComponent implements OnInit, AfterViewChecked {
     return `${Math.round((value || 0) * 100)}%`;
   }
 
+  asStoredPercent(value: number): string {
+    return `${Math.round(value || 0)}%`;
+  }
+
+  get rewardItems() {
+    const lootDrops =
+      this.reward?.drop?.map((item) => ({
+        name: item.name,
+        imageUrl: item.imageUrl,
+        quantity: item.quantity,
+      })) ?? [];
+
+    const equipmentDrops =
+      this.reward?.equipmentDrop?.map((item) => ({
+        name: item.name,
+        imageUrl: item.imageUrl,
+        quantity: item.quantity,
+      })) ?? [];
+
+    return [...lootDrops, ...equipmentDrops];
+  }
+
   getLogClass(log: string): string {
     if (log.includes('heal')) return 'heal';
     if (log.includes('critical')) return 'critical';

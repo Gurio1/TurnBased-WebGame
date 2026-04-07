@@ -15,6 +15,10 @@ import { Equipment } from '../../core/models/equipment';
 import { Item } from '../../core/models/item';
 import { ItemAction } from '../../core/models/itemAction';
 import { InventorySlot } from '../../core/models/inventorySlot';
+import {
+  formatCriticalStatValue,
+  isCriticalPercentStat,
+} from '../../core/utils/critical-stat-display';
 
 @Component({
   selector: 'app-inventory',
@@ -90,7 +94,7 @@ export class InventoryComponent {
                 (attr) =>
                   `${attr.name}: ${
                     this.isItPercentStat(attr.name)
-                      ? attr.value * 100 + '%'
+                      ? formatCriticalStatValue(attr.name, attr.value)
                       : attr.value
                   }`
               )
@@ -105,7 +109,7 @@ export class InventoryComponent {
   }
 
   isItPercentStat(statName: string) {
-    return statName == 'Critical chance' || statName == 'Critical damage';
+    return isCriticalPercentStat(statName);
   }
 
   highlightItem(event: MouseEvent, ItemAction: ItemAction) {

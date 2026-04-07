@@ -25,19 +25,15 @@
     <li class="stat-item" tooltip="Chance to deal critical damage.">
       <span class="icon">🎯</span>
       <span class="label">Critical Chance:</span>
-      <span class="value"
-        >{{ character.stats.criticalChance * 100 | number : "1.0-2" }}%</span
-      >
+      <span class="value">{{ asStoredPercent(character.stats.criticalChance) }}</span>
     </li>
     <li
       class="stat-item"
-      tooltip="Multiplier applied when a critical hit lands."
+      tooltip="Bonus damage applied when a critical hit lands."
     >
       <span class="icon">💥</span>
       <span class="label">Critical Damage:</span>
-      <span class="value"
-        >{{ character.stats.criticalDamage * 100 | number : "1.0-2" }}%</span
-      >
+      <span class="value">{{ asStoredPercent(character.stats.criticalDamage) }}</span>
     </li>
     <li
       class="stat-item"
@@ -59,17 +55,10 @@
       <span class="label">Debuff Resistance:</span>
       <span class="value">{{ character.stats.debuffResistance }}</span>
     </li>
+    <li class="stat-item" tooltip="Improves turn order and combat quickness.">
+      <span class="icon">⚡</span>
+      <span class="label">Speed:</span>
+      <span class="value">{{ character.stats.speed }}</span>
+    </li>
   </ul>
-
-  <div class="abilities">
-    <h3>Abilities</h3>
-    <ul>
-      <li
-        *ngFor="let ability of character.abilities"
-        tooltip="Click to view details (future feature)"
-      >
-        <span class="ability-name">✨ {{ ability.name }}</span>
-      </li>
-    </ul>
-  </div>
 </div>

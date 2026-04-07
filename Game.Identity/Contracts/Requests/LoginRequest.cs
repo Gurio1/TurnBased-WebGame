@@ -2,10 +2,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Game.Identity.Contracts.Requests;
 
-public record LoginRequest
+public sealed record LoginRequest
 {
     [EmailAddress]
-    public required string Email { get; set; }
+    public required string Email { get; init; }
     
-    public required string Password { get; set; }
+    public required string Password { get; init; }
 }

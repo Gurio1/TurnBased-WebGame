@@ -8,6 +8,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Game/Game.csproj", "Game/"]
+COPY ["Game.SharedKernel/Game.SharedKernel.csproj", "Game.SharedKernel/"]
 RUN dotnet restore "Game/Game.csproj"
 COPY . .
 WORKDIR "/src/Game"

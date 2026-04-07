@@ -18,13 +18,7 @@
       class="stat-row"
     >
       <span class="stat-name">{{ attr.name }}:</span>
-      <span class="stat-value">
-        {{
-          isItPercentStat(attr.name)
-            ? (attr.value * 100 | number : "1.0-2") + "%"
-            : attr.value
-        }}
-      </span>
+      <span class="stat-value">{{ formatStatValue(attr.name, attr.value) }}</span>
     </div>
   </div>
 </div>

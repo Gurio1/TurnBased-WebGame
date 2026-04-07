@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Game.Identity.Contracts.Requests;
 using Game.Identity.Contracts.Responses;
 using Game.Identity.Core;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Game.Identity.Controllers;
 
@@ -15,11 +15,8 @@ namespace Game.Identity.Controllers;
 public sealed class UsersController(
     UserManager<User> userManager,
     ITokenFactory tokenFactory,
-    IHttpClientFactory httpClientFactory,
     IConfiguration configuration) : ControllerBase
 {
-    private const string GameApiClientName = "GameApi";
-
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
@@ -36,15 +33,16 @@ public sealed class UsersController(
             return ValidationProblem(ModelState);
         }
 
-        var createPlayerResult = await CreatePlayerAsync(cancellationToken);
-        if (!createPlayerResult.Success)
-            return StatusCode(createPlayerResult.StatusCode, createPlayerResult.ErrorMessage);
+        var gamePlayerProvisioningClient = HttpContext.RequestServices.GetRequiredService<IGamePlayerProvisioningClient>();
+        var createPlayerResult = await gamePlayerProvisioningClient.CreatePlayerAsync(cancellationToken);
+        if (createPlayerResult.IsFailure)
+            return StatusCode(StatusCodes.Status502BadGateway, createPlayerResult.Error.Description);
 
         var newUser = new User
         {
             UserName = request.Email,
             Email = request.Email,
-            PlayerId = createPlayerResult.PlayerId!
+            PlayerId = createPlayerResult.Value.PlayerId!
         };
 
         var createUserResult = await userManager.CreateAsync(newUser, request.Password);
@@ -52,9 +50,9 @@ public sealed class UsersController(
         {
             AddIdentityErrors(createUserResult);
 
-            var deletePlayerResult = await DeletePlayerAsync(createPlayerResult.PlayerId!, cancellationToken);
-            if (!deletePlayerResult.Success)
-                return StatusCode(deletePlayerResult.StatusCode, deletePlayerResult.ErrorMessage);
+            var deletePlayerResult = await gamePlayerProvisioningClient.DeletePlayerAsync(createPlayerResult.Value.PlayerId!, cancellationToken);
+            if (deletePlayerResult.IsFailure)
+                return StatusCode(StatusCodes.Status502BadGateway, deletePlayerResult.Error.Description);
 
             return ValidationProblem(ModelState);
         }
@@ -87,65 +85,9 @@ public sealed class UsersController(
         return Ok(isNotUnique);
     }
 
-    private async Task<(bool Success, string? PlayerId, int StatusCode, string? ErrorMessage)> CreatePlayerAsync(CancellationToken cancellationToken)
-    {
-        var client = httpClientFactory.CreateClient(GameApiClientName);
-        using var response = await client.PostAsync("/players", content: null, cancellationToken);
-
-        string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        if (!response.IsSuccessStatusCode)
-        {
-            return (
-                false,
-                null,
-                (int)response.StatusCode,
-                string.IsNullOrWhiteSpace(responseBody)
-                    ? "Unable to create player in the game service."
-                    : responseBody);
-        }
-
-        return (true, ParsePlayerId(responseBody), StatusCodes.Status200OK, null);
-    }
-
-    private async Task<(bool Success, int StatusCode, string? ErrorMessage)> DeletePlayerAsync(string playerId, CancellationToken cancellationToken)
-    {
-        var client = httpClientFactory.CreateClient(GameApiClientName);
-        using var response = await client.DeleteAsync($"/players/{Uri.EscapeDataString(playerId)}", cancellationToken);
-
-        if (response.IsSuccessStatusCode)
-            return (true, StatusCodes.Status204NoContent, null);
-
-        string responseBody = await response.Content.ReadAsStringAsync(cancellationToken);
-        return (
-            false,
-            (int)response.StatusCode,
-            string.IsNullOrWhiteSpace(responseBody)
-                ? $"Player '{playerId}' was created, but the cleanup delete call failed."
-                : responseBody);
-    }
-
     private void AddIdentityErrors(IdentityResult result)
     {
         foreach (var error in result.Errors)
             ModelState.AddModelError(string.Empty, error.Description);
-    }
-
-    private static string ParsePlayerId(string responseBody)
-    {
-        if (string.IsNullOrWhiteSpace(responseBody))
-            throw new InvalidOperationException("Game service returned an empty player creation response.");
-
-        try
-        {
-            string? playerId = JsonSerializer.Deserialize<string>(responseBody);
-            if (!string.IsNullOrWhiteSpace(playerId))
-                return playerId;
-        }
-        catch (JsonException)
-        {
-            // Fall back to raw text for non-JSON responses.
-        }
-
-        return responseBody.Trim().Trim('"');
     }
 }

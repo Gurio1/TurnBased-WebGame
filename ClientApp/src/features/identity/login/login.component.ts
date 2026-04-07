@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { passwordValidator } from '../shared/validators/password-validator';
@@ -13,7 +13,10 @@ import { IdentityService } from '../services/identity.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
+  @ViewChild('loginFormElement')
+  private readonly loginFormElement?: ElementRef<HTMLFormElement>;
+
   constructor(
     private readonly identityService: IdentityService,
     private readonly router: Router
@@ -28,8 +31,15 @@ export class LoginComponent {
     ]),
   });
 
+  ngAfterViewInit(): void {
+    queueMicrotask(() => this.syncDomValuesToForm());
+  }
+
   submitForm(): void {
+    this.syncDomValuesToForm();
+
     if (!this.loginForm.valid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
@@ -42,5 +52,27 @@ export class LoginComponent {
       next: () => this.router.navigate(['/home']),
       error: (err) => console.error('Observable emitted an error: ' + err),
     });
+  }
+
+  private syncDomValuesToForm(): void {
+    const formElement = this.loginFormElement?.nativeElement;
+    if (!formElement) {
+      return;
+    }
+
+    const email = formElement.querySelector<HTMLInputElement>('#email')?.value ?? '';
+    const password = formElement.querySelector<HTMLInputElement>('#password')?.value ?? '';
+
+    this.loginForm.patchValue(
+      {
+        email,
+        password,
+      },
+      { emitEvent: false }
+    );
+
+    this.loginForm.controls['email'].updateValueAndValidity({ emitEvent: false });
+    this.loginForm.controls['password'].updateValueAndValidity({ emitEvent: false });
+    this.loginForm.updateValueAndValidity({ emitEvent: false });
   }
 }

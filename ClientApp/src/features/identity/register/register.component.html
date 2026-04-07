@@ -2,16 +2,20 @@
 <div class="container">
   <h1>Dark Dungeon RPG Registration</h1>
   <form
+    #registerFormElement
     [formGroup]="registerForm"
-    (ngSubmit)="$event.preventDefault(); submitForm()"
+    (ngSubmit)="submitForm()"
   >
     <div class="form-group">
       <label for="email">Contact Scroll (Email):</label>
-      <input type="email" id="email" formControlName="email" required />
-      <mat-progress-bar
-        *ngIf="registerForm.get('email')?.pending"
-        mode="indeterminate"
-      ></mat-progress-bar>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        autocomplete="email"
+        formControlName="email"
+        required
+      />
       <div
         *ngIf="
           registerForm.get('email')?.invalid &&
@@ -31,12 +35,6 @@
         >
           Enter a valid email address
         </small>
-        <small
-          class="text-danger"
-          *ngIf="registerForm.get('email')?.hasError('uniqueEmail')"
-        >
-          User with this email already exists
-        </small>
       </div>
     </div>
     <div class="form-group">
@@ -44,6 +42,8 @@
       <input
         type="password"
         id="password"
+        name="password"
+        autocomplete="new-password"
         formControlName="password"
         required
       />
@@ -80,6 +80,8 @@
       <input
         type="password"
         id="confirmPassword"
+        name="confirmPassword"
+        autocomplete="new-password"
         formControlName="confirmPassword"
         required
       />

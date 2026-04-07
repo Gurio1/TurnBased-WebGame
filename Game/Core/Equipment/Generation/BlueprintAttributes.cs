@@ -2,6 +2,6 @@ namespace Game.Core.Equipment.Generation;
 
 public sealed class BlueprintAttributes
 {
-    public List<AttributeRange> AttributeRanges { get; init; }
-    public Dictionary<string, double> AttributeCountWeights { get; init; }
+    public required List<BlueprintStatRange> Stats { get; init; }
+    public required Dictionary<string, double> AttributeCountWeights { get; init; }
 }

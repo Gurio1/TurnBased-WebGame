@@ -1,14 +1,18 @@
-using Game.Identity.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using System.Text;
+using System.Text.Json;
+using Game.Identity.Persistence;
 using Game.Identity.Services;
+using Game.SharedKernel.Contracts.Requests;
+using Game.SharedKernel.Messaging;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var rabbitMqSettings = builder.Configuration.GetSection("Messaging:RabbitMq").Get<RabbitMqSettings>() ?? new RabbitMqSettings();
 
 builder.Host.UseDefaultServiceProvider(opt =>
 {
@@ -19,6 +23,40 @@ builder.Host.UseDefaultServiceProvider(opt =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Game.Identity API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services
@@ -45,13 +83,24 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = false;
     options.User.RequireUniqueEmail = true;
 });
-        
-builder.Services.AddScoped<ITokenFactory, TokenFactory>();
 
-builder.Services.AddHttpClient("GameApi", client =>
+builder.Services.AddScoped<ITokenFactory, TokenFactory>();
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("Messaging:RabbitMq"));
+builder.Services.AddMassTransit(x =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["Services:GameApi:BaseUrl"]!);
+    x.AddRequestClient<CreatePlayerRequest>(new Uri($"queue:{rabbitMqSettings.PlayerCreateRequestQueue}"));
+    x.AddRequestClient<DeletePlayerRequest>(new Uri($"queue:{rabbitMqSettings.PlayerDeleteRequestQueue}"));
+
+    x.UsingRabbitMq((_, cfg) =>
+    {
+        cfg.Host(rabbitMqSettings.HostName, rabbitMqSettings.VirtualHost, h =>
+        {
+            h.Username(rabbitMqSettings.UserName);
+            h.Password(rabbitMqSettings.Password);
+        });
+    });
 });
+builder.Services.AddScoped<IGamePlayerProvisioningClient, GamePlayerProvisioningClient>();
 
 builder.Services.AddPersistenceServices(builder.Configuration);
 
@@ -67,6 +116,12 @@ app.UseAuthentication()
     .UseAuthorization();
 
 app.UseHttpsRedirection();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.MapControllers();
 

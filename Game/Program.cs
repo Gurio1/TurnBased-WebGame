@@ -1,25 +1,25 @@
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Game.Application;
-using Game.Application.Battle;
-using Game.Core.Battle;
+using Game.Application.Equipment.Generation;
 using Game.Core.Equipment.Generation;
 using Game.Core.Loot;
-using Game.Features.Battle.PVE;
-using Game.Features.Equipment.Generation;
+using Game.Messaging;
 using Game.Persistence;
 using Game.Persistence.Mongo;
-using Game.SharedKernel;
+using Game.SharedKernel.Messaging;
 using Game.SignalR;
 using Game.Utilities;
 using Game.Utilities.Middlewares;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var rabbitMqSettings = builder.Configuration.GetSection("Messaging:RabbitMq").Get<RabbitMqSettings>() ?? new RabbitMqSettings();
 
 builder.Host.UseDefaultServiceProvider(opt =>
 {
@@ -31,6 +31,40 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Game API",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services
@@ -76,18 +110,49 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 });
 
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
-builder.Services.AddSingleton<ILootService, LootService>();
-builder.Services.AddSingleton<IEquipmentGenerator, EquipmentGenerator>();
+builder.Services.AddScoped<ILootService, LootService>();
+builder.Services.AddScoped<IEquipmentGenerator, EquipmentGenerator>();
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("Messaging:RabbitMq"));
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<BattleSettlementConsumer>();
+    x.AddConsumer<CreatePlayerConsumer>();
+    x.AddConsumer<DeletePlayerConsumer>();
+    x.AddConsumer<BattleSnapshotConsumer>();
 
-builder.Services.AddScoped<IBattleAuthService, BattleAuthService>();
-builder.Services.AddScoped<BattleContext>();
-builder.Services.AddScoped<BattleCacheManager>();
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(rabbitMqSettings.HostName, rabbitMqSettings.VirtualHost, h =>
+        {
+            h.Username(rabbitMqSettings.UserName);
+            h.Password(rabbitMqSettings.Password);
+        });
+
+        cfg.ReceiveEndpoint(rabbitMqSettings.BattleSettlementRequestQueue, e =>
+        {
+            e.ConfigureConsumer<BattleSettlementConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint(rabbitMqSettings.PlayerCreateRequestQueue, e =>
+        {
+            e.ConfigureConsumer<CreatePlayerConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint(rabbitMqSettings.PlayerDeleteRequestQueue, e =>
+        {
+            e.ConfigureConsumer<DeletePlayerConsumer>(context);
+        });
+
+        cfg.ReceiveEndpoint(rabbitMqSettings.BattleStartSnapshotRequestQueue, e =>
+        {
+            e.ConfigureConsumer<BattleSnapshotConsumer>(context);
+        });
+    });
+});
 
 builder.Services.AddScoped<UrlBuilder>();
 
-
 builder.Services.AddDataServices();
-builder.Services.RegisterDispatcher(typeof(Program));
 
 builder.Services.AddCors(options =>
 {
@@ -100,26 +165,22 @@ builder.Services.AddCors(options =>
         });
 });
 
-
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowSpecificOrigin");
-
-using (var scope = app.Services.CreateScope())
-{
-    await scope.ServiceProvider.InitializeAbilities();
-}
-
 app.UseMiddleware<WebSocketsMiddleware>();
 
-app.UseAuthentication()
-    .UseAuthorization();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseCors("AllowSpecificOrigin");
+app.UseMiddleware<ExecutionTimeMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseMiddleware<ExecutionTimeMiddleware>();
-
-app.MapHub<PveBattleHub>("/hubs/battle");
 
 app.Run();

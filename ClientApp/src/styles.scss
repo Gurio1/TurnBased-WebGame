@@ -1,3 +1,5 @@
+@use "./styles/admin-rpg" as admin;
+
 * {
   padding: 0;
   margin: 0;
@@ -65,6 +67,17 @@ select:focus,
 textarea:focus {
   outline: 0;
   box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.26);
+}
+
+.rpg-control {
+  @include admin.admin-field;
+  padding: 10px 12px;
+  font-family: "MedievalSharp", cursive, "Merriweather", serif;
+}
+
+.rpg-control option {
+  background: #2a2118;
+  color: #f4e5c1;
 }
 
 button {

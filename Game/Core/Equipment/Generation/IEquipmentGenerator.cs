@@ -1,4 +1,5 @@
 using Game.SharedKernel;
+using Game.SharedKernel.Results;
 
 namespace Game.Core.Equipment.Generation;
 

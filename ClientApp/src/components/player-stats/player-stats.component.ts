@@ -12,4 +12,8 @@ import { PlayerHomeViewModel } from '../../features/home/contracts/playerHomeVie
 export class PlayerStatsComponent {
   @Input()
   character!: PlayerHomeViewModel;
+
+  asStoredPercent(value: number): string {
+    return `${Math.round(value || 0)}%`;
+  }
 }

@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Identity", "Game.Ident
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.SharedKernel", "Game.SharedKernel\Game.SharedKernel.csproj", "{5024E42B-228D-4AE2-AA78-AF0797E02D2C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Battle", "Battle", "{6C139FB2-3F71-4C2E-A942-E0156E299F8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Battle", "Game.Battle\Game.Battle.csproj", "{2390A577-6026-43BE-8740-3DF81A033D31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,8 +35,13 @@ Global
 		{5024E42B-228D-4AE2-AA78-AF0797E02D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5024E42B-228D-4AE2-AA78-AF0797E02D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5024E42B-228D-4AE2-AA78-AF0797E02D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2390A577-6026-43BE-8740-3DF81A033D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2390A577-6026-43BE-8740-3DF81A033D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2390A577-6026-43BE-8740-3DF81A033D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2390A577-6026-43BE-8740-3DF81A033D31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8EF3795B-06E8-4FE7-96E8-E712D9EC74B9} = {041ADA7E-F4DC-411D-B293-69B8DCE9BCB8}
+		{2390A577-6026-43BE-8740-3DF81A033D31} = {6C139FB2-3F71-4C2E-A942-E0156E299F8D}
 	EndGlobalSection
 EndGlobal

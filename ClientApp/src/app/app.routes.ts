@@ -30,4 +30,29 @@ export const routes: Routes = [
     loadComponent: () =>
       import('../features/map/map-page/map-page.component').then((m) => m.MapPageComponent),
   },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('../features/admin/admin-shell/admin-shell.component').then(
+        (m) => m.AdminShellComponent
+      ),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'blueprints' },
+      {
+        path: 'blueprints',
+        loadComponent: () =>
+          import('../features/admin/blueprints/admin-blueprints-page.component').then(
+            (m) => m.AdminBlueprintsPageComponent
+          ),
+      },
+      {
+        path: 'monsters',
+        loadComponent: () =>
+          import('../features/admin/monsters/admin-monsters-page.component').then(
+            (m) => m.AdminMonstersPageComponent
+          ),
+      },
+    ],
+  },
 ];

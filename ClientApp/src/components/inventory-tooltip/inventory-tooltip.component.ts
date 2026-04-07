@@ -10,6 +10,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { Equipment } from '../../core/models/equipment';
 import { Item } from '../../core/models/item';
+import {
+  formatCriticalStatValue,
+  isCriticalPercentStat,
+} from '../../core/utils/critical-stat-display';
 
 @Component({
   selector: 'app-inventory-tooltip',
@@ -38,11 +42,12 @@ export class InventoryTooltipComponent {
   }
 
   isItPercentStat(statName: string): boolean {
-    return (
-      statName.toLowerCase().includes('percent') ||
-      statName.toLowerCase().includes('chance') ||
-      statName === 'Critical chance' ||
-      statName === 'Critical damage'
-    );
+    return isCriticalPercentStat(statName);
+  }
+
+  formatStatValue(statName: string, value: number): string {
+    return this.isItPercentStat(statName)
+      ? formatCriticalStatValue(statName, value)
+      : `${value}`;
   }
 }

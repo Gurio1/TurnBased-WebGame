@@ -74,14 +74,14 @@
           <img src="/battle-icon-crit.svg" alt="" aria-hidden="true" />
           <span class="stat-label">Crit Chance</span>
           <span class="stat-value">{{
-            asPercent(battleData.monster.stats.criticalChance)
+            asStoredPercent(battleData.monster.stats.criticalChance)
           }}</span>
         </div>
         <div class="sheet-stat">
           <img src="/battle-icon-critdmg.svg" alt="" aria-hidden="true" />
           <span class="stat-label">Crit Dmg</span>
           <span class="stat-value">{{
-            asPercent(battleData.monster.stats.criticalDamage)
+            asStoredPercent(battleData.monster.stats.criticalDamage)
           }}</span>
         </div>
         <div class="sheet-stat">
@@ -163,7 +163,7 @@
     *ngIf="reward"
     [gold]="reward.gold || 100"
     [gems]="reward.experience || 200"
-    [items]="reward.equipmentDrop || []"
+    [items]="rewardItems"
   >
   </app-reward-modal>
 

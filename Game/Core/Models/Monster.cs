@@ -1,21 +1,19 @@
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
-using Game.Core.Abilities;
-using Game.Core.Battle;
-using Game.Core.Equipment;
-using Game.Core.StatusEffects;
+using Game.SharedKernel.Models;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Game.Core.Models;
 
-public class Monster : CombatEntity, IHasAbilityIds
+[BsonIgnoreExtraElements]
+public class Monster
 {
-    public Dictionary<string, float> DropsTable { get; init; }
-    
-    [OnDeserialized]
-    internal void OnDeserializedMethod(StreamingContext context)
-    {
-        Equipment ??= new Dictionary<string, EquipmentBase?>();
-        Debuffs ??= [];
-    }
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
+
+    public required string Name { get; set; }
+    public Stats Stats { get; set; } = new();
+    public double OverallDropChance { get; set; } = 1;
+    public List<MonsterDropEntry> Drops { get; set; } = [];
+    public List<string> AbilityIds { get; set; } = [];
 }

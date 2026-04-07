@@ -1,0 +1,31 @@
+<section class="admin-shell">
+  <aside class="admin-sidebar" aria-label="Admin navigation">
+    <div class="admin-sidebar__intro">
+      <p class="admin-sidebar__eyebrow">Workshop Console</p>
+      <h1>Admin Panel</h1>
+      <p class="admin-sidebar__copy">
+        Curate live game data with guarded tooling, structured editors, and a sidebar
+        ready for future systems.
+      </p>
+    </div>
+
+    <nav class="admin-sidebar__nav">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.route"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="admin-sidebar__link"
+      >
+        <span class="admin-sidebar__label">{{ item.label }}</span>
+        <span class="admin-sidebar__description">{{ item.description }}</span>
+      </a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-stage">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</section>

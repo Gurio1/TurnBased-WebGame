@@ -1,44 +1,61 @@
-﻿using Game.Core.Abilities;
-using Game.Core.PlayerProfile;
+﻿using Game.Core.PlayerProfile;
 using Game.Core.PlayerProfile.Aggregates;
 using Game.Persistence.Mongo;
-using Game.SharedKernel;
+using Game.SharedKernel.Results;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 
 namespace Game.Persistence.Repositories;
 
-public sealed class PlayerMongoRepository : IPlayerRepository
+public sealed class PlayerMongoRepository(IMongoCollectionProvider provider) : IPlayerRepository
 {
-    private readonly IMongoCollectionProvider provider;
-    
-    public PlayerMongoRepository(IMongoCollectionProvider provider) =>
-        this.provider = provider;
-    
     public async Task<Result<GamePlayer>> GetById(string playerId, CancellationToken ct = default)
     {
         var player = await provider.GetCollection<GamePlayer>()
-            .Find(p => p.Id == playerId)
+            .Find(existing => existing.Id == playerId)
             .FirstOrDefaultAsync(ct);
-        
+
         return player is null
             ? Result<GamePlayer>.NotFound($"Player with id '{playerId}' does not exist")
             : Result<GamePlayer>.Success(player);
     }
-    
-    public async Task<Result<GamePlayer>> GetByIdWithAbilities(string playerId, CancellationToken ct = default)
+
+    public async Task<Result<GamePlayer>> Create(GamePlayer player, CancellationToken ct = default)
     {
-        var lookupResult = await provider.GetCollection<GamePlayer>()
-            .AsQueryable()
-            .Where(p => p.Id == playerId)
-            .WithAbilities(provider.GetCollection<Ability>())
-            .FirstOrDefaultAsync(ct);
-        
-        if (lookupResult.Local is null)
-            return Result<GamePlayer>.NotFound($"Unable to retrieve player with id '{playerId}'");
-        
-        lookupResult.Local.Abilities = lookupResult.Results.ToList();
-        
-        return Result<GamePlayer>.Success(lookupResult.Local);
+        try
+        {
+            await provider.GetCollection<GamePlayer>().InsertOneAsync(player, cancellationToken: ct);
+            return Result<GamePlayer>.Success(player);
+        }
+        catch (Exception ex)
+        {
+            return Result<GamePlayer>.Failure(ex.Message);
+        }
+    }
+
+    public async Task<Result<GamePlayer>> Save(GamePlayer player, CancellationToken ct = default)
+    {
+        try
+        {
+            var updateResult = await provider.GetCollection<GamePlayer>()
+                .ReplaceOneAsync(existing => existing.Id == player.Id, player, cancellationToken: ct);
+
+            return updateResult.MatchedCount == 0
+                ? Result<GamePlayer>.NotFound($"Player with id '{player.Id}' does not exist")
+                : Result<GamePlayer>.Success(player);
+        }
+        catch (Exception ex)
+        {
+            return Result<GamePlayer>.Failure(ex.Message);
+        }
+    }
+
+    public async Task<ResultWithoutValue> Delete(string playerId, CancellationToken ct = default)
+    {
+        var deleteResult = await provider.GetCollection<GamePlayer>()
+            .DeleteOneAsync(player => player.Id == playerId, ct);
+
+        return deleteResult.DeletedCount == 0
+            ? ResultWithoutValue.NotFound($"Can't delete player with id '{playerId}'. Not found.")
+            : ResultWithoutValue.Success();
     }
 }

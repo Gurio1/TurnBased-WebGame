@@ -1,6 +1,151 @@
 ﻿services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: Game
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d Game"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand({ ping: 1 }).ok\" | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   game:
-    image: game
     build:
       context: .
       dockerfile: Game/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__MongoConnection: mongodb://mongo:27017
+      ConnectionStrings__RedisConnection: redis:6379
+      Messaging__RabbitMq__HostName: rabbitmq
+      Messaging__RabbitMq__UserName: guest
+      Messaging__RabbitMq__Password: guest
+      Messaging__RabbitMq__RequestQueue: battle.settlement.requests
+      Auth__JwtSecret: really really REALLY long secret key goes here
+    ports:
+      - "5284:8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  battle:
+    build:
+      context: .
+      dockerfile: Game.Battle/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__MongoConnection: mongodb://mongo:27017
+      ConnectionStrings__RedisConnection: redis:6379
+      Services__GameApi__BaseUrl: http://game:8080
+      Messaging__RabbitMq__HostName: rabbitmq
+      Messaging__RabbitMq__UserName: guest
+      Messaging__RabbitMq__Password: guest
+      Messaging__RabbitMq__RequestQueue: battle.settlement.requests
+      Auth__JwtSecret: really really REALLY long secret key goes here
+    ports:
+      - "5242:8080"
+    depends_on:
+      game:
+        condition: service_started
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  identity:
+    build:
+      context: .
+      dockerfile: Game.Identity/Dockerfile
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=Game;Username=postgres;Password=123
+      Messaging__RabbitMq__HostName: rabbitmq
+      Messaging__RabbitMq__UserName: guest
+      Messaging__RabbitMq__Password: guest
+      Auth__JwtSecret: really really REALLY long secret key goes here
+    ports:
+      - "5026:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      game:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm start -- --host 0.0.0.0 --port 4200 --proxy-config proxy.conf.docker.json"
+    volumes:
+      - ./ClientApp:/app
+      - clientapp-node-modules:/app/node_modules
+    ports:
+      - "4200:4200"
+    depends_on:
+      game:
+        condition: service_started
+      battle:
+        condition: service_started
+      identity:
+        condition: service_started
+
+volumes:
+  postgres-data:
+  mongo-data:
+  redis-data:
+  rabbitmq-data:
+  clientapp-node-modules:

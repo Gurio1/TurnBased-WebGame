@@ -1,10 +1,13 @@
-using Game.Core.Battle;
+using Game.Application.Equipment.Blueprints;
+using Game.Application.Locations;
+using Game.Application.Monsters;
+using Game.Application.Players;
+using Game.Core.Equipment;
+using Game.Core.Location;
+using Game.Core.Models;
 using Game.Core.PlayerProfile;
-using Game.Features.Players.Sell;
 using Game.Persistence.Mongo;
-using Game.Persistence.Redis;
 using Game.Persistence.Repositories;
-using Game.Persistence.Requests;
 
 namespace Game.Persistence;
 
@@ -16,15 +19,15 @@ public static class PersistenceExtension
         services.AddTransient<IMongoCollectionProvider, MongoCollectionProvider>();
         
         services.AddScoped<IPlayerRepository, PlayerMongoRepository>();
-        services.AddScoped<IBattleRepository, BattleRedisRepository>();
-        
-        //TODO: Should it be in a repo?
-        services.AddScoped<GetMonsterQuery>();
-        services.AddScoped<UpdatePlayerAfterEquipmentInteraction>();
-        services.AddScoped<UpdatePlayerAfterSellInteraction>();
-        
-        services.AddSingleton<RedisProvider>();
+        services.AddScoped<IMonsterRepository, MonsterMongoRepository>();
+        services.AddScoped<IEquipmentBlueprintRepository, EquipmentBlueprintMongoRepository>();
+        services.AddSingleton<ILocationRepository, PredefinedLocationRepository>();
+        services.AddScoped<IPlayerService, PlayerService>();
+        services.AddScoped<IMonsterService, MonsterService>();
+        services.AddScoped<IEquipmentBlueprintService, EquipmentBlueprintService>();
+        services.AddScoped<ILocationService, LocationService>();
         
         return services;
     }
 }
+

@@ -1,0 +1,525 @@
+<section class="monsters-page">
+  <header class="monsters-page__header">
+    <div>
+      <p class="monsters-page__eyebrow">Bestiary Forge</p>
+      <h2>Monster Workshop</h2>
+      <p class="monsters-page__copy">
+        Curate encounter-ready monsters, tune their stats, bind abilities, and shape mixed-item
+        loot tables from the live item catalog.
+      </p>
+    </div>
+
+    <button type="button" class="secondary-action" (click)="startCreate()">New Monster</button>
+  </header>
+
+  <p *ngIf="loadError" class="status-banner status-banner--error">{{ loadError }}</p>
+  <p *ngIf="submitError" class="status-banner status-banner--error">{{ submitError }}</p>
+  <p *ngIf="successMessage" class="status-banner status-banner--success">{{ successMessage }}</p>
+
+  <div class="monsters-page__layout" *ngIf="!isLoading; else loadingState">
+    <section class="monster-list panel">
+      <div class="panel__header">
+        <div>
+          <p class="panel__eyebrow">Existing Monsters</p>
+          <h3>Encounter Roster</h3>
+        </div>
+        <span class="panel__meta">{{ monsters.length }} total</span>
+      </div>
+
+      <label class="field-label" for="monster-search">Search monsters</label>
+      <input
+        id="monster-search"
+        class="rpg-control"
+        type="search"
+        [formControl]="monsterSearchControl"
+        placeholder="Search by monster name"
+      />
+
+      <div class="monster-list__items" *ngIf="filteredMonsters.length > 0; else emptyState">
+        <button
+          type="button"
+          class="monster-card"
+          *ngFor="let monster of filteredMonsters; trackBy: trackMonster"
+          [class.is-active]="selectedMonsterName === monster.name"
+          (click)="openMonster(monster.name)"
+        >
+          <div class="monster-card__content">
+            <strong>{{ monster.name }}</strong>
+            <span>{{ monster.maxHealth }} max health</span>
+            <span>{{ monster.damage }} damage</span>
+            <span>{{ monster.abilityCount }} abilities &middot; {{ monster.dropCount }} drops</span>
+          </div>
+        </button>
+      </div>
+
+      <ng-template #emptyState>
+        <div class="empty-panel">
+          <p>No monsters found. Create the first one from the editor.</p>
+        </div>
+      </ng-template>
+    </section>
+
+    <section class="monster-editor panel">
+      <div class="panel__header">
+        <div>
+          <p class="panel__eyebrow">Editor</p>
+          <h3>{{ selectedMonsterName ? 'Edit Monster' : 'Create Monster' }}</h3>
+        </div>
+      </div>
+
+      <form class="editor-grid" [formGroup]="monsterForm" novalidate>
+        <section class="editor-section">
+          <button
+            type="button"
+            class="stage-toggle"
+            [class.is-collapsed]="isStageCollapsed('identity')"
+            [attr.aria-expanded]="!isStageCollapsed('identity')"
+            aria-controls="monster-stage-identity"
+            (click)="toggleStage('identity')"
+          >
+            <div class="section-heading">
+              <div>
+                <h4>1. Identity</h4>
+                <p>Name the encounter and define its overall chance to drop an item at all.</p>
+              </div>
+              <span class="stage-toggle__meta">
+                {{ isStageCollapsed('identity') ? 'Expand' : 'Collapse' }}
+              </span>
+            </div>
+          </button>
+
+          <div
+            id="monster-stage-identity"
+            class="stage-content"
+            *ngIf="!isStageCollapsed('identity')"
+          >
+            <div class="identity-grid">
+              <div>
+                <label class="field-label" for="monster-name">Monster name</label>
+                <input
+                  id="monster-name"
+                  class="rpg-control"
+                  type="text"
+                  formControlName="name"
+                  placeholder="Goblin Raider"
+                />
+              </div>
+
+              <div>
+                <label class="field-label" for="monster-drop-chance">Overall drop chance</label>
+                <input
+                  id="monster-drop-chance"
+                  class="rpg-control"
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  formControlName="overallDropChance"
+                />
+                <p class="field-hint">Use values from 0 to 1. Example: 0.35 means a 35% chance.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <button
+            type="button"
+            class="stage-toggle"
+            [class.is-collapsed]="isStageCollapsed('stats')"
+            [attr.aria-expanded]="!isStageCollapsed('stats')"
+            aria-controls="monster-stage-stats"
+            (click)="toggleStage('stats')"
+          >
+            <div class="section-heading">
+              <div>
+                <h4>2. Stats</h4>
+                <p>Drag stat definitions into the ledger, then tune the stored numeric values.</p>
+              </div>
+              <span class="stage-toggle__meta">
+                {{ isStageCollapsed('stats') ? 'Expand' : 'Collapse' }}
+              </span>
+            </div>
+          </button>
+
+          <div id="monster-stage-stats" class="stage-content" *ngIf="!isStageCollapsed('stats')">
+            <label class="field-label" for="stat-search">Search stats</label>
+            <input
+              id="stat-search"
+              class="rpg-control"
+              type="search"
+              [formControl]="statSearchControl"
+              placeholder="Search stat catalog"
+            />
+
+            <div class="catalog-workbench" cdkDropListGroup>
+              <div
+                class="catalog-grid compact"
+                cdkDropList
+                #statCatalogList="cdkDropList"
+                [cdkDropListData]="filteredStatCatalog"
+                [cdkDropListConnectedTo]="[selectedStatsList]"
+                [cdkDropListSortingDisabled]="true"
+              >
+                <article
+                  *ngFor="let stat of filteredStatCatalog; trackBy: trackStat"
+                  class="catalog-card"
+                  [class.is-unavailable]="!canAttachStat(stat)"
+                  cdkDrag
+                  [cdkDragData]="stat"
+                  [cdkDragDisabled]="!canAttachStat(stat)"
+                >
+                  <div class="catalog-card__body">
+                    <strong>{{ stat.name }}</strong>
+                    <span>{{ stat.valueType === 'integer' ? 'Whole number' : 'Decimal value' }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="inline-action"
+                    [disabled]="!canAttachStat(stat)"
+                    (click)="attachStat(stat)"
+                  >
+                    Add
+                  </button>
+                </article>
+              </div>
+
+              <div
+                class="selection-surface"
+                cdkDropList
+                #selectedStatsList="cdkDropList"
+                [cdkDropListData]="statsArray.controls"
+                [cdkDropListConnectedTo]="[statCatalogList]"
+                [cdkDropListSortingDisabled]="true"
+                (cdkDropListDropped)="onStatDropped($any($event))"
+              >
+                <div class="selection-surface__header">
+                  <strong>Selected stats</strong>
+                  <span>{{ statsArray.length }} attached</span>
+                </div>
+
+                <div class="stat-grid" *ngIf="statsArray.length > 0; else noStats">
+                  <article
+                    class="stat-card"
+                    *ngFor="let statGroup of statsArray.controls; let index = index"
+                    [formGroup]="$any(statGroup)"
+                  >
+                    <div class="stat-card__header">
+                      <h5>{{ getStatDefinition(statGroup.get('key')?.value)?.name || 'Stat' }}</h5>
+                      <button type="button" class="ghost-action" (click)="removeStat(index)">
+                        Remove
+                      </button>
+                    </div>
+
+                    <input type="hidden" formControlName="key" />
+
+                    <label class="field-label" [attr.for]="'monster-stat-value-' + index">Value</label>
+                    <input
+                      [id]="'monster-stat-value-' + index"
+                      class="rpg-control"
+                      type="number"
+                      [step]="getStatInputStep(statGroup.get('key')?.value)"
+                      formControlName="value"
+                    />
+                  </article>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noStats>
+              <div class="selection-surface__empty">
+                <strong>Drop stats here</strong>
+                <p>Add at least the combat stats your encounter should use.</p>
+              </div>
+            </ng-template>
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <button
+            type="button"
+            class="stage-toggle"
+            [class.is-collapsed]="isStageCollapsed('abilities')"
+            [attr.aria-expanded]="!isStageCollapsed('abilities')"
+            aria-controls="monster-stage-abilities"
+            (click)="toggleStage('abilities')"
+          >
+            <div class="section-heading">
+              <div>
+                <h4>3. Abilities</h4>
+                <p>Attach existing combat abilities from the catalog. Each ability can only appear once.</p>
+              </div>
+              <span class="stage-toggle__meta">
+                {{ isStageCollapsed('abilities') ? 'Expand' : 'Collapse' }}
+              </span>
+            </div>
+          </button>
+
+          <div
+            id="monster-stage-abilities"
+            class="stage-content"
+            *ngIf="!isStageCollapsed('abilities')"
+          >
+            <label class="field-label" for="ability-search">Search abilities</label>
+            <input
+              id="ability-search"
+              class="rpg-control"
+              type="search"
+              [formControl]="abilitySearchControl"
+              placeholder="Search ability catalog"
+            />
+
+            <div class="catalog-workbench" cdkDropListGroup>
+              <div
+                class="catalog-grid"
+                cdkDropList
+                #abilityCatalogList="cdkDropList"
+                [cdkDropListData]="filteredAbilityCatalog"
+                [cdkDropListConnectedTo]="[selectedAbilitiesList]"
+                [cdkDropListSortingDisabled]="true"
+              >
+                <article
+                  *ngFor="let ability of filteredAbilityCatalog; trackBy: trackAbility"
+                  class="catalog-card"
+                  [class.is-unavailable]="!canAttachAbility(ability)"
+                  cdkDrag
+                  [cdkDragData]="ability"
+                  [cdkDragDisabled]="!canAttachAbility(ability)"
+                >
+                  <div class="catalog-card__media">
+                    <img [src]="getAbilityImagePath(ability.imageUrl)" [alt]="ability.name" />
+                  </div>
+                  <div class="catalog-card__body">
+                    <strong>{{ ability.name }}</strong>
+                    <span>ID {{ ability.id }} &middot; CD {{ ability.cooldown }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="inline-action"
+                    [disabled]="!canAttachAbility(ability)"
+                    (click)="attachAbility(ability)"
+                  >
+                    Add
+                  </button>
+                </article>
+              </div>
+
+              <div
+                class="selection-surface"
+                cdkDropList
+                #selectedAbilitiesList="cdkDropList"
+                [cdkDropListData]="selectedAbilities"
+                [cdkDropListConnectedTo]="[abilityCatalogList]"
+                [cdkDropListSortingDisabled]="true"
+                (cdkDropListDropped)="onAbilityDropped($any($event))"
+              >
+                <div class="selection-surface__header">
+                  <strong>Selected abilities</strong>
+                  <span>{{ abilitiesArray.length }} attached</span>
+                </div>
+
+                <div class="selected-chip-grid" *ngIf="selectedAbilities.length > 0; else noAbilities">
+                  <article class="selected-chip" *ngFor="let ability of selectedAbilities; let index = index">
+                    <img [src]="getAbilityImagePath(ability.imageUrl)" [alt]="ability.name" />
+                    <div>
+                      <strong>{{ ability.name }}</strong>
+                      <span>{{ ability.typeName }} &middot; ID {{ ability.id }}</span>
+                    </div>
+                    <button type="button" class="ghost-action" (click)="removeAbility(index)">
+                      Remove
+                    </button>
+                  </article>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noAbilities>
+              <div class="selection-surface__empty">
+                <strong>Drop abilities here</strong>
+                <p>Use the catalog or the add buttons to attach combat actions.</p>
+              </div>
+            </ng-template>
+          </div>
+        </section>
+
+        <section class="editor-section">
+          <button
+            type="button"
+            class="stage-toggle"
+            [class.is-collapsed]="isStageCollapsed('drops')"
+            [attr.aria-expanded]="!isStageCollapsed('drops')"
+            aria-controls="monster-stage-drops"
+            (click)="toggleStage('drops')"
+          >
+            <div class="section-heading">
+              <div>
+                <h4>4. Drops</h4>
+                <p>Mix equipment, crafting items, and currency in one weighted drop table.</p>
+              </div>
+              <span class="stage-toggle__meta">
+                {{ isStageCollapsed('drops') ? 'Expand' : 'Collapse' }}
+              </span>
+            </div>
+          </button>
+
+          <div id="monster-stage-drops" class="stage-content" *ngIf="!isStageCollapsed('drops')">
+            <label class="field-label" for="item-search">Search items</label>
+            <input
+              id="item-search"
+              class="rpg-control"
+              type="search"
+              [formControl]="itemSearchControl"
+              placeholder="Search item catalog"
+            />
+
+            <div class="catalog-workbench" cdkDropListGroup>
+              <div
+                class="catalog-grid"
+                cdkDropList
+                #itemCatalogList="cdkDropList"
+                [cdkDropListData]="filteredItemCatalog"
+                [cdkDropListConnectedTo]="[selectedDropsList]"
+                [cdkDropListSortingDisabled]="true"
+              >
+                <article
+                  *ngFor="let item of filteredItemCatalog; trackBy: trackItem"
+                  class="catalog-card"
+                  [class.is-unavailable]="!canAttachItem(item)"
+                  cdkDrag
+                  [cdkDragData]="item"
+                  [cdkDragDisabled]="!canAttachItem(item)"
+                >
+                  <div class="catalog-card__media">
+                    <img [src]="getItemImagePath(item.imageUrl)" [alt]="item.name" />
+                  </div>
+                  <div class="catalog-card__body">
+                    <strong>{{ item.name }}</strong>
+                    <span>{{ item.category }} &middot; {{ item.itemId }}</span>
+                  </div>
+                  <button
+                    type="button"
+                    class="inline-action"
+                    [disabled]="!canAttachItem(item)"
+                    (click)="attachDropItem(item)"
+                  >
+                    Add
+                  </button>
+                </article>
+              </div>
+
+              <div
+                class="selection-surface"
+                cdkDropList
+                #selectedDropsList="cdkDropList"
+                [cdkDropListData]="dropsArray.controls"
+                [cdkDropListConnectedTo]="[itemCatalogList]"
+                [cdkDropListSortingDisabled]="true"
+                (cdkDropListDropped)="onItemDropped($any($event))"
+              >
+                <div class="selection-surface__header">
+                  <strong>Drop table</strong>
+                  <span>{{ dropsArray.length }} entries</span>
+                </div>
+
+                <div class="drop-grid" *ngIf="dropsArray.length > 0; else noDrops">
+                  <article
+                    class="drop-card"
+                    *ngFor="let dropGroup of dropsArray.controls; let index = index"
+                    [formGroup]="$any(dropGroup)"
+                  >
+                    <div class="drop-card__header">
+                      <div class="drop-card__identity">
+                        <img
+                          [src]="getItemImagePath(getDropItem(dropGroup.get('itemTypeName')?.value, dropGroup.get('itemId')?.value)?.imageUrl || '')"
+                          [alt]="getDropItem(dropGroup.get('itemTypeName')?.value, dropGroup.get('itemId')?.value)?.name || 'Drop item'"
+                        />
+                        <div>
+                          <strong>{{
+                            getDropItem(dropGroup.get('itemTypeName')?.value, dropGroup.get('itemId')?.value)?.name ||
+                              dropGroup.get('itemId')?.value
+                          }}</strong>
+                          <span>{{
+                            getDropItem(dropGroup.get('itemTypeName')?.value, dropGroup.get('itemId')?.value)?.category ||
+                              'Unknown'
+                          }}</span>
+                        </div>
+                      </div>
+                      <button type="button" class="ghost-action" (click)="removeDrop(index)">
+                        Remove
+                      </button>
+                    </div>
+
+                    <input type="hidden" formControlName="itemTypeName" />
+                    <input type="hidden" formControlName="itemId" />
+
+                    <div class="drop-card__inputs">
+                      <div>
+                        <label class="field-label" [attr.for]="'drop-quantity-' + index">Quantity</label>
+                        <input
+                          [id]="'drop-quantity-' + index"
+                          class="rpg-control"
+                          type="number"
+                          min="1"
+                          step="1"
+                          formControlName="quantity"
+                        />
+                      </div>
+
+                      <div>
+                        <label class="field-label" [attr.for]="'drop-weight-' + index">Weight</label>
+                        <input
+                          [id]="'drop-weight-' + index"
+                          class="rpg-control"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          formControlName="weight"
+                        />
+                      </div>
+                    </div>
+
+                    <p class="drop-card__odds">
+                      {{ formatPercent(getEffectiveDropChance(index)) }} drop chance
+                    </p>
+                  </article>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #noDrops>
+              <div class="selection-surface__empty">
+                <strong>Drop items here</strong>
+                <p>Attach any concrete item and fine-tune its weight and quantity.</p>
+              </div>
+            </ng-template>
+          </div>
+        </section>
+
+        <div class="editor-actions">
+          <button
+            type="button"
+            class="ghost-action"
+            [disabled]="!canDeleteSelected"
+            (click)="deleteMonster()"
+          >
+            {{ isDeleting ? 'Deleting...' : 'Delete' }}
+          </button>
+          <button
+            type="button"
+            class="primary-action"
+            [disabled]="isSaving"
+            (click)="saveMonster()"
+          >
+            {{ isSaving ? 'Saving...' : selectedMonsterName ? 'Save Changes' : 'Create Monster' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <ng-template #loadingState>
+    <div class="panel loading-panel">
+      <p>Loading monster workshop...</p>
+    </div>
+  </ng-template>
+</section>

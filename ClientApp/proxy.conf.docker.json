@@ -1,0 +1,27 @@
+{
+  "/api/hubs": {
+    "target": "http://battle:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "ws": true,
+    "pathRewrite": {
+      "^/api/hubs": "/hubs"
+    }
+  },
+  "/api": {
+    "target": "http://game:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    }
+  },
+  "/identity-api": {
+    "target": "http://identity:8080",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/identity-api": ""
+    }
+  }
+}

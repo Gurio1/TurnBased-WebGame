@@ -1,5 +1,5 @@
 export interface Ability {
-  id: number;
+  id: string;
   name: string;
   cooldown: number;
   currentCooldown: number;

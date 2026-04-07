@@ -3,4 +3,25 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-.dotnet-home
+
+# Local tooling and build output
+.codex/
+.codex-build/
+.dotnet_home/
+artifacts/
+
+# IDE user files
+*.sln.DotSettings.user
+.idea/**/workspace.xml
+.idea/**/shelf/
+.idea/**/projectSettingsUpdater.xml
+.idea/**/contentModel.xml
+.idea/**/*.iml
+.idea/**/dataSources/
+.idea/**/dataSources.local.xml
+.idea/**/inspectionProfiles/
+.idea/**/Docker/
+
+# Local logs
+ClientApp/frontend.err.log
+ClientApp/frontend.out.log

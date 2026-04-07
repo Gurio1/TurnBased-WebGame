@@ -85,9 +85,11 @@ export class MapPageComponent {
           subtitle: null,
           items,
         };
+        this.isExploring = false;
       },
       error: (err: Error) => {
         this.exploreErrorMessage = err.message;
+        this.isExploring = false;
       },
       complete: () => {
         this.isExploring = false;

@@ -1,13 +1,12 @@
 using System.Text.Json.Serialization;
-using Game.Application;
-using Game.Core.Abilities;
 using Game.Core.Equipment;
 using Game.Core.Marketplace;
 using Game.Core.Models;
 using Game.Core.PlayerProfile.Specifications;
 using Game.Core.PlayerProfile.ValueObjects;
-using Game.Core.StatusEffects;
 using Game.SharedKernel;
+using Game.SharedKernel.Models;
+using Game.SharedKernel.Results;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -18,19 +17,13 @@ public class GamePlayer : IHasAbilityIds
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; init; } = ObjectId.GenerateNewId().ToString();
-    
-    public string? BattleId { get; private set; }
+
     public Stats Stats { get; set; } = new();
-    [BsonIgnore] public List<Ability> Abilities { get; set; } = [];
     public Dictionary<string, EquipmentBase?> Equipment { get; init; } = [];
     public Inventory Inventory { get; init; } = new();
-    public List<IDebuff> Debuffs { get; init; } = [];
     public string CharacterType { get; set; } = "Player";
     [JsonIgnore] public List<string> AbilityIds { get; init; } = [];
-    
-    public bool InBattle() => BattleId is not null;
-    public void ResetBattleId() => BattleId = null;
-    
+
     public ResultWithoutValue Equip(string itemId)
     {
         var itemResult = Inventory.GetItem(itemId);
